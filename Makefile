@@ -24,7 +24,7 @@ format:
 	clang-format *.{c,h}
 
 run:
-	./build/kak
+	./build/vis
 
 
 build: mkdir_build
