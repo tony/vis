@@ -41,7 +41,7 @@ set(BIN_DIR ${vis_SOURCE_DIR}/bin)
 
 set(CURSES_NEED_NCURSESW TRUE)
 find_package(NCursesw REQUIRED)
-find_package(LibTermKey REQUIRED)
+find_package(LibTermkey REQUIRED)
 
 include_directories("./")
 
