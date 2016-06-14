@@ -16,6 +16,9 @@
 #if CONFIG_SELINUX
 #include <selinux/selinux.h>
 #endif
+#if __FreeBSD__
+#include <stdint.h>
+#endif
 
 #include "text.h"
 #include "text-util.h"

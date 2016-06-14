@@ -12,6 +12,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#if __FreeBSD__
+#include <inttypes.h>
+#endif
 #include "map.h"
 
 typedef struct Node Node;
