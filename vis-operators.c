@@ -3,7 +3,6 @@
 #include "vis-core.h"
 #include "text-motions.h"
 #include "text-objects.h"
-#include "text-util.h"
 #include "util.h"
 
 static size_t op_delete(Vis *vis, Text *txt, OperatorContext *c) {

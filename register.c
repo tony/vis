@@ -2,9 +2,6 @@
 #include <string.h>
 
 #include "vis.h"
-#include "text.h"
-#include "util.h"
-#include "register.h"
 
 static ssize_t read_buffer(void *context, char *data, size_t len) {
 	buffer_append(context, data, len);

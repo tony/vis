@@ -1,14 +1,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <wchar.h>
-#include <ctype.h>
 #include <errno.h>
-#include <regex.h>
 #include <limits.h>
 #include "view.h"
-#include "text.h"
 #include "text-motions.h"
-#include "text-util.h"
 #include "util.h"
 
 typedef struct {

@@ -12,7 +12,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <inttypes.h>
 #include "map.h"
 
 typedef struct Node Node;

@@ -1,10 +1,8 @@
 #include <stdio.h>
 #include <string.h>
-#include <regex.h>
 #include "vis-core.h"
 #include "text-motions.h"
 #include "text-objects.h"
-#include "text-util.h"
 #include "util.h"
 
 /** utility functions */

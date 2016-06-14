@@ -4,24 +4,18 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-#include <strings.h>
 #include <limits.h>
 #include <ctype.h>
 #include <signal.h>
 #include <locale.h>
 #include <poll.h>
 #include <sys/ioctl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
 #include <termios.h>
 
 #include "ui-curses.h"
-#include "vis.h"
 #include "vis-core.h"
-#include "text.h"
 #include "util.h"
-#include "text-util.h"
 
 #ifdef NCURSES_VERSION
 # ifndef NCURSES_EXT_COLORS

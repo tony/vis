@@ -2,13 +2,10 @@
 #include <limits.h>
 #include <string.h>
 #include <wchar.h>
-#include <ctype.h>
 #include <errno.h>
 
 #include "ui-curses.h"
-#include "vis.h"
 #include "vis-lua.h"
-#include "text-util.h"
 #include "text-motions.h"
 #include "text-objects.h"
 #include "util.h"

@@ -6,19 +6,12 @@
  *  Copyright © 2016 Marc André Tanner <mat at brain-dump.org>
  */
 #include <string.h>
-#include <strings.h>
-#include <stdio.h>
 #include <ctype.h>
-#include <errno.h>
 #include <unistd.h>
-#include <limits.h>
 #include "sam.h"
 #include "vis-core.h"
-#include "buffer.h"
-#include "text.h"
 #include "text-motions.h"
 #include "text-objects.h"
-#include "text-regex.h"
 #include "util.h"
 
 #define MAX_ARGV 8

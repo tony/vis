@@ -1,5 +1,7 @@
 /* this file is included from sam.c */
 
+#include <errno.h>
+#include <limits.h>
 #include <termkey.h>
 #include "vis-lua.h"
 

@@ -1,6 +1,5 @@
 /* libutf8 © 2012-2015 Connor Lane Smith <cls@lubutu.com> */
 #include "libutf.h"
-#include "util.h"
 
 int
 runelen(Rune r)
