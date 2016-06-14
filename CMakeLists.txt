@@ -52,6 +52,12 @@ file(GLOB vis_SOURCES array.c buffer.c libutf.c main.c map.c register.c ring-buf
 	vis-operators.c vis-prompt.c vis-text-objects.c)
     #list(REMOVE_ITEM vis_SOURCES vis_lua.c)
 
+if (NOT EXISTS "${PROJECT_SOURCE_DIR}/config.h")
+  configure_file (
+    "${PROJECT_SOURCE_DIR}/config.def.h"
+    "${PROJECT_SOURCE_DIR}/config.h"
+  )
+endif()
 
 include_directories(${CURSES_INCLUDE_DIR} ${LIBTERMKEY_INCLUDE_DIR})
 
