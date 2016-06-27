@@ -6,7 +6,7 @@ test:
 	./test/run
 
 mkdir_build:
-	if [ -n -d ./build ]; then mkdir -p build; fi;
+	[[ -d ./build ]] || mkdir -p build
 
 entr_warn:
 	@echo "----------------------------------------------------------"
