@@ -71,7 +71,7 @@ static const char *gotoline(Vis*, const char *keys, const Arg *arg);
 /* set motion type either LINEWISE or CHARWISE via arg->i */
 static const char *motiontype(Vis*, const char *keys, const Arg *arg);
 /* make the current action use the operator indicated by arg->i */
-static const char *operator(Vis*, const char *keys, const Arg *arg);
+static const char *oper(Vis*, const char *keys, const Arg *arg);
 /* use arg->s as command for the filter operator */
 static const char *operator_filter(Vis*, const char *keys, const Arg *arg);
 /* blocks to read a key and performs movement indicated by arg->i which
@@ -97,7 +97,7 @@ static const char *earlier(Vis*, const char *keys, const Arg *arg);
 static const char *later(Vis*, const char *keys, const Arg *arg);
 /* delete from the current cursor position to the end of
  * movement as indicated by arg->i */
-static const char *delete(Vis*, const char *keys, const Arg *arg);
+static const char *del(Vis*, const char *keys, const Arg *arg);
 /* insert register content indicated by keys at current cursor position */
 static const char *insert_register(Vis*, const char *keys, const Arg *arg);
 /* show a user prompt to get input with title arg->s */
@@ -607,22 +607,22 @@ static const KeyAction vis_action[] = {
 	[VIS_ACTION_DELETE_CHAR_PREV] = {
 		"delete-char-prev",
 		"Delete the previous character",
-		delete, { .i = VIS_MOVE_CHAR_PREV }
+		del, { .i = VIS_MOVE_CHAR_PREV }
 	},
 	[VIS_ACTION_DELETE_CHAR_NEXT] = {
 		"delete-char-next",
 		"Delete the next character",
-		delete, { .i = VIS_MOVE_CHAR_NEXT }
+		del, { .i = VIS_MOVE_CHAR_NEXT }
 	},
 	[VIS_ACTION_DELETE_LINE_BEGIN] = {
 		"delete-line-begin",
 		"Delete until the start of the current line",
-		delete, { .i = VIS_MOVE_LINE_BEGIN }
+		del, { .i = VIS_MOVE_LINE_BEGIN }
 	},
 	[VIS_ACTION_DELETE_WORD_PREV] = {
 		"delete-word-prev",
 		"Delete the previous WORD",
-		delete, { .i = VIS_MOVE_LONGWORD_START_PREV }
+		del, { .i = VIS_MOVE_LONGWORD_START_PREV }
 	},
 	[VIS_ACTION_JUMPLIST_PREV] = {
 		"jumplist-prev",
@@ -747,42 +747,42 @@ static const KeyAction vis_action[] = {
 	[VIS_ACTION_OPERATOR_CHANGE] = {
 		"vis-operator-change",
 		"Change operator",
-		operator, { .i = VIS_OP_CHANGE }
+		oper, { .i = VIS_OP_CHANGE }
 	},
 	[VIS_ACTION_OPERATOR_DELETE] = {
 		"vis-operator-delete",
 		"Delete operator",
-		operator, { .i = VIS_OP_DELETE }
+		oper, { .i = VIS_OP_DELETE }
 	},
 	[VIS_ACTION_OPERATOR_YANK] = {
 		"vis-operator-yank",
 		"Yank operator",
-		operator, { .i = VIS_OP_YANK }
+		oper, { .i = VIS_OP_YANK }
 	},
 	[VIS_ACTION_OPERATOR_SHIFT_LEFT] = {
 		"vis-operator-shift-left",
 		"Shift left operator",
-		operator, { .i = VIS_OP_SHIFT_LEFT }
+		oper, { .i = VIS_OP_SHIFT_LEFT }
 	},
 	[VIS_ACTION_OPERATOR_SHIFT_RIGHT] = {
 		"vis-operator-shift-right",
 		"Shift right operator",
-		operator, { .i = VIS_OP_SHIFT_RIGHT }
+		oper, { .i = VIS_OP_SHIFT_RIGHT }
 	},
 	[VIS_ACTION_OPERATOR_CASE_LOWER] = {
 		"vis-operator-case-lower",
 		"Lowercase operator",
-		operator, { .i = VIS_OP_CASE_LOWER }
+		oper, { .i = VIS_OP_CASE_LOWER }
 	},
 	[VIS_ACTION_OPERATOR_CASE_UPPER] = {
 		"vis-operator-case-upper",
 		"Uppercase operator",
-		operator, { .i = VIS_OP_CASE_UPPER }
+		oper, { .i = VIS_OP_CASE_UPPER }
 	},
 	[VIS_ACTION_OPERATOR_CASE_SWAP] = {
 		"vis-operator-case-swap",
 		"Swap case operator",
-		operator, { .i = VIS_OP_CASE_SWAP }
+		oper, { .i = VIS_OP_CASE_SWAP }
 	},
 	[VIS_ACTION_OPERATOR_FILTER] = {
 		"vis-operator-filter",
@@ -862,7 +862,7 @@ static const KeyAction vis_action[] = {
 	[VIS_ACTION_JOIN_LINES] = {
 		"join-lines",
 		"Join selected lines",
-		operator, { .i = VIS_OP_JOIN }
+		oper, { .i = VIS_OP_JOIN }
 	},
 	[VIS_ACTION_PROMPT_SHOW] = {
 		"prompt-show",
@@ -912,22 +912,22 @@ static const KeyAction vis_action[] = {
 	[VIS_ACTION_PUT_AFTER] = {
 		"put-after",
 		"Put text after the cursor",
-		operator, { .i = VIS_OP_PUT_AFTER }
+		oper, { .i = VIS_OP_PUT_AFTER }
 	},
 	[VIS_ACTION_PUT_BEFORE] = {
 		"put-before",
 		"Put text before the cursor",
-		operator, { .i = VIS_OP_PUT_BEFORE }
+		oper, { .i = VIS_OP_PUT_BEFORE }
 	},
 	[VIS_ACTION_PUT_AFTER_END] = {
 		"put-after-end",
 		"Put text after the cursor, place cursor after new text",
-		operator, { .i = VIS_OP_PUT_AFTER_END }
+		oper, { .i = VIS_OP_PUT_AFTER_END }
 	},
 	[VIS_ACTION_PUT_BEFORE_END] = {
 		"put-before-end",
 		"Put text before the cursor, place cursor after new text",
-		operator, { .i = VIS_OP_PUT_BEFORE_END }
+		oper, { .i = VIS_OP_PUT_BEFORE_END }
 	},
 	[VIS_ACTION_CURSOR_SELECT_WORD] = {
 		"cursors-select-word",
@@ -957,12 +957,12 @@ static const KeyAction vis_action[] = {
 	[VIS_ACTION_CURSORS_NEW_LINES_BEGIN] = {
 		"cursors-new-lines-begin",
 		"Create a new cursor at the start of every line covered by selection",
-		operator, { .i = VIS_OP_CURSOR_SOL }
+		oper, { .i = VIS_OP_CURSOR_SOL }
 	},
 	[VIS_ACTION_CURSORS_NEW_LINES_END] = {
 		"cursors-new-lines-end",
 		"Create a new cursor at the end of every line covered by selection",
-		operator, { .i = VIS_OP_CURSOR_EOL }
+		oper, { .i = VIS_OP_CURSOR_EOL }
 	},
 	[VIS_ACTION_CURSORS_NEW_MATCH_NEXT] = {
 		"cursors-new-match-next",
@@ -1244,9 +1244,9 @@ static const char *key2register(Vis *vis, const char *keys, enum VisRegister *re
 	if (!keys[0])
 		return NULL;
 	if ('a' <= keys[0] && keys[0] <= 'z')
-		*reg = keys[0] - 'a';
+		*reg = (VisRegister)((int)keys[0] - 'a');
 	else if ('A' <= keys[0] && keys[0] <= 'Z')
-		*reg = VIS_REG_A + keys[0] - 'A';
+		*reg = (VisRegister)(VIS_REG_A + keys[0] - 'A');
 	else if (keys[0] == '*' || keys[0] == '+')
 		*reg = VIS_REG_CLIPBOARD;
 	else if (keys[0] == '_')
@@ -1370,7 +1370,7 @@ static const char *cursors_align_indent(Vis *vis, const char *keys, const Arg *a
 		}
 
 		size_t len = maxcol - mincol;
-		char *buf = malloc(len+1);
+		char *buf = (char*)malloc(len+1);
 		if (!buf)
 			return keys;
 		memset(buf, ' ', len);
@@ -1564,7 +1564,7 @@ static const char *selections_rotate(Vis *vis, const char *keys, const Arg *arg)
 		Rotate rot;
 		rot.cursor = c;
 		rot.len = text_range_size(&sel);
-		if ((rot.data = malloc(rot.len)))
+		if ((rot.data = (char*) malloc(rot.len)))
 			rot.len = text_bytes_get(txt, sel.start, rot.len, rot.data);
 		else
 			rot.len = 0;
@@ -1579,8 +1579,8 @@ static const char *selections_rotate(Vis *vis, const char *keys, const Arg *arg)
 			size_t off = arg->i > 0 ? count % len : len - (count % len);
 			for (size_t i = 0; i < len; i++) {
 				size_t j = (i + off) % len;
-				Rotate *oldrot = array_get(&arr, i);
-				Rotate *newrot = array_get(&arr, j);
+				Rotate *oldrot = (Rotate*) array_get(&arr, i);
+				Rotate *newrot = (Rotate*) array_get(&arr, j);
 				if (!oldrot || !newrot || oldrot == newrot)
 					continue;
 				Filerange newsel = view_cursors_selection_get(newrot->cursor);
@@ -1661,12 +1661,12 @@ static const char *gotoline(Vis *vis, const char *keys, const Arg *arg) {
 }
 
 static const char *motiontype(Vis *vis, const char *keys, const Arg *arg) {
-	vis_motion_type(vis, arg->i);
+	vis_motion_type(vis, (VisMotionType) arg->i);
 	return keys;
 }
 
-static const char *operator(Vis *vis, const char *keys, const Arg *arg) {
-	vis_operator(vis, arg->i);
+static const char *oper(Vis *vis, const char *keys, const Arg *arg) {
+	vis_operator(vis, (VisOperator) arg->i);
 	return keys;
 }
 
@@ -1684,18 +1684,18 @@ static const char *movement_key(Vis *vis, const char *keys, const Arg *arg) {
 	if (len < sizeof key) {
 		strncpy(key, keys, len);
 		key[len] = '\0';
-		vis_motion(vis, arg->i, key);
+		vis_motion(vis, (VisMotion) arg->i, key);
 	}
 	return next;
 }
 
 static const char *movement(Vis *vis, const char *keys, const Arg *arg) {
-	vis_motion(vis, arg->i);
+	vis_motion(vis, (VisMotion) arg->i);
 	return keys;
 }
 
 static const char *textobj(Vis *vis, const char *keys, const Arg *arg) {
-	vis_textobject(vis, arg->i);
+	vis_textobject(vis, (VisTextObject) arg->i);
 	return keys;
 }
 
@@ -1741,14 +1741,14 @@ static const char *key2mark(Vis *vis, const char *keys, int *mark) {
 static const char *mark_set(Vis *vis, const char *keys, const Arg *arg) {
 	int mark;
 	keys = key2mark(vis, keys, &mark);
-	vis_mark_set(vis, mark, view_cursor_get(vis_view(vis)));
+	vis_mark_set(vis, (VisMark) mark, view_cursor_get(vis_view(vis)));
 	return keys;
 }
 
 static const char *mark_motion(Vis *vis, const char *keys, const Arg *arg) {
 	int mark;
 	keys = key2mark(vis, keys, &mark);
-	vis_motion(vis, arg->i, mark);
+	vis_motion(vis, (VisMotion) arg->i, mark);
 	return keys;
 }
 
@@ -1796,9 +1796,9 @@ static const char *later(Vis *vis, const char *keys, const Arg *arg) {
 	return keys;
 }
 
-static const char *delete(Vis *vis, const char *keys, const Arg *arg) {
+static const char *del(Vis *vis, const char *keys, const Arg *arg) {
 	vis_operator(vis, VIS_OP_DELETE);
-	vis_motion(vis, arg->i);
+	vis_motion(vis, (VisMotion) arg->i);
 	return keys;
 }
 
@@ -1974,18 +1974,18 @@ static const char *join(Vis *vis, const char *keys, const Arg *arg) {
 	if (count)
 		vis_count_set(vis, count-1);
 	vis_operator(vis, VIS_OP_JOIN);
-	vis_motion(vis, arg->i);
+	vis_motion(vis, (VisMotion) arg->i);
 	return keys;
 }
 
 static const char *switchmode(Vis *vis, const char *keys, const Arg *arg) {
-	vis_mode_switch(vis, arg->i);
+	vis_mode_switch(vis, (VisMode) arg->i);
 	return keys;
 }
 
 static const char *insertmode(Vis *vis, const char *keys, const Arg *arg) {
 	vis_operator(vis, VIS_OP_INSERT);
-	vis_motion(vis, arg->i);
+	vis_motion(vis, (VisMotion) arg->i);
 	return keys;
 }
 
@@ -2203,7 +2203,7 @@ int main(int argc, char *argv[]) {
 	for (int i = 0; i < LENGTH(default_bindings); i++) {
 		for (const KeyBinding **binding = default_bindings[i]; binding && *binding; binding++) {
 			for (const KeyBinding *kb = *binding; kb->key; kb++) {
-				vis_mode_map(vis, i, false, kb->key, kb);
+				vis_mode_map(vis, (VisMode) i, false, kb->key, kb);
 			}
 		}
 	}
