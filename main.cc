@@ -313,922 +313,921 @@ enum {
 	VIS_ACTION_NOP,
 };
 
-static const KeyAction vis_action[] = {
-	[VIS_ACTION_EDITOR_SUSPEND] = {
+static const KeyAction vis_action[VIS_ACTION_NOP];
+vis_action[VIS_ACTION_EDITOR_SUSPEND] = {
 		"editor-suspend",
 		"Suspend the editor",
 		suspend,
-	},
-	[VIS_ACTION_CURSOR_CHAR_PREV] = {
+};
+vis_action[VIS_ACTION_CURSOR_CHAR_PREV] = {
 		"cursor-char-prev",
 		"Move cursor left, to the previous character",
-		movement, { .i = VIS_MOVE_CHAR_PREV }
-	},
-	[VIS_ACTION_CURSOR_CHAR_NEXT] = {
+		movement, { nullptr, VIS_MOVE_CHAR_PREV }
+};
+vis_action[VIS_ACTION_CURSOR_CHAR_NEXT] = {
 		"cursor-char-next",
 		"Move cursor right, to the next character",
-		movement, { .i = VIS_MOVE_CHAR_NEXT }
-	},
-	[VIS_ACTION_CURSOR_LINE_CHAR_PREV] = {
+		movement, { nullptr, VIS_MOVE_CHAR_NEXT }
+};
+vis_action[VIS_ACTION_CURSOR_LINE_CHAR_PREV] = {
 		"cursor-line-char-prev",
 		"Move cursor left, to the previous character on the same line",
-		movement, { .i = VIS_MOVE_LINE_CHAR_PREV }
-	},
-	[VIS_ACTION_CURSOR_LINE_CHAR_NEXT] = {
+		movement, { nullptr, VIS_MOVE_LINE_CHAR_PREV }
+};
+vis_action[VIS_ACTION_CURSOR_LINE_CHAR_NEXT] = {
 		"cursor-line-char-next",
 		"Move cursor right, to the next character on the same line",
-		movement, { .i = VIS_MOVE_LINE_CHAR_NEXT }
-	},
-	[VIS_ACTION_CURSOR_WORD_START_PREV] = {
+		movement, { nullptr, VIS_MOVE_LINE_CHAR_NEXT }
+};
+vis_action[VIS_ACTION_CURSOR_WORD_START_PREV] = {
 		"cursor-word-start-prev",
 		"Move cursor words backwards",
-		movement, { .i = VIS_MOVE_WORD_START_PREV }
-	},
-	[VIS_ACTION_CURSOR_WORD_START_NEXT] = {
+		movement, { nullptr, VIS_MOVE_WORD_START_PREV }
+};
+vis_action[VIS_ACTION_CURSOR_WORD_START_NEXT] = {
 		"cursor-word-start-next",
 		"Move cursor words forwards",
-		movement, { .i = VIS_MOVE_WORD_START_NEXT }
-	},
-	[VIS_ACTION_CURSOR_WORD_END_PREV] = {
+		movement, { nullptr, VIS_MOVE_WORD_START_NEXT }
+};
+vis_action[VIS_ACTION_CURSOR_WORD_END_PREV] = {
 		"cursor-word-end-prev",
 		"Move cursor backwards to the end of word",
-		movement, { .i = VIS_MOVE_WORD_END_PREV }
-	},
-	[VIS_ACTION_CURSOR_WORD_END_NEXT] = {
+		movement, { nullptr, VIS_MOVE_WORD_END_PREV }
+};
+vis_action[VIS_ACTION_CURSOR_WORD_END_NEXT] = {
 		"cursor-word-end-next",
 		"Move cursor forward to the end of word",
-		movement, { .i = VIS_MOVE_WORD_END_NEXT }
-	},
-	[VIS_ACTION_CURSOR_LONGWORD_START_PREV] = {
+		movement, { nullptr, VIS_MOVE_WORD_END_NEXT }
+};
+vis_action[VIS_ACTION_CURSOR_LONGWORD_START_PREV] = {
 		"cursor-longword-start-prev",
 		"Move cursor WORDS backwards",
-		movement, { .i = VIS_MOVE_LONGWORD_START_PREV }
-	},
-	[VIS_ACTION_CURSOR_LONGWORD_START_NEXT] = {
+		movement, { nullptr, VIS_MOVE_LONGWORD_START_PREV }
+};
+vis_action[VIS_ACTION_CURSOR_LONGWORD_START_NEXT] = {
 		"cursor-longword-start-next",
 		"Move cursor WORDS forwards",
-		movement, { .i = VIS_MOVE_LONGWORD_START_NEXT }
-	},
-	[VIS_ACTION_CURSOR_LONGWORD_END_PREV] = {
+		movement, { nullptr, VIS_MOVE_LONGWORD_START_NEXT }
+};
+vis_action[VIS_ACTION_CURSOR_LONGWORD_END_PREV] = {
 		"cursor-longword-end-prev",
 		"Move cursor backwards to the end of WORD",
-		movement, { .i = VIS_MOVE_LONGWORD_END_PREV }
-	},
-	[VIS_ACTION_CURSOR_LONGWORD_END_NEXT] = {
+		movement, { nullptr, VIS_MOVE_LONGWORD_END_PREV }
+};
+vis_action[VIS_ACTION_CURSOR_LONGWORD_END_NEXT] = {
 		"cursor-longword-end-next",
 		"Move cursor forward to the end of WORD",
-		movement, { .i = VIS_MOVE_LONGWORD_END_NEXT }
-	},
-	[VIS_ACTION_CURSOR_LINE_UP] = {
+		movement, { nullptr, VIS_MOVE_LONGWORD_END_NEXT }
+};
+vis_action[VIS_ACTION_CURSOR_LINE_UP] = {
 		"cursor-line-up",
 		"Move cursor line upwards",
-		movement, { .i = VIS_MOVE_LINE_UP }
-	},
-	[VIS_ACTION_CURSOR_LINE_DOWN] = {
+		movement, { nullptr, VIS_MOVE_LINE_UP }
+};
+vis_action[VIS_ACTION_CURSOR_LINE_DOWN] = {
 		"cursor-line-down",
 		"Move cursor line downwards",
-		movement, { .i = VIS_MOVE_LINE_DOWN }
-	},
-	[VIS_ACTION_CURSOR_LINE_START] = {
+		movement, { nullptr, VIS_MOVE_LINE_DOWN }
+};
+vis_action[VIS_ACTION_CURSOR_LINE_START] = {
 		"cursor-line-start",
 		"Move cursor to first non-blank character of the line",
-		movement, { .i = VIS_MOVE_LINE_START }
-	},
-	[VIS_ACTION_CURSOR_LINE_FINISH] = {
+		movement, { nullptr, VIS_MOVE_LINE_START }
+};
+vis_action[VIS_ACTION_CURSOR_LINE_FINISH] = {
 		"cursor-line-finish",
 		"Move cursor to last non-blank character of the line",
-		movement, { .i = VIS_MOVE_LINE_FINISH }
-	},
-	[VIS_ACTION_CURSOR_LINE_BEGIN] = {
+		movement, { nullptr, VIS_MOVE_LINE_FINISH }
+};
+vis_action[VIS_ACTION_CURSOR_LINE_BEGIN] = {
 		"cursor-line-begin",
 		"Move cursor to first character of the line",
-		movement, { .i = VIS_MOVE_LINE_BEGIN }
-	},
-	[VIS_ACTION_CURSOR_LINE_END] = {
+		movement, { nullptr, VIS_MOVE_LINE_BEGIN }
+};
+vis_action[VIS_ACTION_CURSOR_LINE_END] = {
 		"cursor-line-end",
 		"Move cursor to end of the line",
-		movement, { .i = VIS_MOVE_LINE_END }
-	},
-	[VIS_ACTION_CURSOR_LINE_LASTCHAR] = {
+		movement, { nullptr, VIS_MOVE_LINE_END }
+};
+vis_action[VIS_ACTION_CURSOR_LINE_LASTCHAR] = {
 		"cursor-line-lastchar",
 		"Move cursor to last character of the line",
-		movement, { .i = VIS_MOVE_LINE_LASTCHAR }
-	},
-	[VIS_ACTION_CURSOR_SCREEN_LINE_UP] = {
+		movement, { nullptr, VIS_MOVE_LINE_LASTCHAR }
+};
+vis_action[VIS_ACTION_CURSOR_SCREEN_LINE_UP] = {
 		"cursor-screenline-up",
 		"Move cursor screen/display line upwards",
-		movement, { .i = VIS_MOVE_SCREEN_LINE_UP }
-	},
-	[VIS_ACTION_CURSOR_SCREEN_LINE_DOWN] = {
+		movement, { nullptr, VIS_MOVE_SCREEN_LINE_UP }
+};
+vis_action[VIS_ACTION_CURSOR_SCREEN_LINE_DOWN] = {
 		"cursor-screenline-down",
 		"Move cursor screen/display line downwards",
-		movement, { .i = VIS_MOVE_SCREEN_LINE_DOWN }
-	},
-	[VIS_ACTION_CURSOR_SCREEN_LINE_BEGIN] = {
+		movement, { nullptr, VIS_MOVE_SCREEN_LINE_DOWN }
+};
+vis_action[VIS_ACTION_CURSOR_SCREEN_LINE_BEGIN] = {
 		"cursor-screenline-begin",
 		"Move cursor to beginning of screen/display line",
-		movement, { .i = VIS_MOVE_SCREEN_LINE_BEGIN }
-	},
-	[VIS_ACTION_CURSOR_SCREEN_LINE_MIDDLE] = {
+		movement, { nullptr, VIS_MOVE_SCREEN_LINE_BEGIN }
+};
+vis_action[VIS_ACTION_CURSOR_SCREEN_LINE_MIDDLE] = {
 		"cursor-screenline-middle",
 		"Move cursor to middle of screen/display line",
-		movement, { .i = VIS_MOVE_SCREEN_LINE_MIDDLE }
-	},
-	[VIS_ACTION_CURSOR_SCREEN_LINE_END] = {
+		movement, { nullptr, VIS_MOVE_SCREEN_LINE_MIDDLE }
+};
+vis_action[VIS_ACTION_CURSOR_SCREEN_LINE_END] = {
 		"cursor-screenline-end",
 		"Move cursor to end of screen/display line",
-		movement, { .i = VIS_MOVE_SCREEN_LINE_END }
-	},
-	[VIS_ACTION_CURSOR_PERCENT] = {
+		movement, { nullptr, VIS_MOVE_SCREEN_LINE_END }
+};
+vis_action[VIS_ACTION_CURSOR_PERCENT] = {
 		"cursor-percent",
 		"Move to count % of file or matching item",
 		percent
-	},
-	[VIS_ACTION_CURSOR_PARAGRAPH_PREV] = {
+};
+vis_action[VIS_ACTION_CURSOR_PARAGRAPH_PREV] = {
 		"cursor-paragraph-prev",
 		"Move cursor paragraph backward",
-		movement, { .i = VIS_MOVE_PARAGRAPH_PREV }
-	},
-	[VIS_ACTION_CURSOR_PARAGRAPH_NEXT] = {
+		movement, { nullptr, VIS_MOVE_PARAGRAPH_PREV }
+};
+vis_action[VIS_ACTION_CURSOR_PARAGRAPH_NEXT] = {
 		"cursor-paragraph-next",
 		"Move cursor paragraph forward",
-		movement, { .i = VIS_MOVE_PARAGRAPH_NEXT }
-	},
-	[VIS_ACTION_CURSOR_SENTENCE_PREV] = {
+		movement, { nullptr, VIS_MOVE_PARAGRAPH_NEXT }
+};
+vis_action[VIS_ACTION_CURSOR_SENTENCE_PREV] = {
 		"cursor-sentence-prev",
 		"Move cursor sentence backward",
-		movement, { .i = VIS_MOVE_SENTENCE_PREV }
-	},
-	[VIS_ACTION_CURSOR_SENTENCE_NEXT] = {
+		movement, { nullptr, VIS_MOVE_SENTENCE_PREV }
+};
+vis_action[VIS_ACTION_CURSOR_SENTENCE_NEXT] = {
 		"cursor-sentence-next",
 		"Move cursor sentence forward",
-		movement, { .i = VIS_MOVE_SENTENCE_NEXT }
-	},
-	[VIS_ACTION_CURSOR_FUNCTION_START_PREV] = {
+		movement, { nullptr, VIS_MOVE_SENTENCE_NEXT }
+};
+vis_action[VIS_ACTION_CURSOR_FUNCTION_START_PREV] = {
 		"cursor-function-start-prev",
 		"Move cursor backwards to start of function",
-		movement, { .i = VIS_MOVE_FUNCTION_START_PREV }
-	},
-	[VIS_ACTION_CURSOR_FUNCTION_START_NEXT] = {
+		movement, { nullptr, VIS_MOVE_FUNCTION_START_PREV }
+};
+vis_action[VIS_ACTION_CURSOR_FUNCTION_START_NEXT] = {
 		"cursor-function-start-next",
 		"Move cursor forwards to start of function",
-		movement, { .i = VIS_MOVE_FUNCTION_START_NEXT }
-	},
-	[VIS_ACTION_CURSOR_FUNCTION_END_PREV] = {
+		movement, { nullptr, VIS_MOVE_FUNCTION_START_NEXT }
+};
+vis_action[VIS_ACTION_CURSOR_FUNCTION_END_PREV] = {
 		"cursor-function-end-prev",
 		"Move cursor backwards to end of function",
-		movement, { .i = VIS_MOVE_FUNCTION_END_PREV }
-	},
-	[VIS_ACTION_CURSOR_FUNCTION_END_NEXT] = {
+		movement, { nullptr, VIS_MOVE_FUNCTION_END_PREV }
+};
+vis_action[VIS_ACTION_CURSOR_FUNCTION_END_NEXT] = {
 		"cursor-function-end-next",
 		"Move cursor forwards to end of function",
-		movement, { .i = VIS_MOVE_FUNCTION_END_NEXT }
-	},
-	[VIS_ACTION_CURSOR_BLOCK_START] = {
+		movement, { nullptr, VIS_MOVE_FUNCTION_END_NEXT }
+};
+vis_action[VIS_ACTION_CURSOR_BLOCK_START] = {
 		"cursor-block-start",
 		"Move cursor to the opening curly brace in a block",
-		movement, { .i = VIS_MOVE_BLOCK_START }
-	},
-	[VIS_ACTION_CURSOR_BLOCK_END] = {
+		movement, { nullptr, VIS_MOVE_BLOCK_START }
+};
+vis_action[VIS_ACTION_CURSOR_BLOCK_END] = {
 		"cursor-block-end",
 		"Move cursor to the closing curly brace in a block",
-		movement, { .i = VIS_MOVE_BLOCK_END }
-	},
-	[VIS_ACTION_CURSOR_PARENTHESE_START] = {
+		movement, { nullptr, VIS_MOVE_BLOCK_END }
+};
+vis_action[VIS_ACTION_CURSOR_PARENTHESE_START] = {
 		"cursor-parenthese-start",
 		"Move cursor to the opening parenthese inside a pair of parentheses",
-		movement, { .i = VIS_MOVE_PARENTHESE_START }
-	},
-	[VIS_ACTION_CURSOR_PARENTHESE_END] = {
+		movement, { nullptr, VIS_MOVE_PARENTHESE_START }
+};
+vis_action[VIS_ACTION_CURSOR_PARENTHESE_END] = {
 		"cursor-parenthese-end",
 		"Move cursor to the closing parenthese inside a pair of parentheses",
-		movement, { .i = VIS_MOVE_PARENTHESE_END }
-	},
-	[VIS_ACTION_CURSOR_COLUMN] = {
+		movement, { nullptr, VIS_MOVE_PARENTHESE_END }
+};
+vis_action[VIS_ACTION_CURSOR_COLUMN] = {
 		"cursor-column",
 		"Move cursor to given column of current line",
-		movement, { .i = VIS_MOVE_COLUMN }
-	},
-	[VIS_ACTION_CURSOR_LINE_FIRST] = {
+		movement, { nullptr, VIS_MOVE_COLUMN }
+};
+vis_action[VIS_ACTION_CURSOR_LINE_FIRST] = {
 		"cursor-line-first",
 		"Move cursor to given line (defaults to first)",
-		gotoline, { .i = -1 }
-	},
-	[VIS_ACTION_CURSOR_LINE_LAST] = {
+		gotoline, { nullptr, -1 }
+};
+vis_action[VIS_ACTION_CURSOR_LINE_LAST] = {
 		"cursor-line-last",
 		"Move cursor to given line (defaults to last)",
-		gotoline, { .i = +1 }
-	},
-	[VIS_ACTION_CURSOR_WINDOW_LINE_TOP] = {
+		gotoline, { nullptr, +1 }
+};
+vis_action[VIS_ACTION_CURSOR_WINDOW_LINE_TOP] = {
 		"cursor-window-line-top",
 		"Move cursor to top line of the window",
-		movement, { .i = VIS_MOVE_WINDOW_LINE_TOP }
-	},
-	[VIS_ACTION_CURSOR_WINDOW_LINE_MIDDLE] = {
+		movement, { nullptr, VIS_MOVE_WINDOW_LINE_TOP }
+};
+vis_action[VIS_ACTION_CURSOR_WINDOW_LINE_MIDDLE] = {
 		"cursor-window-line-middle",
 		"Move cursor to middle line of the window",
-		movement, { .i = VIS_MOVE_WINDOW_LINE_MIDDLE }
-	},
-	[VIS_ACTION_CURSOR_WINDOW_LINE_BOTTOM] = {
+		movement, { nullptr, VIS_MOVE_WINDOW_LINE_MIDDLE }
+};
+vis_action[VIS_ACTION_CURSOR_WINDOW_LINE_BOTTOM] = {
 		"cursor-window-line-bottom",
 		"Move cursor to bottom line of the window",
-		movement, { .i = VIS_MOVE_WINDOW_LINE_BOTTOM }
-	},
-	[VIS_ACTION_CURSOR_SEARCH_NEXT] = {
+		movement, { nullptr, VIS_MOVE_WINDOW_LINE_BOTTOM }
+};
+vis_action[VIS_ACTION_CURSOR_SEARCH_NEXT] = {
 		"cursor-search-forward",
 		"Move cursor to bottom line of the window",
-		movement, { .i = VIS_MOVE_SEARCH_NEXT }
-	},
-	[VIS_ACTION_CURSOR_SEARCH_PREV] = {
+		movement, { nullptr, VIS_MOVE_SEARCH_NEXT }
+};
+vis_action[VIS_ACTION_CURSOR_SEARCH_PREV] = {
 		"cursor-search-backward",
 		"Move cursor to bottom line of the window",
-		movement, { .i = VIS_MOVE_SEARCH_PREV }
-	},
-	[VIS_ACTION_CURSOR_SEARCH_WORD_FORWARD] = {
+		movement, { nullptr, VIS_MOVE_SEARCH_PREV }
+};
+vis_action[VIS_ACTION_CURSOR_SEARCH_WORD_FORWARD] = {
 		"cursor-search-word-forward",
 		"Move cursor to next occurence of the word under cursor",
-		movement, { .i = VIS_MOVE_SEARCH_WORD_FORWARD }
-	},
-	[VIS_ACTION_CURSOR_SEARCH_WORD_BACKWARD] = {
+		movement, { nullptr, VIS_MOVE_SEARCH_WORD_FORWARD }
+};
+vis_action[VIS_ACTION_CURSOR_SEARCH_WORD_BACKWARD] = {
 		"cursor-search-word-backward",
 		"Move cursor to previous occurence of the word under cursor",
-		 movement, { .i = VIS_MOVE_SEARCH_WORD_BACKWARD }
-	},
-	[VIS_ACTION_WINDOW_PAGE_UP] = {
+		 movement, { nullptr, VIS_MOVE_SEARCH_WORD_BACKWARD }
+};
+vis_action[VIS_ACTION_WINDOW_PAGE_UP] = {
 		"window-page-up",
 		"Scroll window pages backwards (upwards)",
-		wscroll, { .i = -PAGE }
-	},
-	[VIS_ACTION_WINDOW_HALFPAGE_UP] = {
+		wscroll, { nullptr, -PAGE }
+};
+vis_action[VIS_ACTION_WINDOW_HALFPAGE_UP] = {
 		"window-halfpage-up",
 		"Scroll window half pages backwards (upwards)",
-		wscroll, { .i = -PAGE_HALF }
-	},
-	[VIS_ACTION_WINDOW_PAGE_DOWN] = {
+		wscroll, { nullptr, -PAGE_HALF }
+};
+vis_action[VIS_ACTION_WINDOW_PAGE_DOWN] = {
 		"window-page-down",
 		"Scroll window pages forwards (downwards)",
-		wscroll, { .i = +PAGE }
-	},
-	[VIS_ACTION_WINDOW_HALFPAGE_DOWN] = {
+		wscroll, { nullptr, +PAGE }
+};
+vis_action[VIS_ACTION_WINDOW_HALFPAGE_DOWN] = {
 		"window-halfpage-down",
 		"Scroll window half pages forwards (downwards)",
-		wscroll, { .i = +PAGE_HALF }
-	},
-	[VIS_ACTION_MODE_NORMAL] = {
+		wscroll, { nullptr, +PAGE_HALF }
+};
+vis_action[VIS_ACTION_MODE_NORMAL] = {
 		"vis-mode-normal",
 		"Enter normal mode",
-		switchmode, { .i = VIS_MODE_NORMAL }
-	},
-	[VIS_ACTION_MODE_VISUAL] = {
+		switchmode, { nullptr, VIS_MODE_NORMAL }
+};
+vis_action[VIS_ACTION_MODE_VISUAL] = {
 		"vis-mode-visual-charwise",
 		"Enter characterwise visual mode",
-		switchmode, { .i = VIS_MODE_VISUAL }
-	},
-	[VIS_ACTION_MODE_VISUAL_LINE] = {
+		switchmode, { nullptr, VIS_MODE_VISUAL }
+};
+vis_action[VIS_ACTION_MODE_VISUAL_LINE] = {
 		"vis-mode-visual-linewise",
 		"Enter linewise visual mode",
-		switchmode, { .i = VIS_MODE_VISUAL_LINE }
-	},
-	[VIS_ACTION_MODE_INSERT] = {
+		switchmode, { nullptr, VIS_MODE_VISUAL_LINE }
+};
+vis_action[VIS_ACTION_MODE_INSERT] = {
 		"vis-mode-insert",
 		"Enter insert mode",
-		switchmode, { .i = VIS_MODE_INSERT }
-	},
-	[VIS_ACTION_MODE_REPLACE] = {
+		switchmode, { nullptr, VIS_MODE_INSERT }
+};
+vis_action[VIS_ACTION_MODE_REPLACE] = {
 		"vis-mode-replace",
 		"Enter replace mode",
-		switchmode, { .i = VIS_MODE_REPLACE }
-	},
-	[VIS_ACTION_MODE_OPERATOR_PENDING] = {
+		switchmode, { nullptr, VIS_MODE_REPLACE }
+};
+vis_action[VIS_ACTION_MODE_OPERATOR_PENDING] = {
 		"vis-mode-operator-pending",
 		"Enter to operator pending mode",
-		switchmode, { .i = VIS_MODE_OPERATOR_PENDING }
-	},
-	[VIS_ACTION_DELETE_CHAR_PREV] = {
+		switchmode, { nullptr, VIS_MODE_OPERATOR_PENDING }
+};
+vis_action[VIS_ACTION_DELETE_CHAR_PREV] = {
 		"delete-char-prev",
 		"Delete the previous character",
-		del, { .i = VIS_MOVE_CHAR_PREV }
-	},
-	[VIS_ACTION_DELETE_CHAR_NEXT] = {
+		del, { nullptr, VIS_MOVE_CHAR_PREV }
+};
+vis_action[VIS_ACTION_DELETE_CHAR_NEXT] = {
 		"delete-char-next",
 		"Delete the next character",
-		del, { .i = VIS_MOVE_CHAR_NEXT }
-	},
-	[VIS_ACTION_DELETE_LINE_BEGIN] = {
+		del, { nullptr, VIS_MOVE_CHAR_NEXT }
+};
+vis_action[VIS_ACTION_DELETE_LINE_BEGIN] = {
 		"delete-line-begin",
 		"Delete until the start of the current line",
-		del, { .i = VIS_MOVE_LINE_BEGIN }
-	},
-	[VIS_ACTION_DELETE_WORD_PREV] = {
+		del, { nullptr, VIS_MOVE_LINE_BEGIN }
+};
+vis_action[VIS_ACTION_DELETE_WORD_PREV] = {
 		"delete-word-prev",
 		"Delete the previous WORD",
-		del, { .i = VIS_MOVE_LONGWORD_START_PREV }
-	},
-	[VIS_ACTION_JUMPLIST_PREV] = {
+		del, { nullptr, VIS_MOVE_LONGWORD_START_PREV }
+};
+vis_action[VIS_ACTION_JUMPLIST_PREV] = {
 		"jumplist-prev",
 		"Go to older cursor position in jump list",
-		movement, { .i = VIS_MOVE_JUMPLIST_PREV }
-	},
-	[VIS_ACTION_JUMPLIST_NEXT] = {
+		movement, { nullptr, VIS_MOVE_JUMPLIST_PREV }
+};
+vis_action[VIS_ACTION_JUMPLIST_NEXT] = {
 		"jumplist-next",
 		"Go to newer cursor position in jump list",
-		movement, { .i = VIS_MOVE_JUMPLIST_NEXT }
-	},
-	[VIS_ACTION_CHANGELIST_PREV] = {
+		movement, { nullptr, VIS_MOVE_JUMPLIST_NEXT }
+};
+vis_action[VIS_ACTION_CHANGELIST_PREV] = {
 		"changelist-prev",
 		"Go to older cursor position in change list",
-		movement, { .i = VIS_MOVE_CHANGELIST_PREV }
-	},
-	[VIS_ACTION_CHANGELIST_NEXT] = {
+		movement, { nullptr, VIS_MOVE_CHANGELIST_PREV }
+};
+vis_action[VIS_ACTION_CHANGELIST_NEXT] = {
 		"changelist-next",
 		"Go to newer cursor position in change list",
-		movement, { .i = VIS_MOVE_CHANGELIST_NEXT }
-	},
-	[VIS_ACTION_UNDO] = {
+		movement, { nullptr, VIS_MOVE_CHANGELIST_NEXT }
+};
+vis_action[VIS_ACTION_UNDO] = {
 		"editor-undo",
 		"Undo last change",
 		undo,
-	},
-	[VIS_ACTION_REDO] = {
+};
+vis_action[VIS_ACTION_REDO] = {
 		"editor-redo",
 		"Redo last change",
 		redo,
-	},
-	[VIS_ACTION_EARLIER] = {
+};
+vis_action[VIS_ACTION_EARLIER] = {
 		"editor-earlier",
 		"Goto older text state",
 		earlier,
-	},
-	[VIS_ACTION_LATER] = {
+};
+vis_action[VIS_ACTION_LATER] = {
 		"editor-later",
 		"Goto newer text state",
 		later,
-	},
-	[VIS_ACTION_MACRO_RECORD] = {
+};
+vis_action[VIS_ACTION_MACRO_RECORD] = {
 		"macro-record",
 		"Record macro into given register",
 		macro_record,
-	},
-	[VIS_ACTION_MACRO_REPLAY] = {
+};
+vis_action[VIS_ACTION_MACRO_REPLAY] = {
 		"macro-replay",
 		"Replay macro, execute the content of the given register",
 		macro_replay,
-	},
-	[VIS_ACTION_MARK_SET] = {
+};
+vis_action[VIS_ACTION_MARK_SET] = {
 		"mark-set",
 		"Set given mark at current cursor position",
 		mark_set,
-	},
-	[VIS_ACTION_MARK_GOTO] = {
+};
+vis_action[VIS_ACTION_MARK_GOTO] = {
 		"mark-goto",
 		"Goto the position of the given mark",
-		mark_motion, { .i = VIS_MOVE_MARK }
-	},
-	[VIS_ACTION_MARK_GOTO_LINE] = {
+		mark_motion, { nullptr, VIS_MOVE_MARK }
+};
+vis_action[VIS_ACTION_MARK_GOTO_LINE] = {
 		"mark-goto-line",
 		"Goto first non-blank character of the line containing the given mark",
-		mark_motion, { .i = VIS_MOVE_MARK_LINE }
-	},
-	[VIS_ACTION_REDRAW] = {
+		mark_motion, { nullptr, VIS_MOVE_MARK_LINE }
+};
+vis_action[VIS_ACTION_REDRAW] = {
 		"editor-redraw",
 		"Redraw current editor content",
 		 call, { .f = vis_redraw }
-	},
-	[VIS_ACTION_REPLACE_CHAR] = {
+};
+vis_action[VIS_ACTION_REPLACE_CHAR] = {
 		"replace-char",
 		"Replace the character under the cursor",
 		replace,
-	},
-	[VIS_ACTION_TOTILL_REPEAT] = {
+};
+vis_action[VIS_ACTION_TOTILL_REPEAT] = {
 		"totill-repeat",
 		"Repeat latest to/till motion",
-		movement, { .i = VIS_MOVE_TOTILL_REPEAT }
-	},
-	[VIS_ACTION_TOTILL_REVERSE] = {
+		movement, { nullptr, VIS_MOVE_TOTILL_REPEAT }
+};
+vis_action[VIS_ACTION_TOTILL_REVERSE] = {
 		"totill-reverse",
 		"Repeat latest to/till motion but in opposite direction",
-		movement, { .i = VIS_MOVE_TOTILL_REVERSE }
-	},
-	[VIS_ACTION_PROMPT_SEARCH_FORWARD] = {
+		movement, { nullptr, VIS_MOVE_TOTILL_REVERSE }
+};
+vis_action[VIS_ACTION_PROMPT_SEARCH_FORWARD] = {
 		"search-forward",
 		"Search forward",
 		prompt_show, { .s = "/" }
-	},
-	[VIS_ACTION_PROMPT_SEARCH_BACKWARD] = {
+};
+vis_action[VIS_ACTION_PROMPT_SEARCH_BACKWARD] = {
 		"search-backward",
 		"Search backward",
 		prompt_show, { .s = "?" }
-	},
-	[VIS_ACTION_TILL_LEFT] = {
+};
+vis_action[VIS_ACTION_TILL_LEFT] = {
 		"till-left",
 		"Till after the occurrence of character to the left",
-		movement_key, { .i = VIS_MOVE_LEFT_TILL }
-	},
-	[VIS_ACTION_TILL_RIGHT] = {
+		movement_key, { nullptr, VIS_MOVE_LEFT_TILL }
+};
+vis_action[VIS_ACTION_TILL_RIGHT] = {
 		"till-right",
 		"Till before the occurrence of character to the right",
-		movement_key, { .i = VIS_MOVE_RIGHT_TILL }
-	},
-	[VIS_ACTION_TO_LEFT] = {
+		movement_key, { nullptr, VIS_MOVE_RIGHT_TILL }
+};
+vis_action[VIS_ACTION_TO_LEFT] = {
 		"to-left",
 		"To the first occurrence of character to the left",
-		movement_key, { .i = VIS_MOVE_LEFT_TO }
-	},
-	[VIS_ACTION_TO_RIGHT] = {
+		movement_key, { nullptr, VIS_MOVE_LEFT_TO }
+};
+vis_action[VIS_ACTION_TO_RIGHT] = {
 		"to-right",
 		"To the first occurrence of character to the right",
-		movement_key, { .i = VIS_MOVE_RIGHT_TO }
-	},
-	[VIS_ACTION_REGISTER] = {
+		movement_key, { nullptr, VIS_MOVE_RIGHT_TO }
+};
+vis_action[VIS_ACTION_REGISTER] = {
 		"register",
 		"Use given register for next operator",
 		reg,
-	},
-	[VIS_ACTION_OPERATOR_CHANGE] = {
+};
+vis_action[VIS_ACTION_OPERATOR_CHANGE] = {
 		"vis-operator-change",
 		"Change operator",
-		oper, { .i = VIS_OP_CHANGE }
-	},
-	[VIS_ACTION_OPERATOR_DELETE] = {
+		oper, { nullptr, VIS_OP_CHANGE }
+};
+vis_action[VIS_ACTION_OPERATOR_DELETE] = {
 		"vis-operator-delete",
 		"Delete operator",
-		oper, { .i = VIS_OP_DELETE }
-	},
-	[VIS_ACTION_OPERATOR_YANK] = {
+		oper, { nullptr, VIS_OP_DELETE }
+};
+vis_action[VIS_ACTION_OPERATOR_YANK] = {
 		"vis-operator-yank",
 		"Yank operator",
-		oper, { .i = VIS_OP_YANK }
-	},
-	[VIS_ACTION_OPERATOR_SHIFT_LEFT] = {
+		oper, { nullptr, VIS_OP_YANK }
+};
+vis_action[VIS_ACTION_OPERATOR_SHIFT_LEFT] = {
 		"vis-operator-shift-left",
 		"Shift left operator",
-		oper, { .i = VIS_OP_SHIFT_LEFT }
-	},
-	[VIS_ACTION_OPERATOR_SHIFT_RIGHT] = {
+		oper, { nullptr, VIS_OP_SHIFT_LEFT }
+};
+vis_action[VIS_ACTION_OPERATOR_SHIFT_RIGHT] = {
 		"vis-operator-shift-right",
 		"Shift right operator",
-		oper, { .i = VIS_OP_SHIFT_RIGHT }
-	},
-	[VIS_ACTION_OPERATOR_CASE_LOWER] = {
+		oper, { nullptr, VIS_OP_SHIFT_RIGHT }
+};
+vis_action[VIS_ACTION_OPERATOR_CASE_LOWER] = {
 		"vis-operator-case-lower",
 		"Lowercase operator",
-		oper, { .i = VIS_OP_CASE_LOWER }
-	},
-	[VIS_ACTION_OPERATOR_CASE_UPPER] = {
+		oper, { nullptr, VIS_OP_CASE_LOWER }
+};
+vis_action[VIS_ACTION_OPERATOR_CASE_UPPER] = {
 		"vis-operator-case-upper",
 		"Uppercase operator",
-		oper, { .i = VIS_OP_CASE_UPPER }
-	},
-	[VIS_ACTION_OPERATOR_CASE_SWAP] = {
+		oper, { nullptr, VIS_OP_CASE_UPPER }
+};
+vis_action[VIS_ACTION_OPERATOR_CASE_SWAP] = {
 		"vis-operator-case-swap",
 		"Swap case operator",
-		oper, { .i = VIS_OP_CASE_SWAP }
-	},
-	[VIS_ACTION_OPERATOR_FILTER] = {
+		oper, { nullptr, VIS_OP_CASE_SWAP }
+};
+vis_action[VIS_ACTION_OPERATOR_FILTER] = {
 		"vis-operator-filter",
 		"Filter operator",
 		operator_filter,
-	},
-	[VIS_ACTION_OPERATOR_FILTER_FMT] = {
+};
+vis_action[VIS_ACTION_OPERATOR_FILTER_FMT] = {
 		"vis-operator-filter-format",
 		"Formating operator, filter range through fmt(1)",
 		operator_filter, { .s = "|fmt" }
-	},
-	[VIS_ACTION_COUNT] = {
+};
+vis_action[VIS_ACTION_COUNT] = {
 		"vis-count",
 		"Count specifier",
 		count,
-	},
-	[VIS_ACTION_INSERT_NEWLINE] = {
+};
+vis_action[VIS_ACTION_INSERT_NEWLINE] = {
 		"insert-newline",
 		"Insert a line break (depending on file type)",
 		call, { .f = vis_insert_nl }
-	},
-	[VIS_ACTION_INSERT_TAB] = {
+};
+vis_action[VIS_ACTION_INSERT_TAB] = {
 		"insert-tab",
 		"Insert a tab (might be converted to spaces)",
 		call, { .f = vis_insert_tab }
-	},
-	[VIS_ACTION_INSERT_VERBATIM] = {
+};
+vis_action[VIS_ACTION_INSERT_VERBATIM] = {
 		"insert-verbatim",
 		"Insert Unicode character based on code point",
 		insert_verbatim,
-	},
-	[VIS_ACTION_INSERT_REGISTER] = {
+};
+vis_action[VIS_ACTION_INSERT_REGISTER] = {
 		"insert-register",
 		"Insert specified register content",
 		insert_register,
-	},
-	[VIS_ACTION_WINDOW_NEXT] = {
+};
+vis_action[VIS_ACTION_WINDOW_NEXT] = {
 		"window-next",
 		"Focus next window",
 		call, { .f = vis_window_next }
-	},
-	[VIS_ACTION_WINDOW_PREV] = {
+};
+vis_action[VIS_ACTION_WINDOW_PREV] = {
 		"window-prev",
 		"Focus previous window",
 		call, { .f = vis_window_prev }
-	},
-	[VIS_ACTION_APPEND_CHAR_NEXT] = {
+};
+vis_action[VIS_ACTION_APPEND_CHAR_NEXT] = {
 		"append-char-next",
 		"Append text after the cursor",
-		insertmode, { .i = VIS_MOVE_LINE_CHAR_NEXT }
-	},
-	[VIS_ACTION_APPEND_LINE_END] = {
+		insertmode, { nullptr, VIS_MOVE_LINE_CHAR_NEXT }
+};
+vis_action[VIS_ACTION_APPEND_LINE_END] = {
 		"append-line-end",
 		"Append text after the end of the line",
-		insertmode, { .i = VIS_MOVE_LINE_END },
-	},
-	[VIS_ACTION_INSERT_LINE_START] = {
+		insertmode, { nullptr, VIS_MOVE_LINE_END },
+};
+vis_action[VIS_ACTION_INSERT_LINE_START] = {
 		"insert-line-start",
 		"Insert text before the first non-blank in the line",
-		insertmode, { .i = VIS_MOVE_LINE_START },
-	},
-	[VIS_ACTION_OPEN_LINE_ABOVE] = {
+		insertmode, { nullptr, VIS_MOVE_LINE_START },
+};
+vis_action[VIS_ACTION_OPEN_LINE_ABOVE] = {
 		"open-line-above",
 		"Begin a new line above the cursor",
-		openline, { .i = -1 }
-	},
-	[VIS_ACTION_OPEN_LINE_BELOW] = {
+		openline, { nullptr, -1 }
+};
+vis_action[VIS_ACTION_OPEN_LINE_BELOW] = {
 		"open-line-below",
 		"Begin a new line below the cursor",
-		openline, { .i = +1 }
-	},
-	[VIS_ACTION_JOIN_LINE_BELOW] = {
+		openline, { nullptr, +1 }
+};
+vis_action[VIS_ACTION_JOIN_LINE_BELOW] = {
 		"join-line-below",
 		"Join line(s)",
-		join, { .i = VIS_MOVE_LINE_NEXT },
-	},
-	[VIS_ACTION_JOIN_LINES] = {
+		join, { nullptr, VIS_MOVE_LINE_NEXT },
+};
+vis_action[VIS_ACTION_JOIN_LINES] = {
 		"join-lines",
 		"Join selected lines",
-		oper, { .i = VIS_OP_JOIN }
-	},
-	[VIS_ACTION_PROMPT_SHOW] = {
+		oper, { nullptr, VIS_OP_JOIN }
+};
+vis_action[VIS_ACTION_PROMPT_SHOW] = {
 		"prompt-show",
 		"Show editor command line prompt",
 		prompt_show, { .s = ":" }
-	},
-	[VIS_ACTION_REPEAT] = {
+};
+vis_action[VIS_ACTION_REPEAT] = {
 		"editor-repeat",
 		"Repeat latest editor command",
 		repeat
-	},
-	[VIS_ACTION_SELECTION_FLIP] = {
+};
+vis_action[VIS_ACTION_SELECTION_FLIP] = {
 		"selection-flip",
 		"Flip selection, move cursor to other end",
 		selection_end,
-	},
-	[VIS_ACTION_SELECTION_RESTORE] = {
+};
+vis_action[VIS_ACTION_SELECTION_RESTORE] = {
 		"selection-restore",
 		"Restore last selection",
 		selection_restore,
-	},
-	[VIS_ACTION_WINDOW_REDRAW_TOP] = {
+};
+vis_action[VIS_ACTION_WINDOW_REDRAW_TOP] = {
 		"window-redraw-top",
 		"Redraw cursor line at the top of the window",
 		window, { .w = view_redraw_top }
-	},
-	[VIS_ACTION_WINDOW_REDRAW_CENTER] = {
+};
+vis_action[VIS_ACTION_WINDOW_REDRAW_CENTER] = {
 		"window-redraw-center",
 		"Redraw cursor line at the center of the window",
 		window, { .w = view_redraw_center }
-	},
-	[VIS_ACTION_WINDOW_REDRAW_BOTTOM] = {
+};
+vis_action[VIS_ACTION_WINDOW_REDRAW_BOTTOM] = {
 		"window-redraw-bottom",
 		"Redraw cursor line at the bottom of the window",
 		window, { .w = view_redraw_bottom }
-	},
-	[VIS_ACTION_WINDOW_SLIDE_UP] = {
+};
+vis_action[VIS_ACTION_WINDOW_SLIDE_UP] = {
 		"window-slide-up",
 		"Slide window content upwards",
-		wslide, { .i = -1 }
-	},
-	[VIS_ACTION_WINDOW_SLIDE_DOWN] = {
+		wslide, { nullptr, -1 }
+};
+vis_action[VIS_ACTION_WINDOW_SLIDE_DOWN] = {
 		"window-slide-down",
 		"Slide window content downwards",
-		wslide, { .i = +1 }
-	},
-	[VIS_ACTION_PUT_AFTER] = {
+		wslide, { nullptr, +1 }
+};
+vis_action[VIS_ACTION_PUT_AFTER] = {
 		"put-after",
 		"Put text after the cursor",
-		oper, { .i = VIS_OP_PUT_AFTER }
-	},
-	[VIS_ACTION_PUT_BEFORE] = {
+		oper, { nullptr, VIS_OP_PUT_AFTER }
+};
+vis_action[VIS_ACTION_PUT_BEFORE] = {
 		"put-before",
 		"Put text before the cursor",
-		oper, { .i = VIS_OP_PUT_BEFORE }
-	},
-	[VIS_ACTION_PUT_AFTER_END] = {
+		oper, { nullptr, VIS_OP_PUT_BEFORE }
+};
+vis_action[VIS_ACTION_PUT_AFTER_END] = {
 		"put-after-end",
 		"Put text after the cursor, place cursor after new text",
-		oper, { .i = VIS_OP_PUT_AFTER_END }
-	},
-	[VIS_ACTION_PUT_BEFORE_END] = {
+		oper, { nullptr, VIS_OP_PUT_AFTER_END }
+};
+vis_action[VIS_ACTION_PUT_BEFORE_END] = {
 		"put-before-end",
 		"Put text before the cursor, place cursor after new text",
-		oper, { .i = VIS_OP_PUT_BEFORE_END }
-	},
-	[VIS_ACTION_CURSOR_SELECT_WORD] = {
+		oper, { nullptr, VIS_OP_PUT_BEFORE_END }
+};
+vis_action[VIS_ACTION_CURSOR_SELECT_WORD] = {
 		"cursors-select-word",
 		"Select word under cursor",
 		cursors_select,
-	},
-	[VIS_ACTION_CURSORS_NEW_LINE_ABOVE] = {
+};
+vis_action[VIS_ACTION_CURSORS_NEW_LINE_ABOVE] = {
 		"cursors-new-lines-above",
 		"Create a new cursor on the line above",
-		cursors_new, { .i = -1 }
-	},
-	[VIS_ACTION_CURSORS_NEW_LINE_ABOVE_FIRST] = {
+		cursors_new, { nullptr, -1 }
+};
+vis_action[VIS_ACTION_CURSORS_NEW_LINE_ABOVE_FIRST] = {
 		"cursors-new-lines-above-first",
 		"Create a new cursor on the line above the first cursor",
-		cursors_new, { .i = INT_MIN }
-	},
-	[VIS_ACTION_CURSORS_NEW_LINE_BELOW] = {
+		cursors_new, { nullptr, INT_MIN }
+};
+vis_action[VIS_ACTION_CURSORS_NEW_LINE_BELOW] = {
 		"cursor-new-lines-below",
 		"Create a new cursor on the line below",
-		cursors_new, { .i = +1 }
-	},
-	[VIS_ACTION_CURSORS_NEW_LINE_BELOW_LAST] = {
+		cursors_new, { nullptr, +1 }
+};
+vis_action[VIS_ACTION_CURSORS_NEW_LINE_BELOW_LAST] = {
 		"cursor-new-lines-below-last",
 		"Create a new cursor on the line below the last cursor",
-		cursors_new, { .i = INT_MAX }
-	},
-	[VIS_ACTION_CURSORS_NEW_LINES_BEGIN] = {
+		cursors_new, { nullptr, INT_MAX }
+};
+vis_action[VIS_ACTION_CURSORS_NEW_LINES_BEGIN] = {
 		"cursors-new-lines-begin",
 		"Create a new cursor at the start of every line covered by selection",
-		oper, { .i = VIS_OP_CURSOR_SOL }
-	},
-	[VIS_ACTION_CURSORS_NEW_LINES_END] = {
+		oper, { nullptr, VIS_OP_CURSOR_SOL }
+};
+vis_action[VIS_ACTION_CURSORS_NEW_LINES_END] = {
 		"cursors-new-lines-end",
 		"Create a new cursor at the end of every line covered by selection",
-		oper, { .i = VIS_OP_CURSOR_EOL }
-	},
-	[VIS_ACTION_CURSORS_NEW_MATCH_NEXT] = {
+		oper, { nullptr, VIS_OP_CURSOR_EOL }
+};
+vis_action[VIS_ACTION_CURSORS_NEW_MATCH_NEXT] = {
 		"cursors-new-match-next",
 		"Select the next region matching the current selection",
 		cursors_select_next
-	},
-	[VIS_ACTION_CURSORS_NEW_MATCH_SKIP] = {
+};
+vis_action[VIS_ACTION_CURSORS_NEW_MATCH_SKIP] = {
 		"cursors-new-match-skip",
 		"Clear current selection, but select next match",
 		cursors_select_skip,
-	},
-	[VIS_ACTION_CURSORS_ALIGN] = {
+};
+vis_action[VIS_ACTION_CURSORS_ALIGN] = {
 		"cursors-align",
 		"Try to align all cursors on the same column",
 		cursors_align,
-	},
-	[VIS_ACTION_CURSORS_ALIGN_INDENT_LEFT] = {
+};
+vis_action[VIS_ACTION_CURSORS_ALIGN_INDENT_LEFT] = {
 		"cursors-align-indent-left",
 		"Left align all cursors/selections by inserting spaces",
-		cursors_align_indent, { .i = -1 }
-	},
-	[VIS_ACTION_CURSORS_ALIGN_INDENT_RIGHT] = {
+		cursors_align_indent, { nullptr, -1 }
+};
+vis_action[VIS_ACTION_CURSORS_ALIGN_INDENT_RIGHT] = {
 		"cursors-align-indent-right",
 		"Right align all cursors/selections by inserting spaces",
-		cursors_align_indent, { .i = +1 }
-	},
-	[VIS_ACTION_CURSORS_REMOVE_ALL] = {
+		cursors_align_indent, { nullptr, +1 }
+};
+vis_action[VIS_ACTION_CURSORS_REMOVE_ALL] = {
 		"cursors-remove-all",
 		"Remove all but the primary cursor",
 		cursors_clear,
-	},
-	[VIS_ACTION_CURSORS_REMOVE_LAST] = {
+};
+vis_action[VIS_ACTION_CURSORS_REMOVE_LAST] = {
 		"cursors-remove-last",
 		"Remove least recently created cursor",
 		cursors_remove,
-	},
-	[VIS_ACTION_CURSORS_REMOVE_COLUMN] = {
+};
+vis_action[VIS_ACTION_CURSORS_REMOVE_COLUMN] = {
 		"cursors-remove-column",
 		"Remove count cursor column",
-		cursors_remove_column, { .i = 1 }
-	},
-	[VIS_ACTION_CURSORS_REMOVE_COLUMN_EXCEPT] = {
+		cursors_remove_column, { nullptr, 1 }
+};
+vis_action[VIS_ACTION_CURSORS_REMOVE_COLUMN_EXCEPT] = {
 		"cursors-remove-column-except",
 		"Remove all but the count cursor column",
-		cursors_remove_column_except, { .i = 1 }
-	},
-	[VIS_ACTION_CURSORS_PREV] = {
+		cursors_remove_column_except, { nullptr, 1 }
+};
+vis_action[VIS_ACTION_CURSORS_PREV] = {
 		"cursors-prev",
 		"Move to the previous cursor",
-		cursors_navigate, { .i = -PAGE_HALF }
-	},
-	[VIS_ACTION_CURSORS_NEXT] = {
+		cursors_navigate, { nullptr, -PAGE_HALF }
+};
+vis_action[VIS_ACTION_CURSORS_NEXT] = {
 		"cursors-next",
 		"Move to the next cursor",
-		cursors_navigate, { .i = +PAGE_HALF }
-	},
-	[VIS_ACTION_SELECTIONS_ROTATE_LEFT] = {
+		cursors_navigate, { nullptr, +PAGE_HALF }
+};
+vis_action[VIS_ACTION_SELECTIONS_ROTATE_LEFT] = {
 		"selections-rotate-left",
 		"Rotate selections left",
-		selections_rotate, { .i = -1 }
-	},
-	[VIS_ACTION_SELECTIONS_ROTATE_RIGHT] = {
+		selections_rotate, { nullptr, -1 }
+};
+vis_action[VIS_ACTION_SELECTIONS_ROTATE_RIGHT] = {
 		"selections-rotate-right",
 		"Rotate selections right",
-		selections_rotate, { .i = +1 }
-	},
-	[VIS_ACTION_SELECTIONS_TRIM] = {
+		selections_rotate, { nullptr, +1 }
+};
+vis_action[VIS_ACTION_SELECTIONS_TRIM] = {
 		"selections-trim",
 		"Remove leading and trailing white space from selections",
 		selections_trim
-	},
-	[VIS_ACTION_TEXT_OBJECT_WORD_OUTER] = {
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_WORD_OUTER] = {
 		"text-object-word-outer",
 		"A word leading and trailing whitespace included",
-		textobj, { .i = VIS_TEXTOBJECT_OUTER_WORD }
-	},
-	[VIS_ACTION_TEXT_OBJECT_WORD_INNER] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_OUTER_WORD }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_WORD_INNER] = {
 		"text-object-word-inner",
 		"A word leading and trailing whitespace excluded",
-		textobj, { .i = VIS_TEXTOBJECT_INNER_WORD }
-	},
-	[VIS_ACTION_TEXT_OBJECT_LONGWORD_OUTER] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_INNER_WORD }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_LONGWORD_OUTER] = {
 		"text-object-longword-outer",
 		"A WORD leading and trailing whitespace included",
-		 textobj, { .i = VIS_TEXTOBJECT_OUTER_LONGWORD }
-	},
-	[VIS_ACTION_TEXT_OBJECT_LONGWORD_INNER] = {
+		 textobj, { nullptr, VIS_TEXTOBJECT_OUTER_LONGWORD }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_LONGWORD_INNER] = {
 		"text-object-longword-inner",
 		"A WORD leading and trailing whitespace excluded",
-		 textobj, { .i = VIS_TEXTOBJECT_INNER_LONGWORD }
-	},
-	[VIS_ACTION_TEXT_OBJECT_SENTENCE] = {
+		 textobj, { nullptr, VIS_TEXTOBJECT_INNER_LONGWORD }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_SENTENCE] = {
 		"text-object-sentence",
 		"A sentence",
-		textobj, { .i = VIS_TEXTOBJECT_SENTENCE }
-	},
-	[VIS_ACTION_TEXT_OBJECT_PARAGRAPH] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_SENTENCE }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_PARAGRAPH] = {
 		"text-object-paragraph",
 		"A paragraph",
-		textobj, { .i = VIS_TEXTOBJECT_PARAGRAPH }
-	},
-	[VIS_ACTION_TEXT_OBJECT_SQUARE_BRACKET_OUTER] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_PARAGRAPH }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_SQUARE_BRACKET_OUTER] = {
 		"text-object-square-bracket-outer",
 		"[] block (outer variant)",
-		textobj, { .i = VIS_TEXTOBJECT_OUTER_SQUARE_BRACKET }
-	},
-	[VIS_ACTION_TEXT_OBJECT_SQUARE_BRACKET_INNER] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_OUTER_SQUARE_BRACKET }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_SQUARE_BRACKET_INNER] = {
 		"text-object-square-bracket-inner",
 		"[] block (inner variant)",
-		textobj, { .i = VIS_TEXTOBJECT_INNER_SQUARE_BRACKET }
-	},
-	[VIS_ACTION_TEXT_OBJECT_PARANTHESE_OUTER] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_INNER_SQUARE_BRACKET }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_PARANTHESE_OUTER] = {
 		"text-object-parentheses-outer",
 		"() block (outer variant)",
-		textobj, { .i = VIS_TEXTOBJECT_OUTER_PARANTHESE }
-	},
-	[VIS_ACTION_TEXT_OBJECT_PARANTHESE_INNER] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_OUTER_PARANTHESE }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_PARANTHESE_INNER] = {
 		"text-object-parentheses-inner",
 		"() block (inner variant)",
-		textobj, { .i = VIS_TEXTOBJECT_INNER_PARANTHESE }
-	},
-	[VIS_ACTION_TEXT_OBJECT_ANGLE_BRACKET_OUTER] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_INNER_PARANTHESE }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_ANGLE_BRACKET_OUTER] = {
 		"text-object-angle-bracket-outer",
 		"<> block (outer variant)",
-		textobj, { .i = VIS_TEXTOBJECT_OUTER_ANGLE_BRACKET }
-	},
-	[VIS_ACTION_TEXT_OBJECT_ANGLE_BRACKET_INNER] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_OUTER_ANGLE_BRACKET }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_ANGLE_BRACKET_INNER] = {
 		"text-object-angle-bracket-inner",
 		"<> block (inner variant)",
-		textobj, { .i = VIS_TEXTOBJECT_INNER_ANGLE_BRACKET }
-	},
-	[VIS_ACTION_TEXT_OBJECT_CURLY_BRACKET_OUTER] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_INNER_ANGLE_BRACKET }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_CURLY_BRACKET_OUTER] = {
 		"text-object-curly-bracket-outer",
 		"{} block (outer variant)",
-		textobj, { .i = VIS_TEXTOBJECT_OUTER_CURLY_BRACKET }
-	},
-	[VIS_ACTION_TEXT_OBJECT_CURLY_BRACKET_INNER] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_OUTER_CURLY_BRACKET }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_CURLY_BRACKET_INNER] = {
 		"text-object-curly-bracket-inner",
 		"{} block (inner variant)",
-		textobj, { .i = VIS_TEXTOBJECT_INNER_CURLY_BRACKET }
-	},
-	[VIS_ACTION_TEXT_OBJECT_QUOTE_OUTER] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_INNER_CURLY_BRACKET }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_QUOTE_OUTER] = {
 		"text-object-quote-outer",
 		"A quoted string, including the quotation marks",
-		textobj, { .i = VIS_TEXTOBJECT_OUTER_QUOTE }
-	},
-	[VIS_ACTION_TEXT_OBJECT_QUOTE_INNER] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_OUTER_QUOTE }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_QUOTE_INNER] = {
 		"text-object-quote-inner",
 		"A quoted string, excluding the quotation marks",
-		textobj, { .i = VIS_TEXTOBJECT_INNER_QUOTE }
-	},
-	[VIS_ACTION_TEXT_OBJECT_SINGLE_QUOTE_OUTER] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_INNER_QUOTE }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_SINGLE_QUOTE_OUTER] = {
 		"text-object-single-quote-outer",
 		"A single quoted string, including the quotation marks",
-		textobj, { .i = VIS_TEXTOBJECT_OUTER_SINGLE_QUOTE }
-	},
-	[VIS_ACTION_TEXT_OBJECT_SINGLE_QUOTE_INNER] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_OUTER_SINGLE_QUOTE }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_SINGLE_QUOTE_INNER] = {
 		"text-object-single-quote-inner",
 		"A single quoted string, excluding the quotation marks",
-		textobj, { .i = VIS_TEXTOBJECT_INNER_SINGLE_QUOTE }
-	},
-	[VIS_ACTION_TEXT_OBJECT_BACKTICK_OUTER] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_INNER_SINGLE_QUOTE }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_BACKTICK_OUTER] = {
 		"text-object-backtick-outer",
 		"A backtick delimited string (outer variant)",
-		textobj, { .i = VIS_TEXTOBJECT_OUTER_BACKTICK }
-	},
-	[VIS_ACTION_TEXT_OBJECT_BACKTICK_INNER] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_OUTER_BACKTICK }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_BACKTICK_INNER] = {
 		"text-object-backtick-inner",
 		"A backtick delimited string (inner variant)",
-		textobj, { .i = VIS_TEXTOBJECT_INNER_BACKTICK }
-	},
-	[VIS_ACTION_TEXT_OBJECT_ENTIRE_OUTER] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_INNER_BACKTICK }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_ENTIRE_OUTER] = {
 		"text-object-entire-outer",
 		"The whole text content",
-		textobj, { .i = VIS_TEXTOBJECT_OUTER_ENTIRE }
-	},
-	[VIS_ACTION_TEXT_OBJECT_ENTIRE_INNER] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_OUTER_ENTIRE }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_ENTIRE_INNER] = {
 		"text-object-entire-inner",
 		"The whole text content, except for leading and trailing empty lines",
-		textobj, { .i = VIS_TEXTOBJECT_INNER_ENTIRE }
-	},
-	[VIS_ACTION_TEXT_OBJECT_FUNCTION_OUTER] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_INNER_ENTIRE }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_FUNCTION_OUTER] = {
 		"text-object-function-outer",
 		"A whole C-like function",
-		 textobj, { .i = VIS_TEXTOBJECT_OUTER_FUNCTION }
-	},
-	[VIS_ACTION_TEXT_OBJECT_FUNCTION_INNER] = {
+		 textobj, { nullptr, VIS_TEXTOBJECT_OUTER_FUNCTION }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_FUNCTION_INNER] = {
 		"text-object-function-inner",
 		"A whole C-like function body",
-		 textobj, { .i = VIS_TEXTOBJECT_INNER_FUNCTION }
-	},
-	[VIS_ACTION_TEXT_OBJECT_LINE_OUTER] = {
+		 textobj, { nullptr, VIS_TEXTOBJECT_INNER_FUNCTION }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_LINE_OUTER] = {
 		"text-object-line-outer",
 		"The whole line",
-		 textobj, { .i = VIS_TEXTOBJECT_OUTER_LINE }
-	},
-	[VIS_ACTION_TEXT_OBJECT_LINE_INNER] = {
+		 textobj, { nullptr, VIS_TEXTOBJECT_OUTER_LINE }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_LINE_INNER] = {
 		"text-object-line-inner",
 		"The whole line, excluding leading and trailing whitespace",
-		textobj, { .i = VIS_TEXTOBJECT_INNER_LINE }
-	},
-	[VIS_ACTION_TEXT_OBJECT_INDENTATION] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_INNER_LINE }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_INDENTATION] = {
 		"text-object-indentation",
 		"All adjacent lines with the same indentation level as the current one",
-		textobj, { .i = VIS_TEXTOBJECT_INDENTATION }
-	},
-	[VIS_ACTION_TEXT_OBJECT_SEARCH_FORWARD] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_INDENTATION }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_SEARCH_FORWARD] = {
 		"text-object-search-forward",
 		"The next search match in forward direction",
-		textobj, { .i = VIS_TEXTOBJECT_SEARCH_FORWARD }
-	},
-	[VIS_ACTION_TEXT_OBJECT_SEARCH_BACKWARD] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_SEARCH_FORWARD }
+};
+vis_action[VIS_ACTION_TEXT_OBJECT_SEARCH_BACKWARD] = {
 		"text-object-search-backward",
 		"The next search match in backward direction",
-		textobj, { .i = VIS_TEXTOBJECT_SEARCH_BACKWARD }
-	},
-	[VIS_ACTION_MOTION_CHARWISE] = {
+		textobj, { nullptr, VIS_TEXTOBJECT_SEARCH_BACKWARD }
+};
+vis_action[VIS_ACTION_MOTION_CHARWISE] = {
 		"motion-charwise",
 		"Force motion to be charwise",
-		motiontype, { .i = VIS_MOTIONTYPE_CHARWISE }
-	},
-	[VIS_ACTION_MOTION_LINEWISE] = {
+		motiontype, { nullptr, VIS_MOTIONTYPE_CHARWISE }
+};
+vis_action[VIS_ACTION_MOTION_LINEWISE] = {
 		"motion-linewise",
 		"Force motion to be linewise",
-		motiontype, { .i = VIS_MOTIONTYPE_LINEWISE }
-	},
-	[VIS_ACTION_UNICODE_INFO] = {
+		motiontype, { nullptr, VIS_MOTIONTYPE_LINEWISE }
+};
+vis_action[VIS_ACTION_UNICODE_INFO] = {
 		"unicode-info",
 		"Show Unicode codepoint(s) of character under cursor",
 		unicode_info,
-	},
-	[VIS_ACTION_NUMBER_INCREMENT] = {
+};
+vis_action[VIS_ACTION_NUMBER_INCREMENT] = {
 		"number-increment",
 		"Increment number under cursor",
-		number_increment_decrement, { .i = +1 }
-	},
-	[VIS_ACTION_NUMBER_DECREMENT] = {
+		number_increment_decrement, { nullptr, +1 }
+};
+vis_action[VIS_ACTION_NUMBER_DECREMENT] = {
 		"number-decrement",
 		"Decrement number under cursor",
-		number_increment_decrement, { .i = -1 }
-	},
-	[VIS_ACTION_OPEN_FILE_UNDER_CURSOR] = {
+		number_increment_decrement, { nullptr, -1 }
+};
+vis_action[VIS_ACTION_OPEN_FILE_UNDER_CURSOR] = {
 		"open-file-under-cursor",
 		"Open file under the cursor",
 		open_file_under_cursor, { .b = false }
-	},
-	[VIS_ACTION_OPEN_FILE_UNDER_CURSOR_NEW_WINDOW] = {
+};
+vis_action[VIS_ACTION_OPEN_FILE_UNDER_CURSOR_NEW_WINDOW] = {
 		"open-file-under-cursor-new-window",
 		"Open file under the cursor in a new window",
 		open_file_under_cursor, { .b = true }
-	},
-	[VIS_ACTION_COMPLETE_WORD] = {
+};
+vis_action[VIS_ACTION_COMPLETE_WORD] = {
 		"complete-word",
 		"Complete word in file",
 		complete_word,
-	},
-	[VIS_ACTION_COMPLETE_FILENAME] = {
+};
+vis_action[VIS_ACTION_COMPLETE_FILENAME] = {
 		"complete-filename",
 		"Complete file name",
 		complete_filename,
-	},
-	[VIS_ACTION_NOP] = {
+};
+vis_action[VIS_ACTION_NOP] = {
 		"nop",
 		"Ignore key, do nothing",
 		nop,
-	},
 };
 
 #include "config.h"
