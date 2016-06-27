@@ -1,5 +1,4 @@
-#WATCH_FILES= find . -type f -not -path '*/\.*' | grep -i '.*[.]c,h$$' 2> /dev/null
-WATCH_FILES=find . -type f -not -path '*/\.*' -and -not -path '*/build/*' | grep -i '.*[.]\(c\|h\)$$' 2> /dev/null
+WATCH_FILES=find . -type f -not -path '*/\.*' -and -not -path '*/build/*' | grep -i '.*[.]\(c\|cc\|h\|hh\)$$' 2> /dev/null
 
 
 test:
