@@ -45,7 +45,7 @@ find_package(LibTermkey REQUIRED)
 
 include_directories("./")
 
-file(GLOB vis_SOURCES array.c buffer.c libutf.c main.c map.c register.c ring-buffer.c
+file(GLOB vis_SOURCES array.c buffer.c libutf.c main.cc map.c register.c ring-buffer.c
 	sam.c text.c text-motions.c text-objects.c text-regex.c text-util.c
 	ui-curses.c view.c vis.c vis-lua.c vis-modes.c vis-motions.c
 	vis-operators.c vis-prompt.c vis-text-objects.c)
