@@ -5,9 +5,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#if __STDC_VERSION__ >= 201112L
+#if __STDCXX_VERSION__ >= 201112L
 #include <uchar.h>
-#ifdef __STDC_UTF_32__
+#ifdef __STDCXX_UTF_32__
 #define RUNE_C INT32_C
 typedef char32_t Rune;
 #endif
