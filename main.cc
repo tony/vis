@@ -1,16 +1,17 @@
+#include <map>
 #include <signal.h>
 #include <limits.h>
 #include <string.h>
 #include <wchar.h>
 #include <errno.h>
 
-#include "ui-curses.h"
-#include "vis-lua.h"
-#include "text-motions.h"
-#include "text-objects.h"
-#include "util.h"
-#include "libutf.h"
-#include "array.h"
+#include "ui-curses.hh"
+#include "vis-lua.hh"
+#include "text-motions.hh"
+#include "text-objects.hh"
+#include "util.hh"
+#include "libutf.hh"
+#include "array.hh"
 
 #define PAGE      INT_MAX
 #define PAGE_HALF (INT_MAX-1)
@@ -127,7 +128,7 @@ static const char *complete_word(Vis*, const char *keys, const Arg *arg);
 /* complete input text at cursor based on file names of the current directory */
 static const char *complete_filename(Vis*, const char *keys, const Arg *arg);
 
-enum {
+enum VIS_ACTION {
 	VIS_ACTION_EDITOR_SUSPEND,
 	VIS_ACTION_CURSOR_CHAR_PREV,
 	VIS_ACTION_CURSOR_CHAR_NEXT,
@@ -314,113 +315,142 @@ enum {
 };
 
 
-constexpr KeyAction[] get_actions() {
-	static constexpr KeyAction vis_action[VIS_ACTION_NOP];
-	vis_action[VIS_ACTION_EDITOR_SUSPEND] = {
-			"editor-suspend",
-			"Suspend the editor",
-			suspend,
-	};
+const KeyAction get_actions() {
+
+    std::map<VIS_ACTION, KeyAction> vis_action;
+    vis_action[VIS_ACTION_EDITOR_SUSPEND] = {
+            "editor-suspend", "Suspend the editor", suspend, {}
+    };
 	vis_action[VIS_ACTION_CURSOR_CHAR_PREV] = {
-			"cursor-char-prev",
-			"Move cursor left, to the previous character",
-			movement, { nullptr, VIS_MOVE_CHAR_PREV }
-	};
+            "cursor-char-prev",
+            "Move cursor left, to the previous character", movement, {}
+    };
+    vis_action[VIS_ACTION_CURSOR_CHAR_PREV].arg.i = VIS_MOVE_CHAR_PREV;
+
 	vis_action[VIS_ACTION_CURSOR_CHAR_NEXT] = {
-			"cursor-char-next",
-			"Move cursor right, to the next character",
-			movement, { nullptr, VIS_MOVE_CHAR_NEXT }
-	};
+            "cursor-char-next", "Move cursor right, to the next character",
+            movement, {}
+    };
+    vis_action[VIS_ACTION_CURSOR_CHAR_NEXT].arg.i = VIS_MOVE_CHAR_NEXT;
+
 	vis_action[VIS_ACTION_CURSOR_LINE_CHAR_PREV] = {
-			"cursor-line-char-prev",
-			"Move cursor left, to the previous character on the same line",
-			movement, { nullptr, VIS_MOVE_LINE_CHAR_PREV }
-	};
+            "cursor-line-char-prev",
+            "Move cursor left, to the previous character on the same line",
+            movement, {}
+    };
+    vis_action[VIS_ACTION_CURSOR_LINE_CHAR_PREV].arg.i = VIS_MOVE_LINE_CHAR_PREV;
 	vis_action[VIS_ACTION_CURSOR_LINE_CHAR_NEXT] = {
 			"cursor-line-char-next",
 			"Move cursor right, to the next character on the same line",
-			movement, { nullptr, VIS_MOVE_LINE_CHAR_NEXT }
+			movement, {}
 	};
+    vis_action[VIS_ACTION_CURSOR_LINE_CHAR_NEXT].arg.i = VIS_MOVE_LINE_CHAR_NEXT;
 	vis_action[VIS_ACTION_CURSOR_WORD_START_PREV] = {
 			"cursor-word-start-prev",
 			"Move cursor words backwards",
-			movement, { nullptr, VIS_MOVE_WORD_START_PREV }
+			movement, {}
 	};
+    vis_action[VIS_ACTION_CURSOR_WORD_START_PREV].arg.i = VIS_MOVE_WORD_START_PREV;
+
 	vis_action[VIS_ACTION_CURSOR_WORD_START_NEXT] = {
 			"cursor-word-start-next",
 			"Move cursor words forwards",
-			movement, { nullptr, VIS_MOVE_WORD_START_NEXT }
+			movement, {}
 	};
+    vis_action[VIS_ACTION_CURSOR_WORD_START_NEXT].arg.i = VIS_MOVE_WORD_START_NEXT;
+
 	vis_action[VIS_ACTION_CURSOR_WORD_END_PREV] = {
 			"cursor-word-end-prev",
 			"Move cursor backwards to the end of word",
-			movement, { nullptr, VIS_MOVE_WORD_END_PREV }
+			movement, {}
 	};
+    vis_action[VIS_ACTION_CURSOR_WORD_END_PREV].arg.i = VIS_MOVE_WORD_END_PREV;
+
 	vis_action[VIS_ACTION_CURSOR_WORD_END_NEXT] = {
 			"cursor-word-end-next",
 			"Move cursor forward to the end of word",
-			movement, { nullptr, VIS_MOVE_WORD_END_NEXT }
+			movement, {}
 	};
+    vis_action[VIS_ACTION_CURSOR_WORD_END_NEXT].arg.i =  VIS_MOVE_WORD_END_NEXT ;
+
 	vis_action[VIS_ACTION_CURSOR_LONGWORD_START_PREV] = {
 			"cursor-longword-start-prev",
 			"Move cursor WORDS backwards",
-			movement, { nullptr, VIS_MOVE_LONGWORD_START_PREV }
+			movement, {}
 	};
+    vis_action[VIS_ACTION_CURSOR_LONGWORD_START_PREV].arg.i = VIS_MOVE_LONGWORD_START_PREV;
+
 	vis_action[VIS_ACTION_CURSOR_LONGWORD_START_NEXT] = {
 			"cursor-longword-start-next",
 			"Move cursor WORDS forwards",
-			movement, { nullptr, VIS_MOVE_LONGWORD_START_NEXT }
+			movement, {}
 	};
+    vis_action[VIS_ACTION_CURSOR_LONGWORD_START_NEXT].arg.i = VIS_MOVE_LONGWORD_START_NEXT;
+
 	vis_action[VIS_ACTION_CURSOR_LONGWORD_END_PREV] = {
 			"cursor-longword-end-prev",
 			"Move cursor backwards to the end of WORD",
-			movement, { nullptr, VIS_MOVE_LONGWORD_END_PREV }
+			movement, {}
 	};
+    vis_action[VIS_ACTION_CURSOR_LONGWORD_END_PREV].arg.i = VIS_MOVE_LONGWORD_END_PREV;
+
 	vis_action[VIS_ACTION_CURSOR_LONGWORD_END_NEXT] = {
 			"cursor-longword-end-next",
 			"Move cursor forward to the end of WORD",
-			movement, { nullptr, VIS_MOVE_LONGWORD_END_NEXT }
+			movement, {}
 	};
+    vis_action[VIS_ACTION_CURSOR_LONGWORD_END_NEXT].arg.i = VIS_MOVE_LONGWORD_END_NEXT;
+
 	vis_action[VIS_ACTION_CURSOR_LINE_UP] = {
 			"cursor-line-up",
 			"Move cursor line upwards",
-			movement, { nullptr, VIS_MOVE_LINE_UP }
+			movement, {}
 	};
+ 	vis_action[VIS_ACTION_CURSOR_LINE_UP].arg.i = VIS_MOVE_LINE_UP;
+
 	vis_action[VIS_ACTION_CURSOR_LINE_DOWN] = {
-			"cursor-line-down",
-			"Move cursor line downwards",
-			movement, { nullptr, VIS_MOVE_LINE_DOWN }
-	};
+        "cursor-line-down", "Move cursor line downwards";
+        movement, {}
+    };
+    vis_action[VIS_ACTION_CURSOR_LINE_DOWN].arg.i = VIS_MOVE_LINE_DOWN;
+
 	vis_action[VIS_ACTION_CURSOR_LINE_START] = {
 			"cursor-line-start",
 			"Move cursor to first non-blank character of the line",
-			movement, { nullptr, VIS_MOVE_LINE_START }
+			movement, {}
 	};
+    vis_action[VIS_ACTION_CURSOR_LINE_START].arg.i = VIS_MOVE_LINE_START
+
 	vis_action[VIS_ACTION_CURSOR_LINE_FINISH] = {
 			"cursor-line-finish",
 			"Move cursor to last non-blank character of the line",
 			movement, { nullptr, VIS_MOVE_LINE_FINISH }
 	};
+
 	vis_action[VIS_ACTION_CURSOR_LINE_BEGIN] = {
 			"cursor-line-begin",
 			"Move cursor to first character of the line",
 			movement, { nullptr, VIS_MOVE_LINE_BEGIN }
 	};
+
 	vis_action[VIS_ACTION_CURSOR_LINE_END] = {
 			"cursor-line-end",
 			"Move cursor to end of the line",
 			movement, { nullptr, VIS_MOVE_LINE_END }
 	};
+
 	vis_action[VIS_ACTION_CURSOR_LINE_LASTCHAR] = {
 			"cursor-line-lastchar",
 			"Move cursor to last character of the line",
 			movement, { nullptr, VIS_MOVE_LINE_LASTCHAR }
 	};
+
 	vis_action[VIS_ACTION_CURSOR_SCREEN_LINE_UP] = {
 			"cursor-screenline-up",
 			"Move cursor screen/display line upwards",
 			movement, { nullptr, VIS_MOVE_SCREEN_LINE_UP }
 	};
+
 	vis_action[VIS_ACTION_CURSOR_SCREEN_LINE_DOWN] = {
 			"cursor-screenline-down",
 			"Move cursor screen/display line downwards",
@@ -1235,7 +1265,7 @@ constexpr KeyAction[] get_actions() {
 }
 static constexpr KeyAction vis_action[VIS_ACTION_NOP] = get_actions();
 
-#include "config.h"
+#include "config.hh"
 
 /** key bindings functions */
 
