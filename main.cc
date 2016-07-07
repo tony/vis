@@ -321,16 +321,17 @@ auto get_actions() {
     vis_action[VIS_ACTION_EDITOR_SUSPEND] = {
             "editor-suspend", "Suspend the editor", suspend, {}
     };
-	vis_action[VIS_ACTION_CURSOR_CHAR_PREV] = {
+    vis_action[VIS_ACTION_CURSOR_CHAR_PREV] = {
             "cursor-char-prev",
             "Move cursor left, to the previous character", movement, {}
     };
     vis_action[VIS_ACTION_CURSOR_CHAR_PREV].arg.i = VIS_MOVE_CHAR_PREV;
 
-	vis_action[VIS_ACTION_CURSOR_CHAR_NEXT] = {
+    vis_action[VIS_ACTION_CURSOR_CHAR_NEXT] = {
             "cursor-char-next", "Move cursor right, to the next character",
             movement, {}
     };
+
     vis_action[VIS_ACTION_CURSOR_CHAR_NEXT].arg.i = VIS_MOVE_CHAR_NEXT;
 
 	vis_action[VIS_ACTION_CURSOR_LINE_CHAR_PREV] = {
