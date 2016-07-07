@@ -41,10 +41,10 @@ file(GLOB vis_SOURCES array.c buffer.c libutf.c main.cc map.c register.c ring-bu
 	ui-curses.c view.c vis.c vis-lua.c vis-modes.c vis-motions.c
 	vis-operators.c vis-prompt.c vis-text-objects.c)
 
-if (NOT EXISTS "${PROJECT_SOURCE_DIR}/config.h")
+if (NOT EXISTS "${PROJECT_SOURCE_DIR}/config.hh")
   configure_file (
-    "${PROJECT_SOURCE_DIR}/config.def.h"
-    "${PROJECT_SOURCE_DIR}/config.h"
+    "${PROJECT_SOURCE_DIR}/config.def.hh"
+    "${PROJECT_SOURCE_DIR}/config.hh"
   )
 endif()
 
