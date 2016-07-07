@@ -315,7 +315,7 @@ enum VIS_ACTION {
 };
 
 
-const KeyAction get_actions() {
+auto get_actions() {
 
     std::map<VIS_ACTION, KeyAction> vis_action;
     vis_action[VIS_ACTION_EDITOR_SUSPEND] = {
@@ -1017,7 +1017,7 @@ const KeyAction get_actions() {
 		    "Append text after the end of the line",
 		    insertmode, {}
     };
-    vis_action[VIS_ACTION_APPEND_LINE_END].arg.i = VIS_MODE_LINE_END;
+    vis_action[VIS_ACTION_APPEND_LINE_END].arg.i = VIS_MOVE_LINE_END;
 
     vis_action[VIS_ACTION_INSERT_LINE_START] = {
 		    "insert-line-start",
@@ -1087,7 +1087,7 @@ const KeyAction get_actions() {
 		    "Redraw cursor line at the center of the window",
 		    window, {}
     };
-    vis_action[VIS_ACTION_WINDOW_REDRAW_CENTER].arg.w = review_redraw_center;
+    vis_action[VIS_ACTION_WINDOW_REDRAW_CENTER].arg.w = view_redraw_center;
 
     vis_action[VIS_ACTION_WINDOW_REDRAW_BOTTOM] = {
 		    "window-redraw-bottom",
@@ -1403,7 +1403,7 @@ const KeyAction get_actions() {
 		    "A backtick delimited string (inner variant)",
 		    textobj, {}
     };
-    vis_action[VIS_ACTION_TEXT_OBJECT_BACKTICK_INNER] = VIS_TEXTOBJECT_INNER_BACKTICK;
+    vis_action[VIS_ACTION_TEXT_OBJECT_BACKTICK_INNER].arg.i = VIS_TEXTOBJECT_INNER_BACKTICK;
 
     vis_action[VIS_ACTION_TEXT_OBJECT_ENTIRE_OUTER] = {
 		    "text-object-entire-outer",
@@ -1530,7 +1530,7 @@ const KeyAction get_actions() {
     };
     return vis_action;
 }
-static constexpr KeyAction vis_action[VIS_ACTION_NOP] = get_actions();
+static const auto vis_action = get_actions();
 
 #include "config.hh"
 
