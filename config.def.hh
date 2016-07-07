@@ -7,93 +7,102 @@ static const char *keymaps[] = {
 	NULL
 };
 
-static const KeyBinding bindings_basic[] = {
-	{ "<C-z>",              ACTION(EDITOR_SUSPEND)                      },
-	{ "<Down>",             ACTION(CURSOR_LINE_DOWN)                    },
-	{ "<End>",              ACTION(CURSOR_LINE_END)                     },
-	{ "<Home>",             ACTION(CURSOR_LINE_BEGIN)                   },
-	{ "<Left>",             ACTION(CURSOR_CHAR_PREV)                    },
-	{ "<PageDown>",         ACTION(WINDOW_PAGE_DOWN)                    },
-	{ "<PageUp>",           ACTION(WINDOW_PAGE_UP)                      },
-	{ "<Right>",            ACTION(CURSOR_CHAR_NEXT)                    },
-	{ "<S-Left>",           ACTION(CURSOR_LONGWORD_START_PREV)          },
-	{ "<S-PageDown>",       ACTION(WINDOW_HALFPAGE_DOWN)                },
-	{ "<S-PageUp>",         ACTION(WINDOW_HALFPAGE_UP)                  },
-	{ "<S-Right>",          ACTION(CURSOR_LONGWORD_START_NEXT)          },
-	{ "<Up>",               ACTION(CURSOR_LINE_UP)                      },
-	{ 0 /* empty last element, array terminator */                      }
-};
+struct BindingsBasic {
+	KeyBinding bindings[100];
+	BindingsBasic() :
+		bindings({
+		{ "<C-z>",              ACTION(EDITOR_SUSPEND)                      },
+		{ "<Down>",             ACTION(CURSOR_LINE_DOWN)                    },
+		{ "<End>",              ACTION(CURSOR_LINE_END)                     },
+		{ "<Home>",             ACTION(CURSOR_LINE_BEGIN)                   },
+		{ "<Left>",             ACTION(CURSOR_CHAR_PREV)                    },
+		{ "<PageDown>",         ACTION(WINDOW_PAGE_DOWN)                    },
+		{ "<PageUp>",           ACTION(WINDOW_PAGE_UP)                      },
+		{ "<Right>",            ACTION(CURSOR_CHAR_NEXT)                    },
+		{ "<S-Left>",           ACTION(CURSOR_LONGWORD_START_PREV)          },
+		{ "<S-PageDown>",       ACTION(WINDOW_HALFPAGE_DOWN)                },
+		{ "<S-PageUp>",         ACTION(WINDOW_HALFPAGE_UP)                  },
+		{ "<S-Right>",          ACTION(CURSOR_LONGWORD_START_NEXT)          },
+		{ "<Up>",               ACTION(CURSOR_LINE_UP)                      }
+	}) {}
+} bindings_basic;
 
-static const KeyBinding bindings_motions[] = {
-	{ "|",                  ACTION(CURSOR_COLUMN)                       },
-	{ "]]",                 ACTION(CURSOR_FUNCTION_END_NEXT)            },
-	{ "[]",                 ACTION(CURSOR_FUNCTION_END_PREV)            },
-	{ "][",                 ACTION(CURSOR_FUNCTION_START_NEXT)          },
-	{ "[[",                 ACTION(CURSOR_FUNCTION_START_PREV)          },
-	{ "[{",                 ACTION(CURSOR_BLOCK_START)                  },
-	{ "]}",                 ACTION(CURSOR_BLOCK_END)                    },
-	{ "[(",                 ACTION(CURSOR_PARENTHESE_START)             },
-	{ "])",                 ACTION(CURSOR_PARENTHESE_END)               },
-	{ "$",                  ACTION(CURSOR_LINE_END)                     },
-	{ "^",                  ACTION(CURSOR_LINE_START)                   },
-	{ "}",                  ACTION(CURSOR_PARAGRAPH_NEXT)               },
-	{ "{",                  ACTION(CURSOR_PARAGRAPH_PREV)               },
-	{ "%",                  ACTION(CURSOR_PERCENT)                      },
-	{ "#",                  ACTION(CURSOR_SEARCH_WORD_BACKWARD)         },
-	{ "*",                  ACTION(CURSOR_SEARCH_WORD_FORWARD)          },
-	{ ")",                  ACTION(CURSOR_SENTENCE_NEXT)                },
-	{ "(",                  ACTION(CURSOR_SENTENCE_PREV)                },
-	{ "`",                  ACTION(MARK_GOTO)                           },
-	{ "'",                  ACTION(MARK_GOTO_LINE)                      },
-	{ "?",                  ACTION(PROMPT_SEARCH_BACKWARD)              },
-	{ "/",                  ACTION(PROMPT_SEARCH_FORWARD)               },
-	{ ";",                  ACTION(TOTILL_REPEAT)                       },
-	{ ",",                  ACTION(TOTILL_REVERSE)                      },
-	{ "+",                  ALIAS("j^")                                 },
-	{ "-",                  ALIAS("k^")                                 },
-	{ " ",                  ALIAS("<Space>")                            },
-	{ "<Space>",            ALIAS("l")                                  },
-	{ "<Backspace>",        ALIAS("h")                                  },
-	{ "B",                  ACTION(CURSOR_LONGWORD_START_PREV)          },
-	{ "b",                  ACTION(CURSOR_WORD_START_PREV)              },
-	{ "<C-h>",              ALIAS("<Backspace>")                        },
-	{ "<C-j>",              ALIAS("j")                                  },
-	{ "<C-n>",              ALIAS("j")                                  },
-	{ "<C-p>",              ALIAS("k")                                  },
-	{ "E",                  ACTION(CURSOR_LONGWORD_END_NEXT)            },
-	{ "e",                  ACTION(CURSOR_WORD_END_NEXT)                },
-	{ "<Enter>",            ALIAS("j")                                  },
-	{ "F",                  ACTION(TO_LEFT)                             },
-	{ "f",                  ACTION(TO_RIGHT)                            },
-	{ "g0",                 ACTION(CURSOR_SCREEN_LINE_BEGIN)            },
-	{ "g_",                 ACTION(CURSOR_LINE_FINISH)                  },
-	{ "G",                  ACTION(CURSOR_LINE_LAST)                    },
-	{ "g$",                 ACTION(CURSOR_SCREEN_LINE_END)              },
-	{ "g<Down>",            ALIAS("gj")                                 },
-	{ "gE",                 ACTION(CURSOR_LONGWORD_END_PREV)            },
-	{ "ge",                 ACTION(CURSOR_WORD_END_PREV)                },
-	{ "gg",                 ACTION(CURSOR_LINE_FIRST)                   },
-	{ "gj",                 ACTION(CURSOR_SCREEN_LINE_DOWN)             },
-	{ "gk",                 ACTION(CURSOR_SCREEN_LINE_UP)               },
-	{ "gm",                 ACTION(CURSOR_SCREEN_LINE_MIDDLE)           },
-	{ "g<Up>",              ALIAS("gk")                                 },
-	{ "h",                  ACTION(CURSOR_CHAR_PREV)                    },
-	{ "H",                  ACTION(CURSOR_WINDOW_LINE_TOP)              },
-	{ "j",                  ACTION(CURSOR_LINE_DOWN)                    },
-	{ "k",                  ACTION(CURSOR_LINE_UP)                      },
-	{ "l",                  ACTION(CURSOR_CHAR_NEXT)                    },
-	{ "L",                  ACTION(CURSOR_WINDOW_LINE_BOTTOM)           },
-	{ "M",                  ACTION(CURSOR_WINDOW_LINE_MIDDLE)           },
-	{ "n",                  ACTION(CURSOR_SEARCH_NEXT)                  },
-	{ "N",                  ACTION(CURSOR_SEARCH_PREV)                  },
-	{ "T",                  ACTION(TILL_LEFT)                           },
-	{ "t",                  ACTION(TILL_RIGHT)                          },
-	{ "W",                  ACTION(CURSOR_LONGWORD_START_NEXT)          },
-	{ "w",                  ACTION(CURSOR_WORD_START_NEXT)              },
-	{ 0 /* empty last element, array terminator */                      }
-};
+struct BindingsMotions {
+	KeyBinding bindings[100];
+	BindingsMotions() :
+		bindings({
+		{ "|",                  ACTION(CURSOR_COLUMN)                       },
+		{ "]]",                 ACTION(CURSOR_FUNCTION_END_NEXT)            },
+		{ "[]",                 ACTION(CURSOR_FUNCTION_END_PREV)            },
+		{ "][",                 ACTION(CURSOR_FUNCTION_START_NEXT)          },
+		{ "[[",                 ACTION(CURSOR_FUNCTION_START_PREV)          },
+		{ "[{",                 ACTION(CURSOR_BLOCK_START)                  },
+		{ "]}",                 ACTION(CURSOR_BLOCK_END)                    },
+		{ "[(",                 ACTION(CURSOR_PARENTHESE_START)             },
+		{ "])",                 ACTION(CURSOR_PARENTHESE_END)               },
+		{ "$",                  ACTION(CURSOR_LINE_END)                     },
+		{ "^",                  ACTION(CURSOR_LINE_START)                   },
+		{ "}",                  ACTION(CURSOR_PARAGRAPH_NEXT)               },
+		{ "{",                  ACTION(CURSOR_PARAGRAPH_PREV)               },
+		{ "%",                  ACTION(CURSOR_PERCENT)                      },
+		{ "#",                  ACTION(CURSOR_SEARCH_WORD_BACKWARD)         },
+		{ "*",                  ACTION(CURSOR_SEARCH_WORD_FORWARD)          },
+		{ ")",                  ACTION(CURSOR_SENTENCE_NEXT)                },
+		{ "(",                  ACTION(CURSOR_SENTENCE_PREV)                },
+		{ "`",                  ACTION(MARK_GOTO)                           },
+		{ "'",                  ACTION(MARK_GOTO_LINE)                      },
+		{ "?",                  ACTION(PROMPT_SEARCH_BACKWARD)              },
+		{ "/",                  ACTION(PROMPT_SEARCH_FORWARD)               },
+		{ ";",                  ACTION(TOTILL_REPEAT)                       },
+		{ ",",                  ACTION(TOTILL_REVERSE)                      },
+		{ "+",                  ALIAS("j^")                                 },
+		{ "-",                  ALIAS("k^")                                 },
+		{ " ",                  ALIAS("<Space>")                            },
+		{ "<Space>",            ALIAS("l")                                  },
+		{ "<Backspace>",        ALIAS("h")                                  },
+		{ "B",                  ACTION(CURSOR_LONGWORD_START_PREV)          },
+		{ "b",                  ACTION(CURSOR_WORD_START_PREV)              },
+		{ "<C-h>",              ALIAS("<Backspace>")                        },
+		{ "<C-j>",              ALIAS("j")                                  },
+		{ "<C-n>",              ALIAS("j")                                  },
+		{ "<C-p>",              ALIAS("k")                                  },
+		{ "E",                  ACTION(CURSOR_LONGWORD_END_NEXT)            },
+		{ "e",                  ACTION(CURSOR_WORD_END_NEXT)                },
+		{ "<Enter>",            ALIAS("j")                                  },
+		{ "F",                  ACTION(TO_LEFT)                             },
+		{ "f",                  ACTION(TO_RIGHT)                            },
+		{ "g0",                 ACTION(CURSOR_SCREEN_LINE_BEGIN)            },
+		{ "g_",                 ACTION(CURSOR_LINE_FINISH)                  },
+		{ "G",                  ACTION(CURSOR_LINE_LAST)                    },
+		{ "g$",                 ACTION(CURSOR_SCREEN_LINE_END)              },
+		{ "g<Down>",            ALIAS("gj")                                 },
+		{ "gE",                 ACTION(CURSOR_LONGWORD_END_PREV)            },
+		{ "ge",                 ACTION(CURSOR_WORD_END_PREV)                },
+		{ "gg",                 ACTION(CURSOR_LINE_FIRST)                   },
+		{ "gj",                 ACTION(CURSOR_SCREEN_LINE_DOWN)             },
+		{ "gk",                 ACTION(CURSOR_SCREEN_LINE_UP)               },
+		{ "gm",                 ACTION(CURSOR_SCREEN_LINE_MIDDLE)           },
+		{ "g<Up>",              ALIAS("gk")                                 },
+		{ "h",                  ACTION(CURSOR_CHAR_PREV)                    },
+		{ "H",                  ACTION(CURSOR_WINDOW_LINE_TOP)              },
+		{ "j",                  ACTION(CURSOR_LINE_DOWN)                    },
+		{ "k",                  ACTION(CURSOR_LINE_UP)                      },
+		{ "l",                  ACTION(CURSOR_CHAR_NEXT)                    },
+		{ "L",                  ACTION(CURSOR_WINDOW_LINE_BOTTOM)           },
+		{ "M",                  ACTION(CURSOR_WINDOW_LINE_MIDDLE)           },
+		{ "n",                  ACTION(CURSOR_SEARCH_NEXT)                  },
+		{ "N",                  ACTION(CURSOR_SEARCH_PREV)                  },
+		{ "T",                  ACTION(TILL_LEFT)                           },
+		{ "t",                  ACTION(TILL_RIGHT)                          },
+		{ "W",                  ACTION(CURSOR_LONGWORD_START_NEXT)          },
+		{ "w",                  ACTION(CURSOR_WORD_START_NEXT)              }
+	}) {}
+} bindings_motions;
 
-static const KeyBinding bindings_textobjects[] = {
+struct BindingsTextObjects {
+	KeyBinding bindings[100];
+	BindingsTextObjects() :
+		bindings({
 	{ "a<",                 ACTION(TEXT_OBJECT_ANGLE_BRACKET_OUTER)     },
 	{ "a`",                 ACTION(TEXT_OBJECT_BACKTICK_OUTER)          },
 	{ "a{",                 ACTION(TEXT_OBJECT_CURLY_BRACKET_OUTER)     },
@@ -137,11 +146,14 @@ static const KeyBinding bindings_textobjects[] = {
 	{ "is",                 ACTION(TEXT_OBJECT_SENTENCE)                },
 	{ "i<Tab>",             ACTION(TEXT_OBJECT_INDENTATION)             },
 	{ "iW",                 ACTION(TEXT_OBJECT_LONGWORD_INNER)          },
-	{ "iw",                 ACTION(TEXT_OBJECT_WORD_INNER)              },
-	{ 0 /* empty last element, array terminator */                      }
-};
+	{ "iw",                 ACTION(TEXT_OBJECT_WORD_INNER)              }
+	}) {}
+} bindings_textobjects;
 
-static const KeyBinding bindings_operators[] = {
+struct BindingsOperators {
+	KeyBinding bindings[100];
+	BindingsOperators() :
+		bindings({
 	{ "0",                  ACTION(COUNT)                               },
 	{ "1",                  ACTION(COUNT)                               },
 	{ "2",                  ACTION(COUNT)                               },
@@ -170,15 +182,22 @@ static const KeyBinding bindings_operators[] = {
 	{ "P",                  ACTION(PUT_BEFORE)                          },
 	{ "y",                  ACTION(OPERATOR_YANK)                       },
 	{ 0 /* empty last element, array terminator */                      }
-};
+}) {}
+} bindings_operators;
 
-static const KeyBinding bindings_operator_options[] = {
-	{ "v",                  ACTION(MOTION_CHARWISE)                     },
-	{ "V",                  ACTION(MOTION_LINEWISE)                     },
-	{ 0 /* empty last element, array terminator */                      }
-};
+struct BindingsOperatorOptions {
+	KeyBinding bindings[100];
+	BindingsOperatorOptions() :
+		bindings({
+		{ "v",                  ACTION(MOTION_CHARWISE)                     },
+		{ "V",                  ACTION(MOTION_LINEWISE)                     }
+	}) {}
+} bindings_operator_options;
 
-static const KeyBinding bindings_normal[] = {
+struct BindingsNormal {
+	KeyBinding bindings[100];
+	BindingsNormal() :
+		bindings({
 	{ "a",                  ACTION(APPEND_CHAR_NEXT)                    },
 	{ "A",                  ACTION(APPEND_LINE_END)                     },
 	{ "@",                  ACTION(MACRO_REPLAY)                        },
@@ -258,9 +277,13 @@ static const KeyBinding bindings_normal[] = {
 	{ "zz",                 ACTION(WINDOW_REDRAW_CENTER)                },
 	{ "ZZ",                 ALIAS(":wq<Enter>")                         },
 	{ 0 /* empty last element, array terminator */                      }
-};
+}) {}
+} bindings_normal;
 
-static const KeyBinding bindings_visual[] = {
+struct BindingsVisual {
+	KeyBindings bindings[100];
+	BindingsVisual() :
+		bindings({
 	{ "A",                  ACTION(CURSORS_NEW_LINES_END)               },
 	{ ":",                  ACTION(PROMPT_SHOW)                         },
 	{ "-",                  ACTION(SELECTIONS_ROTATE_LEFT)              },
@@ -292,17 +315,23 @@ static const KeyBinding bindings_visual[] = {
 	{ "<Tab>",              ACTION(CURSORS_ALIGN_INDENT_LEFT)           },
 	{ "V",                  ACTION(MODE_VISUAL_LINE)                    },
 	{ "v",                  ALIAS("<Escape>")                           },
-	{ "x",                  ALIAS("d")                                  },
-	{ 0 /* empty last element, array terminator */                      }
-};
+	{ "x",                  ALIAS("d")                                  }
+}) {}
+} bindings_visual;
 
-static const KeyBinding bindings_visual_line[] = {
+struct BindingsVisualLine {
+	KeyBinding bindings[100];
+	BindingsVisualLine() :
+		bindings({
 	{ "v",                  ACTION(MODE_VISUAL)                         },
-	{ "V",                  ACTION(MODE_NORMAL)                         },
-	{ 0 /* empty last element, array terminator */                      }
-};
+	{ "V",                  ACTION(MODE_NORMAL)                         }
+	}) {}
+} bindings_visual_line;
 
-static const KeyBinding bindings_readline[] = {
+struct BindingsReadline {
+		KeyBinding bindings[100];
+		BindingsReadline() :
+	bindings({
 	{ "<Backspace>",        ACTION(DELETE_CHAR_PREV)                    },
 	{ "<C-c>",              ALIAS("<Escape>")                           },
 	{ "<C-d>",              ACTION(DELETE_CHAR_NEXT)                    },
@@ -311,11 +340,13 @@ static const KeyBinding bindings_readline[] = {
 	{ "<C-v>",              ACTION(INSERT_VERBATIM)                     },
 	{ "<C-w>",              ACTION(DELETE_WORD_PREV)                    },
 	{ "<Delete>",           ACTION(DELETE_CHAR_NEXT)                    },
-	{ "<Escape>",           ACTION(MODE_NORMAL)                         },
-	{ 0 /* empty last element, array terminator */                      }
-};
+	{ "<Escape>",           ACTION(MODE_NORMAL)                         }
+} bindings_readline;
 
-static const std::vector<KeyBinding> bindings_insert[] = {
+struct BindingsInsert {
+	KeyBinding bindings[100];
+	BindingsInsert() :
+	bindings({
 	{ "<C-d>",              ALIAS("<Escape><<i")                        },
 	{ "<C-i>",              ALIAS("<Tab>")                              },
 	{ "<C-j>",              ALIAS("<Enter>")                            },
@@ -330,13 +361,12 @@ static const std::vector<KeyBinding> bindings_insert[] = {
 	{ "<Enter>",            ACTION(INSERT_NEWLINE)                      },
 	{ "<Escape>",           ACTION(MODE_NORMAL)                         },
 	{ "<S-Tab>",            ACTION(CURSORS_ALIGN_INDENT_LEFT)           },
-	{ "<Tab>",              ACTION(INSERT_TAB)                          },
-	{ 0 /* empty last element, array terminator */                      }
-};
+	{ "<Tab>",              ACTION(INSERT_TAB)                          }
+} bindings_insert;
 
-static const KeyBinding bindings_replace[] = {
-	{ 0 /* empty last element, array terminator */                      }
-};
+struct BindingsReplace {
+	KeyBinding bindings[100];
+} bindings_replace;
 
 /* For each mode we list a all key bindings, if a key is bound in more than
  * one array the first definition is used and further ones are ignored. */
