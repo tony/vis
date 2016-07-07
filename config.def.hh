@@ -1,7 +1,7 @@
 /* Configure your desired default key bindings. */
 
-#define ALIAS(name) name,
-#define ACTION(id) &vis_action[VIS_ACTION_##id],
+#define ALIAS(name) nullptr, name
+#define ACTION(id) &vis_action[VIS_ACTION_##id], nullptr
 
 static const char *keymaps[] = {
 	NULL
@@ -9,8 +9,8 @@ static const char *keymaps[] = {
 
 struct BindingsBasic {
 	KeyBinding bindings[100];
-	BindingsBasic() :
-		bindings({
+	BindingsBasic() {
+		static const initValue = {
 		{ "<C-z>",              ACTION(EDITOR_SUSPEND)                      },
 		{ "<Down>",             ACTION(CURSOR_LINE_DOWN)                    },
 		{ "<End>",              ACTION(CURSOR_LINE_END)                     },
@@ -24,13 +24,15 @@ struct BindingsBasic {
 		{ "<S-PageUp>",         ACTION(WINDOW_HALFPAGE_UP)                  },
 		{ "<S-Right>",          ACTION(CURSOR_LONGWORD_START_NEXT)          },
 		{ "<Up>",               ACTION(CURSOR_LINE_UP)                      }
-	}) {}
+		};
+		memcpy(bindings, initValue, sizeof(initValue));
+	}
 } bindings_basic;
 
 struct BindingsMotions {
 	KeyBinding bindings[100];
-	BindingsMotions() :
-		bindings({
+	BindingsMotions() {
+		static const initValue = { 
 		{ "|",                  ACTION(CURSOR_COLUMN)                       },
 		{ "]]",                 ACTION(CURSOR_FUNCTION_END_NEXT)            },
 		{ "[]",                 ACTION(CURSOR_FUNCTION_END_PREV)            },
@@ -96,13 +98,15 @@ struct BindingsMotions {
 		{ "t",                  ACTION(TILL_RIGHT)                          },
 		{ "W",                  ACTION(CURSOR_LONGWORD_START_NEXT)          },
 		{ "w",                  ACTION(CURSOR_WORD_START_NEXT)              }
-	}) {}
+		};
+		memcpy(bindings, initValue, sizeof(initValue));
+	}
 } bindings_motions;
 
 struct BindingsTextObjects {
 	KeyBinding bindings[100];
-	BindingsTextObjects() :
-		bindings({
+	BindingsTextObjects() {
+		static const initValue[] = {
 	{ "a<",                 ACTION(TEXT_OBJECT_ANGLE_BRACKET_OUTER)     },
 	{ "a`",                 ACTION(TEXT_OBJECT_BACKTICK_OUTER)          },
 	{ "a{",                 ACTION(TEXT_OBJECT_CURLY_BRACKET_OUTER)     },
@@ -147,13 +151,15 @@ struct BindingsTextObjects {
 	{ "i<Tab>",             ACTION(TEXT_OBJECT_INDENTATION)             },
 	{ "iW",                 ACTION(TEXT_OBJECT_LONGWORD_INNER)          },
 	{ "iw",                 ACTION(TEXT_OBJECT_WORD_INNER)              }
-	}) {}
+		};
+		memcpy(bindings, initValue, sizeof(initValue));
+	}
 } bindings_textobjects;
 
 struct BindingsOperators {
 	KeyBinding bindings[100];
-	BindingsOperators() :
-		bindings({
+	BindingsOperators() {
+		static const initValue[] = {
 	{ "0",                  ACTION(COUNT)                               },
 	{ "1",                  ACTION(COUNT)                               },
 	{ "2",                  ACTION(COUNT)                               },
@@ -180,24 +186,27 @@ struct BindingsOperators {
 	{ "gU",                 ACTION(OPERATOR_CASE_UPPER)                 },
 	{ "p",                  ACTION(PUT_AFTER)                           },
 	{ "P",                  ACTION(PUT_BEFORE)                          },
-	{ "y",                  ACTION(OPERATOR_YANK)                       },
-	{ 0 /* empty last element, array terminator */                      }
-}) {}
+	{ "y",                  ACTION(OPERATOR_YANK)                       }
+		};
+		memcpy(bindings, initValue, sizeof(initValue));
+	}
 } bindings_operators;
 
 struct BindingsOperatorOptions {
 	KeyBinding bindings[100];
-	BindingsOperatorOptions() :
-		bindings({
+	BindingsOperatorOptions() {
+		static const initValue[] = {
 		{ "v",                  ACTION(MOTION_CHARWISE)                     },
 		{ "V",                  ACTION(MOTION_LINEWISE)                     }
-	}) {}
+		}
+		memcpy(bindings, initValue, sizeof(initValue));
+	}
 } bindings_operator_options;
 
 struct BindingsNormal {
 	KeyBinding bindings[100];
-	BindingsNormal() :
-		bindings({
+	BindingsNormal() {
+		static const initValue[] = {
 	{ "a",                  ACTION(APPEND_CHAR_NEXT)                    },
 	{ "A",                  ACTION(APPEND_LINE_END)                     },
 	{ "@",                  ACTION(MACRO_REPLAY)                        },
@@ -275,15 +284,16 @@ struct BindingsNormal {
 	{ "ZQ",                 ALIAS(":q!<Enter>")                         },
 	{ "zt",                 ACTION(WINDOW_REDRAW_TOP)                   },
 	{ "zz",                 ACTION(WINDOW_REDRAW_CENTER)                },
-	{ "ZZ",                 ALIAS(":wq<Enter>")                         },
-	{ 0 /* empty last element, array terminator */                      }
-}) {}
+	{ "ZZ",                 ALIAS(":wq<Enter>")                         }
+		};
+	memcpy(bindings, initValue, sizeof(initValue));
+	}
 } bindings_normal;
 
 struct BindingsVisual {
 	KeyBindings bindings[100];
-	BindingsVisual() :
-		bindings({
+	BindingsVisual() {
+		static const KeyBinding initValue[] = {
 	{ "A",                  ACTION(CURSORS_NEW_LINES_END)               },
 	{ ":",                  ACTION(PROMPT_SHOW)                         },
 	{ "-",                  ACTION(SELECTIONS_ROTATE_LEFT)              },
@@ -316,22 +326,26 @@ struct BindingsVisual {
 	{ "V",                  ACTION(MODE_VISUAL_LINE)                    },
 	{ "v",                  ALIAS("<Escape>")                           },
 	{ "x",                  ALIAS("d")                                  }
-}) {}
+		};
+	memcpy(bindings, initValue, sizeof(initValue));
+	}
 } bindings_visual;
 
 struct BindingsVisualLine {
 	KeyBinding bindings[100];
-	BindingsVisualLine() :
-		bindings({
+	BindingsVisualLine() {
+		static const KeyBinding initValue[] = {
 	{ "v",                  ACTION(MODE_VISUAL)                         },
 	{ "V",                  ACTION(MODE_NORMAL)                         }
-	}) {}
+		};
+		memcpy(bindings, initValue, sizeof(initValue));
+	}
 } bindings_visual_line;
 
 struct BindingsReadline {
 		KeyBinding bindings[100];
-		BindingsReadline() :
-	bindings({
+		BindingsReadline(){
+			static const KeyBinding initValue[] = {
 	{ "<Backspace>",        ACTION(DELETE_CHAR_PREV)                    },
 	{ "<C-c>",              ALIAS("<Escape>")                           },
 	{ "<C-d>",              ACTION(DELETE_CHAR_NEXT)                    },
@@ -341,27 +355,35 @@ struct BindingsReadline {
 	{ "<C-w>",              ACTION(DELETE_WORD_PREV)                    },
 	{ "<Delete>",           ACTION(DELETE_CHAR_NEXT)                    },
 	{ "<Escape>",           ACTION(MODE_NORMAL)                         }
+	};
+
+		memcpy(bindings, initValue, sizeof(initValue));
+	}
 } bindings_readline;
 
 struct BindingsInsert {
 	KeyBinding bindings[100];
-	BindingsInsert() :
-	bindings({
-	{ "<C-d>",              ALIAS("<Escape><<i")                        },
-	{ "<C-i>",              ALIAS("<Tab>")                              },
-	{ "<C-j>",              ALIAS("<Enter>")                            },
-	{ "<C-n>",              ACTION(COMPLETE_WORD)                       },
-	{ "<C-x><C-f>",         ACTION(COMPLETE_FILENAME)                   },
-	{ "<C-m>",              ALIAS("<Enter>")                            },
-	{ "<C-o>",              ACTION(MODE_OPERATOR_PENDING)               },
-	{ "<C-r>",              ACTION(INSERT_REGISTER)                     },
-	{ "<C-t>",              ALIAS("<Escape>>>i")                        },
-	{ "<C-x><C-e>",         ACTION(WINDOW_SLIDE_UP)                     },
-	{ "<C-x><C-y>",         ACTION(WINDOW_SLIDE_DOWN)                   },
-	{ "<Enter>",            ACTION(INSERT_NEWLINE)                      },
-	{ "<Escape>",           ACTION(MODE_NORMAL)                         },
-	{ "<S-Tab>",            ACTION(CURSORS_ALIGN_INDENT_LEFT)           },
-	{ "<Tab>",              ACTION(INSERT_TAB)                          }
+	BindingsInsert() {
+	static const KeyBinding initValue[] = {
+		{ "<C-d>",              ALIAS("<Escape><<i")                        },
+		{ "<C-i>",              ALIAS("<Tab>")                              },
+		{ "<C-j>",              ALIAS("<Enter>")                            },
+		{ "<C-n>",              ACTION(COMPLETE_WORD)                       },
+		{ "<C-x><C-f>",         ACTION(COMPLETE_FILENAME)                   },
+		{ "<C-m>",              ALIAS("<Enter>")                            },
+		{ "<C-o>",              ACTION(MODE_OPERATOR_PENDING)               },
+		{ "<C-r>",              ACTION(INSERT_REGISTER)                     },
+		{ "<C-t>",              ALIAS("<Escape>>>i")                        },
+		{ "<C-x><C-e>",         ACTION(WINDOW_SLIDE_UP)                     },
+		{ "<C-x><C-y>",         ACTION(WINDOW_SLIDE_DOWN)                   },
+		{ "<Enter>",            ACTION(INSERT_NEWLINE)                      },
+		{ "<Escape>",           ACTION(MODE_NORMAL)                         },
+		{ "<S-Tab>",            ACTION(CURSORS_ALIGN_INDENT_LEFT)           },
+		{ "<Tab>",              ACTION(INSERT_TAB)                          }
+	};
+	
+		memcpy(bindings, initValue, sizeof(initValue));
+	}
 } bindings_insert;
 
 struct BindingsReplace {
@@ -370,8 +392,12 @@ struct BindingsReplace {
 
 /* For each mode we list a all key bindings, if a key is bound in more than
  * one array the first definition is used and further ones are ignored. */
-std::map<VisMode, std::vector<*KeyBinding>> *default_bindings = {
-	{VIS_MODE_OPERATOR_PENDING, (const std::vector<*KeyBinding>){
+struct DefaultBindings {
+
+	std::map<VisMode, std::vector<*KeyBinding>> bindings;
+	DefaultBindings() :
+	bindings({
+		{VIS_MODE_OPERATOR_PENDING, (const std::vector<*KeyBinding>){
 		bindings_operator_options,
 		bindings_operators,
 		bindings_textobjects,
@@ -408,4 +434,5 @@ std::map<VisMode, std::vector<*KeyBinding>> *default_bindings = {
 		bindings_replace,
 		NULL,
 	}}
-};
+	}) {}
+} default_bindings;

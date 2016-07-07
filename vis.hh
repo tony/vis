@@ -61,8 +61,8 @@ typedef struct {             /* a KeyAction can be bound to a key binding */
 } KeyAction;
 
 typedef struct {           /* a key binding either refers to an action or an alias */
-	//const char *key;   /* symbolic key to trigger this binding */
-	KeyAction *action; /* action to launch upon triggering this binding */
+	const char *key;   /* symbolic key to trigger this binding */
+	const KeyAction *action; /* action to launch upon triggering this binding */
 	const char *alias; /* replaces key with alias in the input queue */
 } KeyBinding;
 
