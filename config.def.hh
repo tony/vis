@@ -1,7 +1,7 @@
 /* Configure your desired default key bindings. */
 
-#define ALIAS(name) .alias = name,
-#define ACTION(id) .action = &vis_action[VIS_ACTION_##id],
+#define ALIAS(name) name,
+#define ACTION(id) &vis_action[VIS_ACTION_##id],
 
 static const char *keymaps[] = {
 	NULL
@@ -21,7 +21,7 @@ static const KeyBinding bindings_basic[] = {
 	{ "<S-PageUp>",         ACTION(WINDOW_HALFPAGE_UP)                  },
 	{ "<S-Right>",          ACTION(CURSOR_LONGWORD_START_NEXT)          },
 	{ "<Up>",               ACTION(CURSOR_LINE_UP)                      },
-	{ 0 /* empty last element, array terminator */                      },
+	{ 0 /* empty last element, array terminator */                      }
 };
 
 static const KeyBinding bindings_motions[] = {
@@ -90,7 +90,7 @@ static const KeyBinding bindings_motions[] = {
 	{ "t",                  ACTION(TILL_RIGHT)                          },
 	{ "W",                  ACTION(CURSOR_LONGWORD_START_NEXT)          },
 	{ "w",                  ACTION(CURSOR_WORD_START_NEXT)              },
-	{ 0 /* empty last element, array terminator */                      },
+	{ 0 /* empty last element, array terminator */                      }
 };
 
 static const KeyBinding bindings_textobjects[] = {
@@ -138,7 +138,7 @@ static const KeyBinding bindings_textobjects[] = {
 	{ "i<Tab>",             ACTION(TEXT_OBJECT_INDENTATION)             },
 	{ "iW",                 ACTION(TEXT_OBJECT_LONGWORD_INNER)          },
 	{ "iw",                 ACTION(TEXT_OBJECT_WORD_INNER)              },
-	{ 0 /* empty last element, array terminator */                      },
+	{ 0 /* empty last element, array terminator */                      }
 };
 
 static const KeyBinding bindings_operators[] = {
@@ -169,13 +169,13 @@ static const KeyBinding bindings_operators[] = {
 	{ "p",                  ACTION(PUT_AFTER)                           },
 	{ "P",                  ACTION(PUT_BEFORE)                          },
 	{ "y",                  ACTION(OPERATOR_YANK)                       },
-	{ 0 /* empty last element, array terminator */                      },
+	{ 0 /* empty last element, array terminator */                      }
 };
 
 static const KeyBinding bindings_operator_options[] = {
 	{ "v",                  ACTION(MOTION_CHARWISE)                     },
 	{ "V",                  ACTION(MOTION_LINEWISE)                     },
-	{ 0 /* empty last element, array terminator */                      },
+	{ 0 /* empty last element, array terminator */                      }
 };
 
 static const KeyBinding bindings_normal[] = {
@@ -257,7 +257,7 @@ static const KeyBinding bindings_normal[] = {
 	{ "zt",                 ACTION(WINDOW_REDRAW_TOP)                   },
 	{ "zz",                 ACTION(WINDOW_REDRAW_CENTER)                },
 	{ "ZZ",                 ALIAS(":wq<Enter>")                         },
-	{ 0 /* empty last element, array terminator */                      },
+	{ 0 /* empty last element, array terminator */                      }
 };
 
 static const KeyBinding bindings_visual[] = {
@@ -293,13 +293,13 @@ static const KeyBinding bindings_visual[] = {
 	{ "V",                  ACTION(MODE_VISUAL_LINE)                    },
 	{ "v",                  ALIAS("<Escape>")                           },
 	{ "x",                  ALIAS("d")                                  },
-	{ 0 /* empty last element, array terminator */                      },
+	{ 0 /* empty last element, array terminator */                      }
 };
 
 static const KeyBinding bindings_visual_line[] = {
 	{ "v",                  ACTION(MODE_VISUAL)                         },
 	{ "V",                  ACTION(MODE_NORMAL)                         },
-	{ 0 /* empty last element, array terminator */                      },
+	{ 0 /* empty last element, array terminator */                      }
 };
 
 static const KeyBinding bindings_readline[] = {
@@ -312,10 +312,10 @@ static const KeyBinding bindings_readline[] = {
 	{ "<C-w>",              ACTION(DELETE_WORD_PREV)                    },
 	{ "<Delete>",           ACTION(DELETE_CHAR_NEXT)                    },
 	{ "<Escape>",           ACTION(MODE_NORMAL)                         },
-	{ 0 /* empty last element, array terminator */                      },
+	{ 0 /* empty last element, array terminator */                      }
 };
 
-static const KeyBinding bindings_insert[] = {
+static const std::vector<KeyBinding> bindings_insert[] = {
 	{ "<C-d>",              ALIAS("<Escape><<i")                        },
 	{ "<C-i>",              ALIAS("<Tab>")                              },
 	{ "<C-j>",              ALIAS("<Enter>")                            },
@@ -331,51 +331,51 @@ static const KeyBinding bindings_insert[] = {
 	{ "<Escape>",           ACTION(MODE_NORMAL)                         },
 	{ "<S-Tab>",            ACTION(CURSORS_ALIGN_INDENT_LEFT)           },
 	{ "<Tab>",              ACTION(INSERT_TAB)                          },
-	{ 0 /* empty last element, array terminator */                      },
+	{ 0 /* empty last element, array terminator */                      }
 };
 
 static const KeyBinding bindings_replace[] = {
-	{ 0 /* empty last element, array terminator */                      },
+	{ 0 /* empty last element, array terminator */                      }
 };
 
 /* For each mode we list a all key bindings, if a key is bound in more than
  * one array the first definition is used and further ones are ignored. */
-static const KeyBinding **default_bindings[] = {
-	[VIS_MODE_OPERATOR_PENDING] = (const KeyBinding*[]){
+std::map<VisMode, std::vector<*KeyBinding>> *default_bindings = {
+	{VIS_MODE_OPERATOR_PENDING, (const std::vector<*KeyBinding>){
 		bindings_operator_options,
 		bindings_operators,
 		bindings_textobjects,
 		bindings_motions,
 		bindings_basic,
-		NULL,
-	},
-	[VIS_MODE_NORMAL] = (const KeyBinding*[]){
+		NULL
+	}},
+	{VIS_MODE_NORMAL, (const std::vector<KeyBinding*>){
 		bindings_normal,
 		bindings_operators,
 		bindings_motions,
 		bindings_basic,
 		NULL,
-	},
-	[VIS_MODE_VISUAL] = (const KeyBinding*[]){
+										   }},
+	{VIS_MODE_VISUAL, (const std::vector<KeyBinding*>){
 		bindings_visual,
 		bindings_textobjects,
 		bindings_operators,
 		bindings_motions,
 		bindings_basic,
 		NULL,
-	},
-	[VIS_MODE_VISUAL_LINE] = (const KeyBinding*[]){
+	}},
+	{VIS_MODE_VISUAL_LINE, (const std::vector<KeyBinding*>){
 		bindings_visual_line,
 		NULL,
-	},
-	[VIS_MODE_INSERT] = (const KeyBinding*[]){
+	}},
+	{VIS_MODE_INSERT, (const std::vector<KeyBinding*>){
 		bindings_insert,
 		bindings_readline,
 		bindings_basic,
 		NULL,
-	},
-	[VIS_MODE_REPLACE] = (const KeyBinding*[]){
+	}},
+	{VIS_MODE_REPLACE, (const std::vector<KeyBinding*>){
 		bindings_replace,
 		NULL,
-	},
+	}}
 };
