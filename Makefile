@@ -5,7 +5,7 @@ test:
 	./test/run
 
 mkdir_build:
-	[[ -d ./build ]] || mkdir -p build
+	[ -d ./build ] | mkdir -p build
 
 entr_warn:
 	@echo "----------------------------------------------------------"
@@ -17,7 +17,7 @@ entr_warn:
 
 
 watch_debug:
-	if command -v entr > /dev/null; then ${WATCH_FILES} | entr -c $(MAKE) debug; else $(MAKE) debug entr_warn; fi
+	if command -v entr > /dev/null; then ${WATCH_FILES} | entr sh -c 'clear; $(MAKE) debug'; else $(MAKE) debug entr_warn; fi
 
 format:
 	clang-format *.{c,h}
