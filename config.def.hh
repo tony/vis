@@ -10,7 +10,7 @@ static const char *keymaps[] = {
 struct BindingsBasic {
 	KeyBinding bindings[100];
 	BindingsBasic() {
-		static const initValue = {
+		static const KeyBinding initValue[] = {
 		{ "<C-z>",              ACTION(EDITOR_SUSPEND)                      },
 		{ "<Down>",             ACTION(CURSOR_LINE_DOWN)                    },
 		{ "<End>",              ACTION(CURSOR_LINE_END)                     },
@@ -32,7 +32,7 @@ struct BindingsBasic {
 struct BindingsMotions {
 	KeyBinding bindings[100];
 	BindingsMotions() {
-		static const initValue = { 
+		static const KeyBinding initValue[] = { 
 		{ "|",                  ACTION(CURSOR_COLUMN)                       },
 		{ "]]",                 ACTION(CURSOR_FUNCTION_END_NEXT)            },
 		{ "[]",                 ACTION(CURSOR_FUNCTION_END_PREV)            },
@@ -106,7 +106,7 @@ struct BindingsMotions {
 struct BindingsTextObjects {
 	KeyBinding bindings[100];
 	BindingsTextObjects() {
-		static const initValue[] = {
+		static const KeyBinding initValue[] = {
 	{ "a<",                 ACTION(TEXT_OBJECT_ANGLE_BRACKET_OUTER)     },
 	{ "a`",                 ACTION(TEXT_OBJECT_BACKTICK_OUTER)          },
 	{ "a{",                 ACTION(TEXT_OBJECT_CURLY_BRACKET_OUTER)     },
@@ -159,7 +159,7 @@ struct BindingsTextObjects {
 struct BindingsOperators {
 	KeyBinding bindings[100];
 	BindingsOperators() {
-		static const initValue[] = {
+		static const KeyBinding initValue[] = {
 	{ "0",                  ACTION(COUNT)                               },
 	{ "1",                  ACTION(COUNT)                               },
 	{ "2",                  ACTION(COUNT)                               },
@@ -195,18 +195,21 @@ struct BindingsOperators {
 struct BindingsOperatorOptions {
 	KeyBinding bindings[100];
 	BindingsOperatorOptions() {
-		static const initValue[] = {
+		static const KeyBinding initValue[] = {
 		{ "v",                  ACTION(MOTION_CHARWISE)                     },
 		{ "V",                  ACTION(MOTION_LINEWISE)                     }
-		}
+		};
 		memcpy(bindings, initValue, sizeof(initValue));
 	}
+    const KeyBinding& operator[](size_t idx) const{
+        return bindings[idx];
+    }
 } bindings_operator_options;
 
 struct BindingsNormal {
 	KeyBinding bindings[100];
 	BindingsNormal() {
-		static const initValue[] = {
+		static const KeyBinding initValue[] = {
 	{ "a",                  ACTION(APPEND_CHAR_NEXT)                    },
 	{ "A",                  ACTION(APPEND_LINE_END)                     },
 	{ "@",                  ACTION(MACRO_REPLAY)                        },
@@ -291,7 +294,7 @@ struct BindingsNormal {
 } bindings_normal;
 
 struct BindingsVisual {
-	KeyBindings bindings[100];
+	KeyBinding bindings[100];
 	BindingsVisual() {
 		static const KeyBinding initValue[] = {
 	{ "A",                  ACTION(CURSORS_NEW_LINES_END)               },
@@ -394,45 +397,50 @@ struct BindingsReplace {
  * one array the first definition is used and further ones are ignored. */
 struct DefaultBindings {
 
-	std::map<VisMode, std::vector<*KeyBinding>> bindings;
-	DefaultBindings() :
-	bindings({
-		{VIS_MODE_OPERATOR_PENDING, (const std::vector<*KeyBinding>){
-		bindings_operator_options,
-		bindings_operators,
-		bindings_textobjects,
-		bindings_motions,
-		bindings_basic,
-		NULL
-	}},
-	{VIS_MODE_NORMAL, (const std::vector<KeyBinding*>){
-		bindings_normal,
-		bindings_operators,
-		bindings_motions,
-		bindings_basic,
-		NULL,
-										   }},
-	{VIS_MODE_VISUAL, (const std::vector<KeyBinding*>){
-		bindings_visual,
-		bindings_textobjects,
-		bindings_operators,
-		bindings_motions,
-		bindings_basic,
-		NULL,
-	}},
-	{VIS_MODE_VISUAL_LINE, (const std::vector<KeyBinding*>){
-		bindings_visual_line,
-		NULL,
-	}},
-	{VIS_MODE_INSERT, (const std::vector<KeyBinding*>){
-		bindings_insert,
-		bindings_readline,
-		bindings_basic,
-		NULL,
-	}},
-	{VIS_MODE_REPLACE, (const std::vector<KeyBinding*>){
-		bindings_replace,
-		NULL,
-	}}
-	}) {}
+	std::map<VisMode, std::vector<KeyBinding*>> bindings;
+	DefaultBindings() {
+	std::vector<KeyBinding*> bindings[VIS_MODE_OPERATOR_PENDING];
+	bindings[VIS_MODE_OPERATOR_PENDING].insert(
+		bindings[VIS_MODE_OPERATOR_PENDING].end(),
+		bindings_operator_options[0],
+		sizeof(bindings_operator_options) / sizeof(KeyBinding)
+	);
+	// 		(const std::vector<*KeyBinding>){
+	// 	bindings_operator_options,
+	// 	bindings_operators,
+	// 	bindings_textobjects,
+	// 	bindings_motions,
+	// 	bindings_basic,
+	// 	NULL
+	// }},
+	// {VIS_MODE_NORMAL, (const std::vector<KeyBinding*>){
+	// 	bindings_normal,
+	// 	bindings_operators,
+	// 	bindings_motions,
+	// 	bindings_basic,
+	// 	NULL,
+	// 									   }},
+	// {VIS_MODE_VISUAL, (const std::vector<KeyBinding*>){
+	// 	bindings_visual,
+	// 	bindings_textobjects,
+	// 	bindings_operators,
+	// 	bindings_motions,
+	// 	bindings_basic,
+	// 	NULL,
+	// }},
+	// {VIS_MODE_VISUAL_LINE, (const std::vector<KeyBinding*>){
+	// 	bindings_visual_line,
+	// 	NULL,
+	// }},
+	// {VIS_MODE_INSERT, (const std::vector<KeyBinding*>){
+	// 	bindings_insert,
+	// 	bindings_readline,
+	// 	bindings_basic,
+	// 	NULL,
+	// }},
+	// {VIS_MODE_REPLACE, (const std::vector<KeyBinding*>){
+	// 	bindings_replace,
+	// 	NULL,
+	// }}
+	}
 } default_bindings;
