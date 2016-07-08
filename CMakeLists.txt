@@ -32,7 +32,52 @@ set(BIN_DIR ${vis_SOURCE_DIR}/bin)
 
 set(CURSES_NEED_NCURSESW TRUE)
 find_package(NCursesw REQUIRED)
+
+set(DEPS_INSTALL_DIR "${CMAKE_BINARY_DIR}/usr" CACHE PATH "Dependencies install directory.")
+set(DEPS_BIN_DIR "${DEPS_INSTALL_DIR}/bin" CACHE PATH "Dependencies binary install directory.")
+set(DEPS_LIB_DIR "${DEPS_INSTALL_DIR}/lib" CACHE PATH "Dependencies library install directory.")
+set(DEPS_BUILD_DIR "${CMAKE_BINARY_DIR}/build" CACHE PATH "Dependencies build directory.")
+set(DEPS_DOWNLOAD_DIR "${DEPS_BUILD_DIR}/downloads" CACHE PATH "Dependencies download directory.")
+
+option(USE_EXISTING_SRC_DIR "Skip download of deps sources in case of existing source directory." OFF)
+
+if(UNIX)
+  find_program(MAKE_PRG NAMES gmake make)
+  if(MAKE_PRG)
+    execute_process(
+      COMMAND "${MAKE_PRG}" --version
+      OUTPUT_VARIABLE MAKE_VERSION_INFO)
+    if(NOT "${OUTPUT_VARIABLE}" MATCHES ".*GNU.*")
+      unset(MAKE_PRG)
+    endif()
+  endif()
+  if(NOT MAKE_PRG)
+    message(FATAL_ERROR "GNU Make is required to build the dependencies.")
+  else()
+    message(STATUS "Found GNU Make at ${MAKE_PRG}")
+  endif()
+endif()
+
+# When using make, use the $(MAKE) variable to avoid warning about the job
+# server.
+if(CMAKE_GENERATOR MATCHES "Makefiles")
+  set(MAKE_PRG "$(MAKE)")
+endif()
+
+if(CMAKE_C_COMPILER_ARG1)
+  set(DEPS_C_COMPILER "${CMAKE_C_COMPILER} ${CMAKE_C_COMPILER_ARG1}")
+else()
+  set(DEPS_C_COMPILER "${CMAKE_C_COMPILER}")
+endif()
+set(LIBTERMKEY_URL http://www.leonerd.org.uk/code/libtermkey/libtermkey-0.18.tar.gz)
+set(LIBTERMKEY_SHA256 239746de41c845af52bb3c14055558f743292dd6c24ac26c2d6567a5a6093926)
+add_subdirectory(cmake/superbuild)
 find_package(LibTermkey REQUIRED)
+add_custom_target(superbuild
+  cmake --build . --target libtermkey
+  BYPRODUCTS ${LIBTERMKEY_LIBRARY}
+  DEPENDS libtermkey
+)
 
 include_directories("./")
 
@@ -51,6 +96,8 @@ file(GLOB vis_SOURCES array.c buffer.c libutf.c main.cc map.c register.c ring-bu
 include_directories(${CURSES_INCLUDE_DIR} ${LIBTERMKEY_INCLUDE_DIR})
 
 add_executable(vis ${vis_SOURCES} )
+add_dependencies(vis superbuild)
+add_dependencies(vis libtermkey)
 
 target_link_libraries(vis ${CURSES_LIBRARY} ${LIBTERMKEY_LIBRARY})
 
