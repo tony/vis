@@ -13,7 +13,7 @@ endforeach()
 project(vis)
 
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall -Werror -pedantic -std=c++14")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall -std=c++14")
 if (APPLE)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_DARWIN_C_SOURCE")
 elseif(${CMAKE_SYSTEM_NAME} MATCHES FreeBSD)
