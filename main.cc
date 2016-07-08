@@ -316,7 +316,7 @@ enum VIS_ACTION {
 
 
 struct KeyActions {
-    std::map<action, KeyAction> action;
+    std::map<VIS_ACTION, KeyAction> action;
     KeyActions() {
     action[VIS_ACTION_EDITOR_SUSPEND] = {
             "editor-suspend", "Suspend the editor", suspend, {}
@@ -1531,8 +1531,7 @@ struct KeyActions {
     };
 }
 
-    const KeyAction& operator[](size_t idx) const{
-//    KeyActions& operator[](size_t idx) const {
+    const KeyActions& operator[](VIS_ACTION idx) const{
         return action[idx];
     }
 } vis_action;
