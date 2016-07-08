@@ -1,4 +1,5 @@
 #include <map>
+#include <tuple>
 #include <signal.h>
 #include <limits.h>
 #include <string.h>
@@ -1541,10 +1542,14 @@ struct KeyActions {
 /** key bindings functions */
 
 static const char *nop(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
+    std::ignore = vis;
+
 	return keys;
 }
 
 static const char *key2register(Vis *vis, const char *keys, enum VisRegister *reg) {
+    std::ignore = vis;
 	*reg = VIS_REG_INVALID;
 	if (!keys[0])
 		return NULL;
@@ -1568,6 +1573,7 @@ static const char *key2register(Vis *vis, const char *keys, enum VisRegister *re
 }
 
 static const char *macro_record(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
 	if (!vis_macro_record_stop(vis)) {
 		enum VisRegister reg;
 		keys = key2register(vis, keys, &reg);
@@ -1578,6 +1584,7 @@ static const char *macro_record(Vis *vis, const char *keys, const Arg *arg) {
 }
 
 static const char *macro_replay(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
 	enum VisRegister reg;
 	keys = key2register(vis, keys, &reg);
 	vis_macro_replay(vis, reg);
@@ -1585,11 +1592,13 @@ static const char *macro_replay(Vis *vis, const char *keys, const Arg *arg) {
 }
 
 static const char *suspend(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
 	vis_suspend(vis);
 	return keys;
 }
 
 static const char *repeat(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
 	vis_repeat(vis);
 	return keys;
 }
@@ -1634,6 +1643,7 @@ static const char *cursors_new(Vis *vis, const char *keys, const Arg *arg) {
 }
 
 static const char *cursors_align(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
 	View *view = vis_view(vis);
 	Text *txt = vis_text(vis);
 	int mincol = INT_MAX;
@@ -1706,6 +1716,7 @@ static const char *cursors_align_indent(Vis *vis, const char *keys, const Arg *a
 }
 
 static const char *cursors_clear(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
 	View *view = vis_view(vis);
 	if (view_cursors_multiple(view))
 		view_cursors_clear(view);
@@ -1715,6 +1726,7 @@ static const char *cursors_clear(Vis *vis, const char *keys, const Arg *arg) {
 }
 
 static const char *cursors_select(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
 	Text *txt = vis_text(vis);
 	View *view = vis_view(vis);
 	for (Cursor *cursor = view_cursors(view); cursor; cursor = view_cursors_next(cursor)) {
@@ -1730,6 +1742,7 @@ static const char *cursors_select(Vis *vis, const char *keys, const Arg *arg) {
 }
 
 static const char *cursors_select_next(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
 	Text *txt = vis_text(vis);
 	View *view = vis_view(vis);
 	Cursor *cursor = view_cursors_primary_get(view);
@@ -1763,6 +1776,7 @@ static const char *cursors_select_skip(Vis *vis, const char *keys, const Arg *ar
 }
 
 static const char *cursors_remove(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
 	View *view = vis_view(vis);
 	view_cursors_dispose(view_cursors_primary_get(view));
 	view_cursor_to(view, view_cursor_get(view));
@@ -1910,6 +1924,7 @@ static const char *selections_rotate(Vis *vis, const char *keys, const Arg *arg)
 }
 
 static const char *selections_trim(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
 	Text *txt = vis_text(vis);
 	View *view = vis_view(vis);
 	for (Cursor *c = view_cursors(view), *next; c; c = next) {
@@ -1932,6 +1947,8 @@ static const char *selections_trim(Vis *vis, const char *keys, const Arg *arg) {
 }
 
 static const char *replace(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
+
 	if (!keys[0])
 		return NULL;
 	const char *next = vis_keys_next(vis, keys);
@@ -1945,6 +1962,7 @@ static const char *replace(Vis *vis, const char *keys, const Arg *arg) {
 }
 
 static const char *count(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
 	int digit = keys[-1] - '0';
 	int count = vis_count_get_default(vis, 0);
 	if (0 <= digit && digit <= 9) {
@@ -2005,12 +2023,16 @@ static const char *textobj(Vis *vis, const char *keys, const Arg *arg) {
 }
 
 static const char *selection_end(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
+
 	for (Cursor *c = view_cursors(vis_view(vis)); c; c = view_cursors_next(c))
 		view_cursors_selection_swap(c);
 	return keys;
 }
 
 static const char *selection_restore(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
+
 	Text *txt = vis_text(vis);
 	View *view = vis_view(vis);
 	for (Cursor *c = view_cursors(view); c; c = view_cursors_next(c))
@@ -2024,6 +2046,7 @@ static const char *selection_restore(Vis *vis, const char *keys, const Arg *arg)
 }
 
 static const char *reg(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
 	enum VisRegister reg;
 	keys = key2register(vis, keys, &reg);
 	vis_register_set(vis, reg);
@@ -2031,6 +2054,7 @@ static const char *reg(Vis *vis, const char *keys, const Arg *arg) {
 }
 
 static const char *key2mark(Vis *vis, const char *keys, int *mark) {
+    std::ignore = vis;
 	*mark = VIS_MARK_INVALID;
 	if (!keys[0])
 		return NULL;
@@ -2044,6 +2068,8 @@ static const char *key2mark(Vis *vis, const char *keys, int *mark) {
 }
 
 static const char *mark_set(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
+
 	int mark;
 	keys = key2mark(vis, keys, &mark);
 	vis_mark_set(vis, (VisMark) mark, view_cursor_get(vis_view(vis)));
@@ -2058,6 +2084,8 @@ static const char *mark_motion(Vis *vis, const char *keys, const Arg *arg) {
 }
 
 static const char *undo(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
+
 	size_t pos = text_undo(vis_text(vis));
 	if (pos != EPOS) {
 		View *view = vis_view(vis);
@@ -2070,6 +2098,8 @@ static const char *undo(Vis *vis, const char *keys, const Arg *arg) {
 }
 
 static const char *redo(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
+
 	size_t pos = text_redo(vis_text(vis));
 	if (pos != EPOS) {
 		View *view = vis_view(vis);
@@ -2082,6 +2112,8 @@ static const char *redo(Vis *vis, const char *keys, const Arg *arg) {
 }
 
 static const char *earlier(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
+
 	size_t pos = text_earlier(vis_text(vis), vis_count_get_default(vis, 1));
 	if (pos != EPOS) {
 		view_cursor_to(vis_view(vis), pos);
@@ -2092,6 +2124,8 @@ static const char *earlier(Vis *vis, const char *keys, const Arg *arg) {
 }
 
 static const char *later(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
+
 	size_t pos = text_later(vis_text(vis), vis_count_get_default(vis, 1));
 	if (pos != EPOS) {
 		view_cursor_to(vis_view(vis), pos);
@@ -2108,6 +2142,8 @@ static const char *del(Vis *vis, const char *keys, const Arg *arg) {
 }
 
 static const char *insert_register(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
+
 	enum VisRegister regid;
 	keys = key2register(vis, keys, &regid);
 	size_t len;
@@ -2122,6 +2158,8 @@ static const char *prompt_show(Vis *vis, const char *keys, const Arg *arg) {
 }
 
 static const char *insert_verbatim(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
+
 	Rune rune = 0;
 	char buf[4], type = keys[0];
 	const char *data = NULL;
@@ -2295,6 +2333,7 @@ static const char *insertmode(Vis *vis, const char *keys, const Arg *arg) {
 }
 
 static const char *unicode_info(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
 	View *view = vis_view(vis);
 	Text *txt = vis_text(vis);
 	size_t start = view_cursor_get(view);
@@ -2318,6 +2357,7 @@ static const char *unicode_info(Vis *vis, const char *keys, const Arg *arg) {
 }
 
 static const char *percent(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
 	if (vis_count_get(vis) == VIS_COUNT_UNKNOWN)
 		vis_motion(vis, VIS_MOVE_BRACKET_MATCH);
 	else
@@ -2445,6 +2485,7 @@ static void insert_dialog_selection(Vis *vis, Filerange *range, const char *argv
 }
 
 static const char *complete_word(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
 	Text *txt = vis_text(vis);
 	Buffer cmd;
 	buffer_init(&cmd);
