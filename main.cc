@@ -1531,8 +1531,8 @@ struct KeyActions {
     };
 }
 
-    const KeyActions& operator[](VIS_ACTION idx) const{
-        return action[idx];
+    const KeyAction& operator[](VIS_ACTION idx) const{
+        return action.at(idx);
     }
 } vis_action;
 
