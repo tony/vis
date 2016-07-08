@@ -12,8 +12,7 @@ endforeach()
 
 project(vis)
 
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall -std=c++14")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall")
 if (APPLE)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_DARWIN_C_SOURCE")
 elseif(${CMAKE_SYSTEM_NAME} MATCHES FreeBSD)
@@ -95,7 +94,10 @@ file(GLOB vis_SOURCES array.c buffer.c libutf.c main.cc map.c register.c ring-bu
 
 include_directories(${CURSES_INCLUDE_DIR} ${LIBTERMKEY_INCLUDE_DIR})
 
+MESSAGE(STATUS "CURSES_INCLUDE_DIR: " ${CURSES_INCLUDE_DIR})
+
 add_executable(vis ${vis_SOURCES} )
+set_property(TARGET vis PROPERTY CXX_STANDARD 11)
 add_dependencies(vis superbuild)
 add_dependencies(vis libtermkey)
 
