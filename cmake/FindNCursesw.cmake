@@ -107,16 +107,19 @@ if(CURSES_USE_NCURSESW)
   # Use CURSES_NCURSESW_INCLUDE_PATH if set, for compatibility.
   if(CURSES_NCURSESW_INCLUDE_PATH)
     find_path(CURSES_INCLUDE_PATH
-      NAMES ncursesw/ncurses.h ncursesw/curses.h ncurses.h curses.h
+      NAMES ncurses.h curses.h
       PATHS ${CURSES_NCURSESW_INCLUDE_PATH}
+      PATH_SUFFIXES ncursesw
       NO_DEFAULT_PATH
       )
   endif()
 
   find_path(CURSES_INCLUDE_PATH
-    NAMES ncursesw/ncurses.h ncursesw/curses.h ncurses.h curses.h
+    NAMES ncurses.h curses.h
+    PATH_SUFFIXES ncursesw
     HINTS "${_cursesParentDir}/include"
     )
+  message(STATUS "CURSES_INCLUDE_PATH: " ${CURSES_INCLUDE_PATH})
 
   # Previous versions of FindCurses provided these values.
   if(NOT DEFINED CURSES_LIBRARY)
