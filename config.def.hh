@@ -1,7 +1,37 @@
 /* Configure your desired default key bindings. */
 
+#include "vis.hh"
+#include <vector>
+#include <map>
+#include <array>
+
 #define ALIAS(name) nullptr, name
 #define ACTION(id) &vis_action[VIS_ACTION_##id], nullptr
+
+
+
+
+template<std::size_t... Is> struct seq {};
+
+template<std::size_t N, std::size_t... Is>
+struct gen_seq : gen_seq<N-1, N-1, Is...> {};
+
+template<std::size_t... Is>
+struct gen_seq<0, Is...> : seq<Is...> {};
+
+template<typename T, std::size_t N1, std::size_t... I1, std::size_t N2, std::size_t... I2>
+inline std::array<T, N1+N2> concat(
+    std::array<T, N1> a1,
+    std::array<T, N2> a2,
+    seq<I1...>,
+    seq<I2...>) {
+    return {{ std::move(a1[I1])..., std::move(a2[I2])... }};
+}
+
+template<typename T, std::size_t N1, std::size_t N2>
+inline std::array<T, N1+N2> concat(std::array<T, N1> a1, std::array<T, N2> a2) {
+    return concat(std::move(a1), std::move(a2), gen_seq<N1>(), gen_seq<N2>());
+}
 
 static const char *keymaps[] = {
 	NULL
@@ -364,10 +394,7 @@ struct BindingsReadline {
 	}
 } bindings_readline;
 
-struct BindingsInsert {
-	KeyBinding bindings[100];
-	BindingsInsert() {
-	static const KeyBinding initValue[] = {
+const std::array<KeyBinding, 15> bindings_insert{{
 		{ "<C-d>",              ALIAS("<Escape><<i")                        },
 		{ "<C-i>",              ALIAS("<Tab>")                              },
 		{ "<C-j>",              ALIAS("<Enter>")                            },
@@ -383,64 +410,87 @@ struct BindingsInsert {
 		{ "<Escape>",           ACTION(MODE_NORMAL)                         },
 		{ "<S-Tab>",            ACTION(CURSORS_ALIGN_INDENT_LEFT)           },
 		{ "<Tab>",              ACTION(INSERT_TAB)                          }
-	};
-	
-		memcpy(bindings, initValue, sizeof(initValue));
-	}
-} bindings_insert;
+}};
 
-struct BindingsReplace {
-	KeyBinding bindings[100];
-} bindings_replace;
+const std::array<KeyBinding, 15> bindings_replace{{
+		{ "<C-d>",              ALIAS("<Escape><<i")                        },
+		{ "<C-i>",              ALIAS("<Tab>")                              },
+		{ "<C-j>",              ALIAS("<Enter>")                            },
+		{ "<C-n>",              ACTION(COMPLETE_WORD)                       },
+		{ "<C-x><C-f>",         ACTION(COMPLETE_FILENAME)                   },
+		{ "<C-m>",              ALIAS("<Enter>")                            },
+		{ "<C-o>",              ACTION(MODE_OPERATOR_PENDING)               },
+		{ "<C-r>",              ACTION(INSERT_REGISTER)                     },
+		{ "<C-t>",              ALIAS("<Escape>>>i")                        },
+		{ "<C-x><C-e>",         ACTION(WINDOW_SLIDE_UP)                     },
+		{ "<C-x><C-y>",         ACTION(WINDOW_SLIDE_DOWN)                   },
+		{ "<Enter>",            ACTION(INSERT_NEWLINE)                      },
+		{ "<Escape>",           ACTION(MODE_NORMAL)                         },
+		{ "<S-Tab>",            ACTION(CURSORS_ALIGN_INDENT_LEFT)           },
+		{ "<Tab>",              ACTION(INSERT_TAB)                          }
+}};
 
 /* For each mode we list a all key bindings, if a key is bound in more than
  * one array the first definition is used and further ones are ignored. */
-struct DefaultBindings {
 
-	std::map<VisMode, std::vector<KeyBinding*>> bindings;
-	DefaultBindings() {
-	std::vector<KeyBinding*> bindings[VIS_MODE_OPERATOR_PENDING];
-	bindings[VIS_MODE_OPERATOR_PENDING].insert(
-		bindings[VIS_MODE_OPERATOR_PENDING].end(),
-		bindings_operator_options[0],
-		sizeof(bindings_operator_options) / sizeof(KeyBinding)
-	);
-	// 		(const std::vector<*KeyBinding>){
-	// 	bindings_operator_options,
-	// 	bindings_operators,
-	// 	bindings_textobjects,
-	// 	bindings_motions,
-	// 	bindings_basic,
-	// 	NULL
-	// }},
-	// {VIS_MODE_NORMAL, (const std::vector<KeyBinding*>){
-	// 	bindings_normal,
-	// 	bindings_operators,
-	// 	bindings_motions,
-	// 	bindings_basic,
-	// 	NULL,
-	// 									   }},
-	// {VIS_MODE_VISUAL, (const std::vector<KeyBinding*>){
-	// 	bindings_visual,
-	// 	bindings_textobjects,
-	// 	bindings_operators,
-	// 	bindings_motions,
-	// 	bindings_basic,
-	// 	NULL,
-	// }},
-	// {VIS_MODE_VISUAL_LINE, (const std::vector<KeyBinding*>){
-	// 	bindings_visual_line,
-	// 	NULL,
-	// }},
-	// {VIS_MODE_INSERT, (const std::vector<KeyBinding*>){
-	// 	bindings_insert,
-	// 	bindings_readline,
-	// 	bindings_basic,
-	// 	NULL,
-	// }},
-	// {VIS_MODE_REPLACE, (const std::vector<KeyBinding*>){
-	// 	bindings_replace,
-	// 	NULL,
-	// }}
-	}
-} default_bindings;
+
+
+
+const std::array<KeyBinding, 30> default_bindings = concat(bindings_replace, bindings_insert);
+
+// struct DefaultBindings {
+//
+// 	std::map<VisMode, std::array<KeyBinding, 100>> bindings;
+//
+// 	DefaultBindings() {
+//
+// 	// std::array<KeyBinding> bindings[VIS_MODE_OPERATOR_PENDING].assign(
+// 	// 		bindings_operator_options, bindings_operator_options.bindings + sizeof(bindings_operator_options) / sizeof(bindings_operator_options[0])
+// 		// );
+// 	// 	bindings_operator_options.bindings,
+// 	// 	bindings_operator_options.bindings + sizeof(bindings_operator_options) / sizeof(bindings_operator_options[0])
+// 	// };
+// 	bindings[VIS_MODE_OPERATOR_PENDING].push_back(
+// 		bindings[VIS_MODE_OPERATOR_PENDING].end(),
+// 		bindings_operator_options[0],
+// 		sizeof(bindings_operator_options) / sizeof(KeyBinding)
+// 	);
+// 	// 		(const std::vector<*KeyBinding>){
+// 	// 	bindings_operator_options,
+// 	// 	bindings_operators,
+// 	// 	bindings_textobjects,
+// 	// 	bindings_motions,
+// 	// 	bindings_basic,
+// 	// 	NULL
+// 	// }},
+// 	// {VIS_MODE_NORMAL, (const std::vector<KeyBinding*>){
+// 	// 	bindings_normal,
+// 	// 	bindings_operators,
+// 	// 	bindings_motions,
+// 	// 	bindings_basic,
+// 	// 	NULL,
+// 	// 									   }},
+// 	// {VIS_MODE_VISUAL, (const std::vector<KeyBinding*>){
+// 	// 	bindings_visual,
+// 	// 	bindings_textobjects,
+// 	// 	bindings_operators,
+// 	// 	bindings_motions,
+// 	// 	bindings_basic,
+// 	// 	NULL,
+// 	// }},
+// 	// {VIS_MODE_VISUAL_LINE, (const std::vector<KeyBinding*>){
+// 	// 	bindings_visual_line,
+// 	// 	NULL,
+// 	// }},
+// 	// {VIS_MODE_INSERT, (const std::vector<KeyBinding*>){
+// 	// 	bindings_insert,
+// 	// 	bindings_readline,
+// 	// 	bindings_basic,
+// 	// 	NULL,
+// 	// }},
+// 	// {VIS_MODE_REPLACE, (const std::vector<KeyBinding*>){
+// 	// 	bindings_replace,
+// 	// 	NULL,
+// 	// }}
+// 	}
+// } default_bindings;
