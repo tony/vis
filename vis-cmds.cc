@@ -81,18 +81,22 @@ static bool parse_bool(const char *s, bool *outval) {
 
 static bool cmd_set(Vis *vis, Win *win, Command *cmd, const char *argv[], Cursor *cur, Filerange *range) {
 
+	enum OptionDefType {
+		OPTION_TYPE_STRING,
+		OPTION_TYPE_BOOL,
+		OPTION_TYPE_NUMBER,
+		OPTION_TYPE_UNSIGNED
+	};
+
+	enum OptionDefFlag {
+		OPTION_FLAG_OPTIONAL = 1 << 0,
+		OPTION_FLAG_WINDOW = 1 << 1
+	}
+
 	typedef struct {
 		const char *names[3];
-		enum {
-			OPTION_TYPE_STRING,
-			OPTION_TYPE_BOOL,
-			OPTION_TYPE_NUMBER,
-			OPTION_TYPE_UNSIGNED,
-		} type;
-		enum {
-			OPTION_FLAG_OPTIONAL = 1 << 0,
-			OPTION_FLAG_WINDOW = 1 << 1,
-		} flags;
+		enum OptionDefType type;
+		enum OptionDefFlag flags;
 		int index;
 	} OptionDef;
 

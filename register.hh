@@ -7,15 +7,17 @@
 #include "buffer.hh"
 #include "text-util.hh"
 
+enum RegisterTypes {
+	REGISTER_NORMAL,
+	REGISTER_BLACKHOLE,
+	REGISTER_CLIPBOARD,
+}
+
 typedef struct {
 	Buffer buf;
 	bool linewise; /* place register content on a new line when inserting? */
 	bool append;
-	enum {
-		REGISTER_NORMAL,
-		REGISTER_BLACKHOLE,
-		REGISTER_CLIPBOARD,
-	} type;
+	enum RegisterTypes type;
 } Register;
 
 void register_release(Register*);
