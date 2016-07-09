@@ -317,7 +317,7 @@ enum VIS_ACTION {
 
 
 struct KeyActions {
-    std::map<VIS_ACTION, KeyAction> action;
+    KeyAction action[VIS_ACTION_NOP];
     KeyActions() {
     action[VIS_ACTION_EDITOR_SUSPEND] = {
             "editor-suspend", "Suspend the editor", suspend, {}
@@ -1533,7 +1533,7 @@ struct KeyActions {
 }
 
     const KeyAction& operator[](VIS_ACTION idx) const{
-        return action.at(idx);
+        return action[idx];
     }
 } vis_action;
 
@@ -2501,6 +2501,7 @@ static const char *complete_word(Vis *vis, const char *keys, const Arg *arg) {
 }
 
 static const char *complete_filename(Vis *vis, const char *keys, const Arg *arg) {
+    std::ignore = arg;
 	Buffer cmd;
 	buffer_init(&cmd);
 	char *prefix = get_completion_prefix(vis);
@@ -2540,17 +2541,17 @@ int main(int argc, char *argv[]) {
 	if (!vis)
 		return EXIT_FAILURE;
 
-	for (int i = 0; i < LENGTH(vis_action); i++) {
-		const KeyAction *action = &vis_action[i];
-		if (!vis_action_register(vis, action))
-			vis_die(vis, "Could not register action: %s\n", action->name);
+	for (int i = 0; i < VIS_ACTION_NOP; i++) {
+		const KeyAction action = vis_action[(VIS_ACTION) i];
+		if (!vis_action_register(vis, &action))
+			vis_die(vis, "Could not register action: %s\n", action.name);
 	}
 
-	for (int i = 0; i < LENGTH(default_bindings); i++) {
-		for (const KeyBinding **binding = default_bindings[i]; binding && *binding; binding++) {
-			for (const KeyBinding *kb = *binding; kb->key; kb++) {
-				vis_mode_map(vis, (VisMode) i, false, kb->key, kb);
-			}
+	// note currently this needs to iterate over a map of the modes from config.def.hh -> config.hh
+	// this is hard-coded right now while trying to get it to build
+	for (auto binding = default_bindings.cbegin(); binding != default_bindings.cend(); ++binding) {
+		for (const KeyBinding *kb = binding; kb->key; kb++) {
+			vis_mode_map(vis, VIS_MODE_INSERT, false, kb->key, kb);
 		}
 	}
 
