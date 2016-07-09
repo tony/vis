@@ -18,6 +18,7 @@ ExternalProject_Add(libtermkey
   CONFIGURE_COMMAND ""
   BUILD_IN_SOURCE 1
   BUILD_COMMAND ""
+  UPDATE_COMMAND ""
   INSTALL_COMMAND ${MAKE_PRG} CC=${DEPS_C_COMPILER}
                               PREFIX=${DEPS_INSTALL_DIR}
                               PKG_CONFIG_PATH=${DEPS_LIB_DIR}/pkgconfig
@@ -26,4 +27,4 @@ ExternalProject_Add(libtermkey
 set(LIBTERMKEY_DIR "${CMAKE_CURRENT_BINARY_DIR}/libtermkey" CACHE PATH "libtermkey dir" FORCE)
 set(LIBTERMKEY_ROOT ${LIBTERMKEY_DIR} CACHE PATH "libtermkey root" FORCE)
 set(LIBTERMKEY_INCLUDE_DIR ${DEPS_INSTALL_DIR}/include CACHE PATH "libtermkey include dir" FORCE)
-set(LIBTERMKEY_LIBRARY ${LIBTERMKEY_DIR}/lib/libtermkey.a CACHE FILEPATH "libtermkey library" FORCE)
+set(LIBTERMKEY_LIBRARY ${DEPS_LIB_DIR}/libtermkey.a CACHE FILEPATH "libtermkey library" FORCE)
