@@ -98,7 +98,6 @@ MESSAGE(STATUS "CURSES_INCLUDE_DIR: " ${CURSES_INCLUDE_DIR})
 
 add_executable(vis ${vis_SOURCES} )
 set_property(TARGET vis PROPERTY CXX_STANDARD 11)
-add_dependencies(vis superbuild)
 add_dependencies(vis libtermkey)
 
 target_link_libraries(vis ${CURSES_LIBRARY} ${LIBTERMKEY_LIBRARY})
