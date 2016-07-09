@@ -97,7 +97,7 @@ static void vis_mode_visual_line_enter(Vis *vis, Mode *old) {
 		vis_motion(vis, VIS_MOVE_NOP);
 }
 
-static void vis_mode_visual_line_leave(Vis *vis, Mode *new) {
+static void vis_mode_visual_line_leave(Vis *vis, Mode *new_mode) {
 	if (!new->visual) {
 		window_selection_save(vis->win);
 		view_selections_clear(vis->win->view);
@@ -106,7 +106,7 @@ static void vis_mode_visual_line_leave(Vis *vis, Mode *new) {
 	}
 }
 
-static void vis_mode_visual_leave(Vis *vis, Mode *new) {
+static void vis_mode_visual_leave(Vis *vis, Mode *new_mode) {
 	if (!new->visual) {
 		window_selection_save(vis->win);
 		view_selections_clear(vis->win->view);
@@ -122,7 +122,7 @@ static void vis_mode_insert_enter(Vis *vis, Mode *old) {
 	}
 }
 
-static void vis_mode_insert_leave(Vis *vis, Mode *new) {
+static void vis_mode_insert_leave(Vis *vis, Mode *new_mode) {
 	/* make sure we can recover the current state after an editing operation */
 	text_snapshot(vis->win->file->text);
 	if (new == mode_get(vis, VIS_MODE_NORMAL))
@@ -146,7 +146,7 @@ static void vis_mode_replace_enter(Vis *vis, Mode *old) {
 	}
 }
 
-static void vis_mode_replace_leave(Vis *vis, Mode *new) {
+static void vis_mode_replace_leave(Vis *vis, Mode *new_mode) {
 	/* make sure we can recover the current state after an editing operation */
 	text_snapshot(vis->win->file->text);
 	if (new == mode_get(vis, VIS_MODE_NORMAL))
