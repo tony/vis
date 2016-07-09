@@ -45,9 +45,7 @@ struct Command {
 	Command *next;            /* next command in {} group */
 };
 
-struct CommandDef {
-	const char *name[3];                 /* name and optional alias for the command */
-	enum {
+enum CommandFlags {
 		CMD_CMD           = 1 << 0,  /* does the command take a sub/target command? */
 		CMD_REGEX         = 1 << 1,  /* regex after command? */
 		CMD_REGEX_DEFAULT = 1 << 2,  /* is the regex optional i.e. can we use a default? */
@@ -62,7 +60,11 @@ struct CommandDef {
 		CMD_FORCE         = 1 << 11, /* can the command be forced with ! */
 		CMD_ARGV          = 1 << 12, /* whether shell like argument splitted is desired */
 		CMD_ONCE          = 1 << 13, /* command should only be executed once, not for every selection */
-	} flags;
+	};
+
+struct CommandDef {
+	const char *name[3];                 /* name and optional alias for the command */
+	enum CommandFlags flags;
 	const char *defcmd;                  /* name of a default target command */
 	bool (*func)(Vis*, Win*, Command*, const char *argv[], Cursor*, Filerange*); /* command implementation */
 };
