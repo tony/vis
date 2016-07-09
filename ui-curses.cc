@@ -1104,6 +1104,7 @@ static const char *ui_getkey(Ui *ui) {
 			goto fatal;
 		return NULL;
 	}
+	{
 
 	if (ret == TERMKEY_RES_AGAIN) {
 		struct pollfd fd;
@@ -1111,7 +1112,7 @@ static const char *ui_getkey(Ui *ui) {
 		fd.events = POLLIN;
 		if (poll(&fd, 1, termkey_get_waittime(uic->termkey)) == 0)
 			ret = termkey_getkey_force(uic->termkey, &key);
-	}
+	}}
 
 	if (ret != TERMKEY_RES_KEY)
 		return NULL;
@@ -1147,6 +1148,8 @@ Ui *ui_curses_new(void) {
 	tcgetattr(STDERR_FILENO, &uic->tio);
 	if (!(uic->termkey = ui_termkey_new(STDIN_FILENO)))
 		goto err;
+
+	{
 	setlocale(LC_CTYPE, "");
 	if (!getenv("ESCDELAY"))
 		set_escdelay(50);
@@ -1204,6 +1207,7 @@ Ui *ui_curses_new(void) {
 	ui_resize(ui);
 
 	return ui;
+	}
 err:
 	ui_curses_free(ui);
 	return NULL;
