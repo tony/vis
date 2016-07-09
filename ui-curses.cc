@@ -1,6 +1,7 @@
 /* parts of the color handling code originates from tmux/colour.c and is
  * Copyright (c) 2008 Nicholas Marriott <nicm@users.sourceforge.net>
  */
+#include <tuple>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1075,11 +1076,13 @@ static TermKey *ui_termkey_get(Ui *ui) {
 }
 
 static void ui_suspend(Ui *ui) {
+	std::ignore = ui;
 	endwin();
 	raise(SIGSTOP);
 }
 
 static bool ui_haskey(Ui *ui) {
+	std::ignore = ui;
 	nodelay(stdscr, TRUE);
 	int c = getch();
 	if (c != ERR)
@@ -1141,7 +1144,7 @@ static void ui_terminal_restore(Ui *ui) {
 
 Ui *ui_curses_new(void) {
 
-	UiCurses *uic = calloc(1, sizeof(UiCurses));
+	UiCurses *uic = new UiCurses;
 	Ui *ui = (Ui*)uic;
 	if (!uic)
 		return NULL;
