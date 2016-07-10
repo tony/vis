@@ -74,7 +74,7 @@ static void window_status_update(Vis *vis, Win *win) {
 		size_t line = view_cursors_line(cur);
 		size_t col = view_cursors_col(cur);
 		if (col > UI_LARGE_FILE_LINE_SIZE) {
-			options |= UI_OPTION_LARGE_FILE;
+			options = UiOption(options | UI_OPTION_LARGE_FILE);
 			view_options_set(win->view, options);
 		}
 		snprintf(right_parts[right_count], sizeof(right_parts[right_count])-1,

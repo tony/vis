@@ -48,7 +48,7 @@ static void file_free(Vis *vis, File *file) {
 }
 
 static File *file_new_text(Vis *vis, Text *text) {
-	File *file = calloc(1, sizeof(*file));
+	File *file = (File *)calloc(1, sizeof(*file));
 	if (!file)
 		return NULL;
 	file->text = text;

@@ -11,7 +11,7 @@ enum RegisterTypes {
 	REGISTER_NORMAL,
 	REGISTER_BLACKHOLE,
 	REGISTER_CLIPBOARD,
-}
+};
 
 typedef struct {
 	Buffer buf;

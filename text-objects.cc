@@ -366,7 +366,7 @@ Filerange text_object_indentation(Text *txt, size_t pos) {
 	bool line_empty = text_byte_get(txt, bol, &c) && (c == '\r' || c == '\n');
 
 	char *buf = text_bytes_alloc0(txt, bol, line_indent);
-	char *tmp = malloc(line_indent);
+	char *tmp = (char *)malloc(line_indent);
 
 	if (!buf || !tmp) {
 		free(buf);

@@ -9,7 +9,7 @@ struct Regex {
 };
 
 Regex *text_regex_new(void) {
-	Regex *r = calloc(1, sizeof(Regex));
+	Regex *r = (Regex *)calloc(1, sizeof(Regex));
 	if (!r)
 		return NULL;
 	regcomp(&r->regex, "\0\0", 0); /* this should not match anything */

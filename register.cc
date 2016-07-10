@@ -4,7 +4,7 @@
 #include "vis.hh"
 
 static ssize_t read_buffer(void *context, char *data, size_t len) {
-	buffer_append(context, data, len);
+	buffer_append((Buffer *)context, data, len);
 	return len;
 }
 
@@ -26,7 +26,8 @@ const char *register_get(Vis *vis, Register *reg, size_t *len) {
 		buffer_init(&buferr);
 		buffer_clear(&reg->buf);
 
-		int status = vis_pipe(vis, &(Filerange){ .start = 0, .end = 0 }, false,
+		Filerange filerange { .start = 0, .end = 0 };
+		int status = vis_pipe(vis, &filerange, false,
 			(const char*[]){ VIS_CLIPBOARD, "--paste", NULL },
 			&reg->buf, read_buffer, &buferr, read_buffer);
 

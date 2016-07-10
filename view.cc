@@ -8,7 +8,7 @@
 #include "util.hh"
 
 typedef struct {
-	char *symbol;
+	const char *symbol;
 	int style;
 } SyntaxSymbol;
 

@@ -121,10 +121,11 @@ static const char *prompt_backspace(Vis *vis, const char *keys, const Arg *arg) 
 	return keys;
 }
 
-constexpr KeyBinding prompt_enter_binding = [&]{
+constexpr KeyBinding prompt_enter_binding = []{
     KeyBinding b = {};
     b.alias = "<Enter>";
-    b.action = &(KeyAction){};
+    static KeyAction keyAction {};
+    b.action = &keyAction;
     b.action.func = prompt_enter;
     return b;
 };

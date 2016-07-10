@@ -1,5 +1,8 @@
 WATCH_FILES=find . -type f -not -path '*/\.*' -and -not -path '*/build/*' | grep -i '.*[.]\(c\|cc\|h\|hh\)$$' 2> /dev/null
 
+debug: mkdir_build
+	cd build; cmake -GNinja -DCMAKE_BUILD_TYPE=Debug ..
+	ninja -C build
 
 test:
 	./test/run
@@ -31,6 +34,3 @@ build: mkdir_build
 	ninja -C build
 
 
-debug: mkdir_build
-	cd build; cmake -GNinja -DCMAKE_BUILD_TYPE=Debug ..
-	ninja -C build

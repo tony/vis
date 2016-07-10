@@ -157,7 +157,7 @@ static size_t window_changelist_prev(Vis *vis, Win *win, size_t pos) {
 
 static size_t window_jumplist_next(Vis *vis, Win *win, size_t cur) {
 	while (win->jumplist) {
-		Mark mark = ringbuf_next(win->jumplist);
+		Mark mark = (Mark)ringbuf_next(win->jumplist);
 		if (!mark)
 			return cur;
 		size_t pos = text_mark_get(win->file->text, mark);

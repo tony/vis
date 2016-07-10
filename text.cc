@@ -16,9 +16,9 @@
 #if CONFIG_SELINUX
 #include <selinux/selinux.h>
 #endif
-#if __FreeBSD__
+//#if __FreeBSD__
+//#endif
 #include <stdint.h>
-#endif
 
 #include "text.hh"
 #include "text-util.hh"
@@ -83,8 +83,8 @@ typedef struct {
 /* A Change keeps all needed information to redo/undo an insertion/deletion. */
 typedef struct Change Change;
 struct Change {
-	Span old;               /* all pieces which are being modified/swapped out by the change */
-	Span new;               /* all pieces which are introduced/swapped in by the change */
+	Span old_span;          /* all pieces which are being modified/swapped out by the change */
+	Span new_span;          /* all pieces which are introduced/swapped in by the change */
 	size_t pos;             /* absolute position at which the change occured */
 	Change *next;           /* next change which is part of the same action */
 	Change *prev;           /* previous change which is part of the same action */
@@ -161,7 +161,7 @@ static Location piece_get_intern(Text *txt, size_t pos);
 static Location piece_get_extern(Text *txt, size_t pos);
 /* span management */
 static void span_init(Span *span, Piece *start, Piece *end);
-static void span_swap(Text *txt, Span *old, Span *new);
+static void span_swap(Text *txt, Span *old, Span *new_span);
 /* change management */
 static Change *change_alloc(Text *txt, size_t pos);
 static void change_free(Change *c);
@@ -192,16 +192,16 @@ static ssize_t write_all(int fd, const char *buf, size_t count) {
 
 /* allocate a new buffer of MAX(size, BUFFER_SIZE) bytes */
 static Buffer *buffer_alloc(Text *txt, size_t size) {
-	Buffer *buf = calloc(1, sizeof(Buffer));
+	Buffer *buf = (Buffer *)calloc(1, sizeof(Buffer));
 	if (!buf)
 		return NULL;
 	if (BUFFER_SIZE > size)
 		size = BUFFER_SIZE;
-	if (!(buf->data = malloc(size))) {
+	if (!(buf->data = (char *)malloc(size))) {
 		free(buf);
 		return NULL;
 	}
-	buf->type = MALLOC;
+	buf->type = Buffer::MALLOC;
 	buf->size = size;
 	buf->next = txt->buffers;
 	txt->buffers = buf;
@@ -230,17 +230,17 @@ static Buffer *buffer_read(Text *txt, size_t size, int fd) {
 }
 
 static Buffer *buffer_mmap(Text *txt, size_t size, int fd, off_t offset) {
-	Buffer *buf = calloc(1, sizeof(Buffer));
+	Buffer *buf = (Buffer *)calloc(1, sizeof(Buffer));
 	if (!buf)
 		return NULL;
 	if (size) {
-		buf->data = mmap(NULL, size, PROT_READ, MAP_SHARED, fd, offset);
+		buf->data = (char *)mmap(NULL, size, PROT_READ, MAP_SHARED, fd, offset);
 		if (buf->data == MAP_FAILED) {
 			free(buf);
 			return NULL;
 		}
 	}
-	buf->type = MMAP_ORIG;
+	buf->type = Buffer::MMAP_ORIG;
 	buf->size = size;
 	buf->len = size;
 	buf->next = txt->buffers;
@@ -251,9 +251,9 @@ static Buffer *buffer_mmap(Text *txt, size_t size, int fd, off_t offset) {
 static void buffer_free(Buffer *buf) {
 	if (!buf)
 		return;
-	if (buf->type == MALLOC)
+	if (buf->type == Buffer::MALLOC)
 		free(buf->data);
-	else if ((buf->type == MMAP_ORIG || buf->type == MMAP) && buf->data)
+	else if ((buf->type == Buffer::MMAP_ORIG || buf->type == Buffer::MMAP) && buf->data)
 		munmap(buf->data, buf->size);
 	free(buf);
 }
@@ -265,7 +265,7 @@ static bool buffer_capacity(Buffer *buf, size_t len) {
 
 /* append data to buffer, assumes there is enough space available */
 static const char *buffer_append(Buffer *buf, const char *data, size_t len) {
-	char *dest = memcpy(buf->data + buf->len, data, len);
+	char *dest = (char *)memcpy(buf->data + buf->len, data, len);
 	buf->len += len;
 	return dest;
 }
@@ -302,8 +302,8 @@ static bool buffer_delete(Buffer *buf, size_t pos, size_t len) {
 		buf->len -= len;
 		return true;
 	}
-	char *delete = buf->data + pos;
-	memmove(delete, delete + len, buf->len - pos - len);
+	char *delete_ptr = buf->data + pos;
+	memmove(delete_ptr, delete_ptr + len, buf->len - pos - len);
 	buf->len -= len;
 	return true;
 }
@@ -323,8 +323,8 @@ static bool cache_contains(Text *txt, Piece *p) {
 	if (!buf || !txt->cache || txt->cache != p || !a || !a->change)
 		return false;
 
-	Piece *start = a->change->new.start;
-	Piece *end = a->change->new.end;
+	Piece *start = a->change->new_span.start;
+	Piece *end = a->change->new_span.end;
 	bool found = false;
 	for (Piece *cur = start; !found; cur = cur->next) {
 		if (cur == p)
@@ -347,7 +347,7 @@ static bool cache_insert(Text *txt, Piece *p, size_t off, const char *data, size
 	if (!buffer_insert(buf, bufpos, data, len))
 		return false;
 	p->len += len;
-	txt->current_action->change->new.len += len;
+	txt->current_action->change->new_span.len += len;
 	txt->size += len;
 	return true;
 }
@@ -364,7 +364,7 @@ static bool cache_delete(Text *txt, Piece *p, size_t off, size_t len) {
 	if (off + len > p->len || !buffer_delete(buf, bufpos, len))
 		return false;
 	p->len -= len;
-	txt->current_action->change->new.len -= len;
+	txt->current_action->change->new_span.len -= len;
 	txt->size -= len;
 	return true;
 }
@@ -389,56 +389,56 @@ static void span_init(Span *span, Piece *start, Piece *end) {
  *
  * adjusts the document size accordingly.
  */
-static void span_swap(Text *txt, Span *old, Span *new) {
-	if (old->len == 0 && new->len == 0) {
+static void span_swap(Text *txt, Span *old, Span *new_span) {
+	if (old->len == 0 && new_span->len == 0) {
 		return;
 	} else if (old->len == 0) {
 		/* insert new span */
-		new->start->prev->next = new->start;
-		new->end->next->prev = new->end;
-	} else if (new->len == 0) {
+		new_span->start->prev->next = new_span->start;
+		new_span->end->next->prev = new_span->end;
+	} else if (new_span->len == 0) {
 		/* delete old span */
 		old->start->prev->next = old->end->next;
 		old->end->next->prev = old->start->prev;
 	} else {
 		/* replace old with new */
-		old->start->prev->next = new->start;
-		old->end->next->prev = new->end;
+		old->start->prev->next = new_span->start;
+		old->end->next->prev = new_span->end;
 	}
 	txt->size -= old->len;
-	txt->size += new->len;
+	txt->size += new_span->len;
 }
 
 /* allocate a new action, set its pointers to the other actions in the history,
  * and set it as txt->history. All further changes will be associated with this action. */
 static Action *action_alloc(Text *txt) {
-	Action *new = calloc(1, sizeof(Action));
-	if (!new)
+	Action *new_span = (Action *)calloc(1, sizeof(Action));
+	if (!new_span)
 		return NULL;
-	new->time = time(NULL);
-	txt->current_action = new;
+	new_span->time = time(NULL);
+	txt->current_action = new_span;
 
 	/* set sequence number */
 	if (!txt->last_action)
-		new->seq = 0;
+		new_span->seq = 0;
 	else
-		new->seq = txt->last_action->seq + 1;
+		new_span->seq = txt->last_action->seq + 1;
 
 	/* set earlier, later pointers */
 	if (txt->last_action)
-		txt->last_action->later = new;
-	new->earlier = txt->last_action;
+		txt->last_action->later = new_span;
+	new_span->earlier = txt->last_action;
 
 	if (!txt->history) {
-		txt->history = new;
-		return new;
+		txt->history = new_span;
+		return new_span;
 	}
 
 	/* set prev, next pointers */
-	new->prev = txt->history;
-	txt->history->next = new;
-	txt->history = new;
-	return new;
+	new_span->prev = txt->history;
+	txt->history->next = new_span;
+	txt->history = new_span;
+	return new_span;
 }
 
 static void action_free(Action *a) {
@@ -452,7 +452,7 @@ static void action_free(Action *a) {
 }
 
 static Piece *piece_alloc(Text *txt) {
-	Piece *p = calloc(1, sizeof(Piece));
+	Piece *p = (Piece *)calloc(1, sizeof(Piece));
 	if (!p)
 		return NULL;
 	p->text = txt;
@@ -500,7 +500,7 @@ static Location piece_get_intern(Text *txt, size_t pos) {
 		cur += p->len;
 	}
 
-	return (Location){ 0 };
+	return (Location){ 0, 0 };
 }
 
 /* similiar to piece_get_intern but usable as a public API. returns the piece
@@ -524,7 +524,7 @@ static Location piece_get_extern(Text *txt, size_t pos) {
 		cur += p->len;
 	}
 
-	return (Location){ 0 };
+	return (Location){ 0, 0 };
 }
 
 /* allocate a new change, associate it with current action or a newly
@@ -536,7 +536,7 @@ static Change *change_alloc(Text *txt, size_t pos) {
 		if (!a)
 			return NULL;
 	}
-	Change *c = calloc(1, sizeof(Change));
+	Change *c = (Change *)calloc(1, sizeof(Change));
 	if (!c)
 		return NULL;
 	c->pos = pos;
@@ -551,9 +551,9 @@ static void change_free(Change *c) {
 	if (!c)
 		return;
 	/* only free the new part of the span, the old one is still in use */
-	piece_free(c->new.start);
-	if (c->new.start != c->new.end)
-		piece_free(c->new.end);
+	piece_free(c->new_span.start);
+	if (c->new_span.start != c->new_span.end)
+		piece_free(c->new_span.end);
 	free(c);
 }
 
@@ -607,16 +607,16 @@ bool text_insert(Text *txt, size_t pos, const char *data, size_t len) {
 	if (!(data = buffer_store(txt, data, len)))
 		return false;
 
-	Piece *new = NULL;
+	Piece *new_span = NULL;
 
 	if (off == p->len) {
 		/* insert between two existing pieces, hence there is nothing to
 		 * remove, just add a new piece holding the extra text */
-		if (!(new = piece_alloc(txt)))
+		if (!(new_span = piece_alloc(txt)))
 			return false;
-		piece_init(new, p, p->next, data, len);
-		span_init(&c->new, new, new);
-		span_init(&c->old, NULL, NULL);
+		piece_init(new_span, p, p->next, data, len);
+		span_init(&c->new_span, new_span, new_span);
+		span_init(&c->old_span, NULL, NULL);
 	} else {
 		/* insert into middle of an existing piece, therfore split the old
 		 * piece. that is we have 3 new pieces one containing the content
@@ -624,20 +624,20 @@ bool text_insert(Text *txt, size_t pos, const char *data, size_t len) {
 		 * text and one holding the content after the insertion point.
 		 */
 		Piece *before = piece_alloc(txt);
-		new = piece_alloc(txt);
+		new_span = piece_alloc(txt);
 		Piece *after = piece_alloc(txt);
-		if (!before || !new || !after)
+		if (!before || !new_span || !after)
 			return false;
-		piece_init(before, p->prev, new, p->data, off);
-		piece_init(new, before, after, data, len);
-		piece_init(after, new, p->next, p->data + off, p->len - off);
+		piece_init(before, p->prev, new_span, p->data, off);
+		piece_init(new_span, before, after, data, len);
+		piece_init(after, new_span, p->next, p->data + off, p->len - off);
 
-		span_init(&c->new, before, after);
-		span_init(&c->old, p, p);
+		span_init(&c->new_span, before, after);
+		span_init(&c->old_span, p, p);
 	}
 
-	cache_piece(txt, new);
-	span_swap(txt, &c->old, &c->new);
+	cache_piece(txt, new_span);
+	span_swap(txt, &c->old_span, &c->new_span);
 	return true;
 }
 
@@ -663,7 +663,7 @@ bool text_vprintf(Text *txt, size_t pos, const char *format, va_list ap) {
 	int len = vsnprintf(NULL, 0, format, ap);
 	if (len == -1)
 		return false;
-	char *buf = malloc(len+1);
+	char *buf = (char *)malloc(len+1);
 	bool ret = buf && (vsnprintf(buf, len+1, format, ap_save) == len) && text_insert(txt, pos, buf, len);
 	free(buf);
 	va_end(ap_save);
@@ -679,7 +679,7 @@ size_t text_insert_newline(Text *txt, size_t pos) {
 static size_t action_undo(Text *txt, Action *a) {
 	size_t pos = EPOS;
 	for (Change *c = a->change; c; c = c->next) {
-		span_swap(txt, &c->new, &c->old);
+		span_swap(txt, &c->new_span, &c->old_span);
 		pos = c->pos;
 	}
 	return pos;
@@ -691,10 +691,10 @@ static size_t action_redo(Text *txt, Action *a) {
 	while (c->next)
 		c = c->next;
 	for ( ; c; c = c->prev) {
-		span_swap(txt, &c->old, &c->new);
+		span_swap(txt, &c->old_span, &c->new_span);
 		pos = c->pos;
-		if (c->new.len > c->old.len)
-			pos += c->new.len - c->old.len;
+		if (c->new_span.len > c->old_span.len)
+			pos += c->new_span.len - c->old_span.len;
 	}
 	return pos;
 }
@@ -846,7 +846,8 @@ static bool text_save_begin_atomic(TextSave *ctx) {
 	int oldfd, saved_errno;
 	if ((oldfd = open(ctx->filename, O_RDONLY)) == -1 && errno != ENOENT)
 		goto err;
-	struct stat oldmeta = { 0 };
+	struct stat oldmeta;
+	memset(&oldmeta, 0, sizeof(oldmeta));
 	if (oldfd != -1 && lstat(ctx->filename, &oldmeta) == -1)
 		goto err;
 	if (oldfd != -1) {
@@ -856,10 +857,12 @@ static bool text_save_begin_atomic(TextSave *ctx) {
 			goto err;
 	}
 
-	size_t namelen = strlen(ctx->filename) + 1 /* ~ */ + 1 /* \0 */;
-	if (!(ctx->tmpname = calloc(1, namelen)))
-		goto err;
-	snprintf(ctx->tmpname, namelen, "%s~", ctx->filename);
+	{
+		size_t namelen = strlen(ctx->filename) + 1 /* ~ */ + 1 /* \0 */;
+		if (!(ctx->tmpname = (char *)calloc(1, namelen)))
+			goto err;
+		snprintf(ctx->tmpname, namelen, "%s~", ctx->filename);
+	}
 
 	if ((ctx->fd = open(ctx->tmpname, O_CREAT|O_WRONLY|O_TRUNC, oldfd == -1 ? S_IRUSR|S_IWUSR : oldmeta.st_mode)) == -1)
 		goto err;
@@ -876,7 +879,7 @@ static bool text_save_begin_atomic(TextSave *ctx) {
 		close(oldfd);
 	}
 
-	ctx->type = TEXT_SAVE_ATOMIC;
+	ctx->type = TextSave::TEXT_SAVE_ATOMIC;
 	return true;
 err:
 	saved_errno = errno;
@@ -893,7 +896,8 @@ static bool text_save_commit_atomic(TextSave *ctx) {
 	if (fsync(ctx->fd) == -1)
 		return false;
 
-	struct stat meta = { 0 };
+	struct stat meta;
+	memset(&meta, 0, sizeof(meta));
 	if (fstat(ctx->fd, &meta) == -1)
 		return false;
 
@@ -927,14 +931,15 @@ static bool text_save_commit_atomic(TextSave *ctx) {
 
 static bool text_save_begin_inplace(TextSave *ctx) {
 	Text *txt = ctx->txt;
-	struct stat meta = { 0 };
+	struct stat meta;
+	memset(&meta, 0, sizeof(meta));
 	int newfd = -1, saved_errno;
 	if ((ctx->fd = open(ctx->filename, O_CREAT|O_WRONLY, S_IRUSR|S_IWUSR)) == -1)
 		goto err;
 	if (fstat(ctx->fd, &meta) == -1)
 		goto err;
 	if (meta.st_dev == txt->info.st_dev && meta.st_ino == txt->info.st_ino &&
-	    txt->buf && txt->buf->type == MMAP_ORIG && txt->buf->size) {
+	    txt->buf && txt->buf->type == Buffer::MMAP_ORIG && txt->buf->size) {
 		/* The file we are going to overwrite is currently mmap-ed from
 		 * text_load, therefore we copy the mmap-ed buffer to a temporary
 		 * file and remap it at the same position such that all pointers
@@ -966,15 +971,15 @@ static bool text_save_begin_inplace(TextSave *ctx) {
 		newfd = -1;
 		if (close_failed)
 			goto err;
-		txt->buf->data = data;
-		txt->buf->type = MMAP;
+		txt->buf->data = (char *)data;
+		txt->buf->type = Buffer::MMAP;
 		newfd = -1;
 	}
 	/* overwrite the exisiting file content, if somehting goes wrong
 	 * here we are screwed, TODO: make a backup before? */
 	if (ftruncate(ctx->fd, 0) == -1)
 		goto err;
-	ctx->type = TEXT_SAVE_INPLACE;
+	ctx->type = TextSave::TEXT_SAVE_INPLACE;
 	return true;
 err:
 	saved_errno = errno;
@@ -990,7 +995,8 @@ err:
 static bool text_save_commit_inplace(TextSave *ctx) {
 	if (fsync(ctx->fd) == -1)
 		return false;
-	struct stat meta = { 0 };
+	struct stat meta;
+	memset(&meta, 0, sizeof(meta));
 	if (fstat(ctx->fd, &meta) == -1)
 		return false;
 	if (close(ctx->fd) == -1)
@@ -1002,7 +1008,7 @@ static bool text_save_commit_inplace(TextSave *ctx) {
 TextSave *text_save_begin(Text *txt, const char *filename) {
 	if (!filename)
 		return NULL;
-	TextSave *ctx = calloc(1, sizeof *ctx);
+	TextSave *ctx = (TextSave *)calloc(1, sizeof *ctx);
 	if (!ctx)
 		return NULL;
 	ctx->txt = txt;
@@ -1027,10 +1033,10 @@ bool text_save_commit(TextSave *ctx) {
 	bool ret;
 	Text *txt = ctx->txt;
 	switch (ctx->type) {
-	case TEXT_SAVE_ATOMIC:
+	case TextSave::TEXT_SAVE_ATOMIC:
 		ret = text_save_commit_atomic(ctx);
 		break;
-	case TEXT_SAVE_INPLACE:
+	case TextSave::TEXT_SAVE_INPLACE:
 		ret = text_save_commit_inplace(ctx);
 		break;
 	default:
@@ -1116,7 +1122,7 @@ ssize_t text_write_range(Text *txt, Filerange *range, int fd) {
 /* load the given file as starting point for further editing operations.
  * to start with an empty document, pass NULL as filename. */
 Text *text_load(const char *filename) {
-	Text *txt = calloc(1, sizeof(Text));
+	Text *txt = (Text *)calloc(1, sizeof(Text));
 	if (!txt)
 		return NULL;
 	int fd = -1;
@@ -1257,9 +1263,9 @@ bool text_delete(Text *txt, size_t pos, size_t len) {
 		new_end = after;
 	}
 
-	span_init(&c->new, new_start, new_end);
-	span_init(&c->old, start, end);
-	span_swap(txt, &c->old, &c->new);
+	span_init(&c->new_span, new_start, new_end);
+	span_init(&c->old_span, start, end);
+	span_swap(txt, &c->old_span, &c->new_span);
 	return true;
 }
 
@@ -1312,7 +1318,7 @@ bool text_modified(Text *txt) {
 
 bool text_sigbus(Text *txt, const char *addr) {
 	for (Buffer *buf = txt->buffers; buf; buf = buf->next) {
-		if ((buf->type == MMAP_ORIG || buf->type == MMAP) &&
+		if ((buf->type == Buffer::MMAP_ORIG || buf->type == Buffer::MMAP) &&
 		    buf->data <= addr && addr < buf->data + buf->size)
 			return true;
 	}
@@ -1324,7 +1330,7 @@ enum TextNewLine text_newline_type(Text *txt){
 		txt->newlines = TEXT_NEWLINE_NL; /* default to UNIX style \n new lines */
 		const char *start = txt->buf ? txt->buf->data : NULL;
 		if (start) {
-			const char *nl = memchr(start, '\n', txt->buf->len);
+			const char *nl = (const char *)memchr(start, '\n', txt->buf->len);
 			if (nl > start && nl[-1] == '\r')
 				txt->newlines = TEXT_NEWLINE_CRNL;
 		} else {
@@ -1452,7 +1458,8 @@ bool text_iterator_codepoint_prev(Iterator *it, char *c) {
 bool text_iterator_char_next(Iterator *it, char *c) {
 	if (!text_iterator_codepoint_next(it, c))
 		return false;
-	mbstate_t ps = { 0 };
+	mbstate_t ps;
+	memset(&ps, 0, sizeof(ps));
 	for (;;) {
 		char buf[MB_CUR_MAX];
 		size_t len = text_bytes_get(it->piece->text, it->pos, sizeof buf, buf);
@@ -1482,7 +1489,8 @@ bool text_iterator_char_prev(Iterator *it, char *c) {
 		char buf[MB_CUR_MAX];
 		size_t len = text_bytes_get(it->piece->text, it->pos, sizeof buf, buf);
 		wchar_t wc;
-		mbstate_t ps = { 0 };
+		mbstate_t ps;
+		memset(&ps, 0, sizeof(ps));
 		size_t wclen = mbrtowc(&wc, buf, len, &ps);
 		if (wclen == (size_t)-1 && errno == EILSEQ) {
 			return true;
@@ -1526,7 +1534,7 @@ size_t text_bytes_get(Text *txt, size_t pos, size_t len, char *buf) {
 char *text_bytes_alloc0(Text *txt, size_t pos, size_t len) {
 	if (len == SIZE_MAX)
 		return NULL;
-	char *buf = malloc(len+1);
+	char *buf = (char *)malloc(len+1);
 	if (!buf)
 		return NULL;
 	len = text_bytes_get(txt, pos, len, buf);
@@ -1545,7 +1553,7 @@ static size_t lines_count(Text *txt, size_t pos, size_t len) {
 		const char *start = it.text;
 		while (len > 0 && start < it.end) {
 			size_t n = MIN(len, (size_t)(it.end - start));
-			const char *end = memchr(start, '\n', n);
+			const char *end = (const char *)memchr(start, '\n', n);
 			if (!end) {
 				len -= n;
 				break;
@@ -1568,7 +1576,7 @@ static size_t lines_skip_forward(Text *txt, size_t pos, size_t lines, size_t *li
 		const char *start = it.text;
 		while (lines > 0 && start < it.end) {
 			size_t n = it.end - start;
-			const char *end = memchr(start, '\n', n);
+			const char *end = (const char *)memchr(start, '\n', n);
 			if (!end) {
 				pos += n;
 				break;

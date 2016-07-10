@@ -15,6 +15,7 @@
 #if __FreeBSD__
 #include <inttypes.h>
 #endif
+#include <stdint.h>
 #include "map.hh"
 
 typedef struct Node Node;
@@ -129,7 +130,7 @@ bool map_put(Map *map, const char *k, const void *value)
 	new_dir = ((bytes[byte_num]) >> bit_num) & 1;
 
 	/* Allocate new node. */
-	newn = malloc(sizeof(*newn));
+	newn = (Node *)malloc(sizeof(*newn));
 	if (!newn) {
 		free(key);
 		errno = ENOMEM;
@@ -261,7 +262,7 @@ const Map *map_prefix(const Map *map, const char *prefix)
 
 	if (strncmp(n->u.s, prefix, len)) {
 		/* Convenient return for prefixes which do not appear in map. */
-		static const Map empty_map;
+		static Map empty_map;
 		return &empty_map;
 	}
 
@@ -316,7 +317,7 @@ bool map_empty(const Map *map)
 
 Map *map_new(void)
 {
-	return calloc(1, sizeof(Map));
+	return (Map *)calloc(1, sizeof(Map));
 }
 
 void map_free(Map *map)

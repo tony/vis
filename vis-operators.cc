@@ -92,7 +92,7 @@ static size_t op_put(Vis *vis, Text *txt, OperatorContext *c) {
 }
 
 static size_t op_shift_right(Vis *vis, Text *txt, OperatorContext *c) {
-	char spaces[9] = "         ";
+	char spaces[9] = "        ";
 	spaces[MIN(vis->tabwidth, LENGTH(spaces) - 1)] = '\0';
 	const char *tab = vis->expandtab ? spaces : "\t";
 	size_t tablen = strlen(tab);
@@ -144,7 +144,7 @@ static size_t op_shift_left(Vis *vis, Text *txt, OperatorContext *c) {
 
 static size_t op_case_change(Vis *vis, Text *txt, OperatorContext *c) {
 	size_t len = text_range_size(&c->range);
-	char *buf = malloc(len);
+	char *buf = (char *)malloc(len);
 	if (!buf)
 		return c->pos;
 	len = text_bytes_get(txt, c->range.start, len, buf);
@@ -275,7 +275,7 @@ bool vis_operator(Vis *vis, enum VisOperator id, ...) {
 	if (vis->action.op == op) {
 		/* hacky way to handle double operators i.e. things like
 		 * dd, yy etc where the second char isn't a movement */
-		vis->action.type = LINEWISE;
+		vis->action.type = Movement::LINEWISE;
 		vis_motion(vis, VIS_MOVE_LINE_NEXT);
 	} else {
 		vis->action.op = op;

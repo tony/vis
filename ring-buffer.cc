@@ -75,7 +75,7 @@ void ringbuf_invalidate(RingBuffer *buf) {
 
 RingBuffer *ringbuf_alloc(size_t size) {
 	RingBuffer *buf;
-	if ((buf = calloc(1, sizeof(*buf) + (++size)*sizeof(buf->data[0]))))
+	if ((buf = (RingBuffer *)calloc(1, sizeof(*buf) + (++size)*sizeof(buf->data[0]))))
 		buf->size = size;
 	return buf;
 }

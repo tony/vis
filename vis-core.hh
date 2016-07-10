@@ -79,7 +79,7 @@ typedef struct {
 	Filerange (*txt)(Text*, size_t pos);
 	Filerange (*vis)(Vis*, Text*, size_t pos);
 	Filerange (*user)(Vis*, Win*, void *data, size_t pos);
-	enum {
+	enum Type {
 		INNER = 1 << 0, /* whether the object should include */
 		OUTER = 1 << 1, /* the delimiting symbols or not */
 		SPLIT = 1 << 2, /* whether multiple applications will yield a split range */
