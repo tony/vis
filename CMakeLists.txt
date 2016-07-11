@@ -85,12 +85,12 @@ file(GLOB vis_SOURCES array.cc buffer.cc libutf.cc main.ccc map.cc register.cc r
 	ui-curses.cc view.cc vis.cc vis-lua.cc vis-modes.cc vis-motions.cc
 	vis-operators.cc vis-prompt.cc vis-text-objects.cc)
 
-#if (NOT EXISTS "${PROJECT_SOURCE_DIR}/config.hh")
+if (NOT EXISTS "${PROJECT_SOURCE_DIR}/config.hh")
   configure_file (
     "${PROJECT_SOURCE_DIR}/config.def.hh"
     "${PROJECT_SOURCE_DIR}/config.hh"
   )
-#endif()
+endif()
 
 include_directories(${CURSES_INCLUDE_DIR} ${LIBTERMKEY_INCLUDE_DIR})
 
