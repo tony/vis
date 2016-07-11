@@ -117,17 +117,17 @@ static bool cmd_set(Vis *vis, Win *win, Command *cmd, const char *argv[], Cursor
 
 	/* definitions have to be in the same order as the enum above */
 	static OptionDef options[] = {
-		[OPTION_AUTOINDENT]      = { { "autoindent", "ai"       }, OPTION_TYPE_BOOL                                              },
-		[OPTION_EXPANDTAB]       = { { "expandtab", "et"        }, OPTION_TYPE_BOOL                                              },
-		[OPTION_TABWIDTH]        = { { "tabwidth", "tw"         }, OPTION_TYPE_NUMBER                                            },
-		[OPTION_THEME]           = { { "theme"                  }, OPTION_TYPE_STRING,                                           },
-		[OPTION_SYNTAX]          = { { "syntax"                 }, OPTION_TYPE_STRING,   OptionDefFlag(OPTION_FLAG_WINDOW|OPTION_FLAG_OPTIONAL) },
-		[OPTION_SHOW]            = { { "show"                   }, OPTION_TYPE_STRING,   OPTION_FLAG_WINDOW                      },
-		[OPTION_NUMBER]          = { { "numbers", "nu"          }, OPTION_TYPE_BOOL,     OPTION_FLAG_WINDOW                      },
-		[OPTION_NUMBER_RELATIVE] = { { "relativenumbers", "rnu" }, OPTION_TYPE_BOOL,     OPTION_FLAG_WINDOW                      },
-		[OPTION_CURSOR_LINE]     = { { "cursorline", "cul"      }, OPTION_TYPE_BOOL,     OPTION_FLAG_WINDOW                      },
-		[OPTION_COLOR_COLUMN]    = { { "colorcolumn", "cc"      }, OPTION_TYPE_NUMBER,   OPTION_FLAG_WINDOW                      },
-		[OPTION_HORIZON]         = { { "horizon"                }, OPTION_TYPE_UNSIGNED, OPTION_FLAG_WINDOW                      },
+		[OPTION_AUTOINDENT]      = { { "autoindent", "ai"       }, OPTION_TYPE_BOOL, OPTION_FLAG_OPTIONAL, 0                                              },
+		[OPTION_EXPANDTAB]       = { { "expandtab", "et"        }, OPTION_TYPE_BOOL, OPTION_FLAG_OPTIONAL, 0                                              },
+		[OPTION_TABWIDTH]        = { { "tabwidth", "tw"         }, OPTION_TYPE_NUMBER, OPTION_FLAG_OPTIONAL, 0                                            },
+		[OPTION_THEME]           = { { "theme"                  }, OPTION_TYPE_STRING, OPTION_FLAG_OPTIONAL, 0                                           },
+		[OPTION_SYNTAX]          = { { "syntax"                 }, OPTION_TYPE_STRING,   OptionDefFlag(OPTION_FLAG_WINDOW|OPTION_FLAG_OPTIONAL), 0 },
+		[OPTION_SHOW]            = { { "show"                   }, OPTION_TYPE_STRING,   OPTION_FLAG_WINDOW, 0                      },
+		[OPTION_NUMBER]          = { { "numbers", "nu"          }, OPTION_TYPE_BOOL,     OPTION_FLAG_WINDOW, 0                      },
+		[OPTION_NUMBER_RELATIVE] = { { "relativenumbers", "rnu" }, OPTION_TYPE_BOOL,     OPTION_FLAG_WINDOW, 0                      },
+		[OPTION_CURSOR_LINE]     = { { "cursorline", "cul"      }, OPTION_TYPE_BOOL,     OPTION_FLAG_WINDOW, 0                      },
+		[OPTION_COLOR_COLUMN]    = { { "colorcolumn", "cc"      }, OPTION_TYPE_NUMBER,   OPTION_FLAG_WINDOW, 0                      },
+		[OPTION_HORIZON]         = { { "horizon"                }, OPTION_TYPE_UNSIGNED, OPTION_FLAG_WINDOW, 0                      }
 	};
 
 	if (!vis->options) {
