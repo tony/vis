@@ -118,8 +118,8 @@ typedef struct {
 	unsigned char b;
 } Color;
 
-static int color_compare(const void *lhs0, const void *rhs0) {
-	const Color *lhs = lhs0, *rhs = rhs0;
+static int color_compare(const void* lhs0, const void* rhs0) {
+	const Color *lhs = (const Color*)lhs0, *rhs = (const Color*)rhs0;
 
 	if (lhs->r < rhs->r)
 		return -1;
@@ -408,7 +408,7 @@ static int color_find_rgb(unsigned char r, unsigned char g, unsigned char b)
 	};
 
 	Color rgb = { .r = r, .g = g, .b = b };
-	const Color *found = bsearch(&rgb, color_to_256, LENGTH(color_to_256),
+	const Color *found = (const Color*)bsearch(&rgb, color_to_256, LENGTH(color_to_256),
 	    sizeof color_to_256[0], color_compare);
 
 	if (!found) {
@@ -493,7 +493,7 @@ static short color_pair_get(short fg, short bg) {
 		has_default_colors = (use_default_colors() == OK);
 		color_pairs_max = MIN(COLOR_PAIRS, MAX_COLOR_PAIRS);
 		if (COLORS)
-			color2palette = calloc((COLORS + 2) * (COLORS + 2), sizeof(short));
+			color2palette = (short *)calloc((COLORS + 2) * (COLORS + 2), sizeof(short));
 	}
 
 	if (fg >= COLORS)
@@ -960,7 +960,7 @@ static void ui_window_swap(UiWin *aw, UiWin *bw) {
 
 static UiWin *ui_window_new(Ui *ui, View *view, File *file, UiOptionEnum options) {
 	UiCurses *uic = (UiCurses*)ui;
-	UiCursesWin *win = calloc(1, sizeof(UiCursesWin));
+	UiCursesWin *win = (*UiCursesWin)calloc(1, sizeof(UiCursesWin));
 	if (!win)
 		return NULL;
 

@@ -71,13 +71,15 @@ static char *absolute_path(const char *name) {
 	if (!copy1 || !copy2)
 		goto err;
 
-	char *dir = dirname(copy1);
-	char *base = basename(copy2);
-	if (!(path_absolute = realpath(dir, NULL)))
-		goto err;
+    {
+        char *dir = dirname(copy1);
+        char *base = basename(copy2);
+        if (!(path_absolute = realpath(dir, NULL)))
+            goto err;
 
-	snprintf(path_normalized, sizeof(path_normalized)-1, "%s/%s",
-	         path_absolute, base);
+        snprintf(path_normalized, sizeof(path_normalized) - 1, "%s/%s",
+                 path_absolute, base);
+    }
 err:
 	free(copy1);
 	free(copy2);
@@ -196,10 +198,10 @@ static void window_free(Win *win) {
 }
 
 static void window_draw(void *ctx) {
-	Win *win = ctx;
+	Win *win = (Win *)ctx;
 	if (!win->ui)
 		return;
-	Vis *vis = win->vis;
+	Vis *vis = (Vis *)win->vis;
 	if (!win->file->internal && vis->event) {
 		if (win->lexer_name && vis->event->win_highlight)
 			vis->event->win_highlight(vis, win, win->horizon);
@@ -547,7 +549,7 @@ void action_do(Vis *vis, Action *a) {
 	bool repeatable = a->op && !vis->macro_operator;
 	bool multiple_cursors = view_cursors_multiple(view);
 	bool linewise = !(a->type & Movement::CHARWISE) && (
-		a->type & LINEWISE || (a->movement && a->movement->type & LINEWISE) ||
+		a->type & Movement::LINEWISE || (a->movement && a->movement->type & Movement::LINEWISE) ||
 		vis->mode == &vis_modes[VIS_MODE_VISUAL_LINE]);
 
 	for (Cursor *cursor = view_cursors(view), *next; cursor; cursor = next) {
@@ -606,7 +608,7 @@ void action_do(Vis *vis, Action *a) {
 					view_cursors_to(cursor, pos);
 				if (vis->mode->visual)
 					c.range = view_cursors_selection_get(cursor);
-				if (a->movement->type & JUMP)
+				if (a->movement->type & Movement::JUMP)
 					window_jumplist_add(win, pos);
 				else
 					window_jumplist_invalidate(win);
@@ -629,12 +631,12 @@ void action_do(Vis *vis, Action *a) {
 					r = a->textobj->user(vis, win, a->textobj->data, pos);
 				if (!text_range_valid(&r))
 					break;
-				if (a->textobj->type & OUTER) {
+				if (a->textobj->type & Movement::OUTER) {
 					r.start--;
 					r.end++;
 				}
 
-				if (a->textobj->type & SPLIT)
+				if (a->textobj->type & Movement::SPLIT)
 					c.range = r;
 				else
 					c.range = text_range_union(&c.range, &r);
@@ -1402,7 +1404,7 @@ int vis_pipe(Vis *vis, Filerange *range, bool interactive, const char *argv[],
 }
 
 static ssize_t read_buffer(void *context, char *data, size_t len) {
-	buffer_append(context, data, len);
+	buffer_append((Buffer*)context, data, len);
 	return len;
 }
 

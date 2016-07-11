@@ -91,19 +91,19 @@ struct View {
 };
 
 static const SyntaxSymbol symbols_none[] = {
-	[SYNTAX_SYMBOL_SPACE]    = { " " },
-	[SYNTAX_SYMBOL_TAB]      = { " " },
-	[SYNTAX_SYMBOL_TAB_FILL] = { " " },
-	[SYNTAX_SYMBOL_EOL]      = { " " },
-	[SYNTAX_SYMBOL_EOF]      = { "~" },
+	[SYNTAX_SYMBOL_SPACE]    = { " ", 0 },
+	[SYNTAX_SYMBOL_TAB]      = { " ", 0 },
+	[SYNTAX_SYMBOL_TAB_FILL] = { " ", 0 },
+	[SYNTAX_SYMBOL_EOL]      = { " ", 0 },
+	[SYNTAX_SYMBOL_EOF]      = { "~", 0 },
 };
 
 static const SyntaxSymbol symbols_default[] = {
-	[SYNTAX_SYMBOL_SPACE]    = { "\xC2\xB7" },
-	[SYNTAX_SYMBOL_TAB]      = { "\xE2\x96\xB6" },
-	[SYNTAX_SYMBOL_TAB_FILL] = { " " },
-	[SYNTAX_SYMBOL_EOL]      = { "\xE2\x8F\x8E" },
-	[SYNTAX_SYMBOL_EOF]      = { "~" },
+	[SYNTAX_SYMBOL_SPACE]    = { "\xC2\xB7", 0 },
+	[SYNTAX_SYMBOL_TAB]      = { "\xE2\x96\xB6", 0 },
+	[SYNTAX_SYMBOL_TAB_FILL] = { " ", 0 },
+	[SYNTAX_SYMBOL_EOL]      = { "\xE2\x8F\x8E", 0 },
+	[SYNTAX_SYMBOL_EOF]      = { "~", 0 },
 };
 
 static Cell cell_unused;
@@ -182,7 +182,7 @@ static bool view_addch(View *view, Cell *cell) {
 			cell->len = w == 0 ? 1 : 0;
 			int t = w == 0 ? SYNTAX_SYMBOL_TAB : SYNTAX_SYMBOL_TAB_FILL;
 			strncpy(cell->data, view->symbols[t]->symbol, sizeof(cell->data)-1);
-			cell->style = view->symbols[t]->style;
+			cell->style = (enum UiStyle)view->symbols[t]->style;
 			view->line->cells[view->col] = *cell;
 			view->line->len += cell->len;
 			view->line->width += cell->width;
@@ -201,7 +201,7 @@ static bool view_addch(View *view, Cell *cell) {
 		}
 
 		strncpy(cell->data, view->symbols[SYNTAX_SYMBOL_EOL]->symbol, sizeof(cell->data)-1);
-		cell->style = view->symbols[SYNTAX_SYMBOL_EOL]->style;
+		cell->style = (enum UiStyle)view->symbols[SYNTAX_SYMBOL_EOL]->style;
 
 		view->line->cells[view->col] = *cell;
 		view->line->len += cell->len;

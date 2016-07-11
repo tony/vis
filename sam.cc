@@ -157,10 +157,10 @@ static const CommandDef cmds[] = {
 };
 
 static const CommandDef cmddef_select =
-	{ { NULL           }, 0,                                   NULL, cmd_select        };
+	{ { NULL           }, (CommandFlags)0,                                   NULL, cmd_select        };
 
 static const CommandDef cmddef_user =
-	{ { NULL           }, CMD_ARGV|CMD_FORCE|CMD_ONCE,         NULL, cmd_user          };
+	{ { NULL           }, (CommandFlags)(CMD_ARGV|CMD_FORCE|CMD_ONCE),         NULL, cmd_user          };
 
 bool sam_init(Vis *vis) {
 	if (!(vis->cmds = map_new()))
@@ -191,7 +191,7 @@ const char *sam_error(enum SamError err) {
 }
 
 static Address *address_new(void) {
-	return calloc(1, sizeof(Address));
+	return (Address*)calloc(1, sizeof(Address));
 }
 
 static void address_free(Address *addr) {

@@ -275,7 +275,7 @@ bool vis_operator(Vis *vis, enum VisOperator id, ...) {
 	if (vis->action.op == op) {
 		/* hacky way to handle double operators i.e. things like
 		 * dd, yy etc where the second char isn't a movement */
-		vis->action.type = Movement::LINEWISE;
+		vis->action.type = Movement::VIS_MOTIONTYPE_LINEWISE;
 		vis_motion(vis, VIS_MOVE_LINE_NEXT);
 	} else {
 		vis->action.op = op;

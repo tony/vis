@@ -169,7 +169,7 @@ static size_t window_jumplist_next(Vis *vis, Win *win, size_t cur) {
 
 static size_t window_jumplist_prev(Vis *vis, Win *win, size_t cur) {
 	while (win->jumplist) {
-		Mark mark = ringbuf_prev(win->jumplist);
+		Mark mark = (Mark)ringbuf_prev(win->jumplist);
 		if (!mark)
 			return cur;
 		size_t pos = text_mark_get(win->file->text, mark);
@@ -218,12 +218,12 @@ void vis_motion_type(Vis *vis, enum VisMotionType type) {
 int vis_motion_register(Vis *vis, enum VisMotionType type, void *data,
 	size_t (*motion)(Vis*, Win*, void*, size_t pos)) {
 
-	Movement *move = calloc(1, sizeof *move);
+	Movement *move = (Movement*)calloc(1, sizeof *move);
 	if (!move)
 		return -1;
 
 	move->user = motion;
-	move->type = type;
+	move->type = (Movement::Type)type;
 	move->data = data;
 
 	if (array_add_ptr(&vis->motions, move))
