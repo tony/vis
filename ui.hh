@@ -20,6 +20,8 @@ enum UiLayout {
 	UI_LAYOUT_VERTICAL,
 };
 
+typedef int UiOptionEnum;
+
 enum UiOption {
 	UI_OPTION_NONE = 0,
 	UI_OPTION_LINE_NUMBERS_ABSOLUTE = 1 << 0,

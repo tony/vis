@@ -546,7 +546,7 @@ void action_do(Vis *vis, Action *a) {
 	int count = MAX(a->count, 1);
 	bool repeatable = a->op && !vis->macro_operator;
 	bool multiple_cursors = view_cursors_multiple(view);
-	bool linewise = !(a->type & CHARWISE) && (
+	bool linewise = !(a->type & Movement::CHARWISE) && (
 		a->type & LINEWISE || (a->movement && a->movement->type & LINEWISE) ||
 		vis->mode == &vis_modes[VIS_MODE_VISUAL_LINE]);
 
@@ -586,7 +586,7 @@ void action_do(Vis *vis, Action *a) {
 					pos = a->movement->win(vis, win, pos);
 				else if (a->movement->user)
 					pos = a->movement->user(vis, win, a->movement->data, pos);
-				if (pos == EPOS || a->movement->type & IDEMPOTENT || pos == pos_prev)
+				if (pos == EPOS || a->movement->type & Movement::IDEMPOTENT || pos == pos_prev)
 					break;
 			}
 
@@ -600,7 +600,7 @@ void action_do(Vis *vis, Action *a) {
 			}
 
 			if (!a->op) {
-				if (a->movement->type & CHARWISE)
+				if (a->movement->type & Movement::CHARWISE)
 					view_cursors_scroll_to(cursor, pos);
 				else
 					view_cursors_to(cursor, pos);
@@ -610,8 +610,8 @@ void action_do(Vis *vis, Action *a) {
 					window_jumplist_add(win, pos);
 				else
 					window_jumplist_invalidate(win);
-			} else if (a->movement->type & INCLUSIVE ||
-			          (linewise && a->movement->type & LINEWISE_INCLUSIVE)) {
+			} else if (a->movement->type & Movement::INCLUSIVE ||
+			          (linewise && a->movement->type & Movement::LINEWISE_INCLUSIVE)) {
 				c.range.end = text_char_next(txt, c.range.end);
 			}
 		} else if (a->textobj) {
