@@ -208,7 +208,7 @@ static void window_draw(void *ctx) {
 	}
 }
 
-Win *window_new_file(Vis *vis, File *file, enum UiOption options) {
+Win *window_new_file(Vis *vis, File *file, UiOptionEnum options) {
 	Win *win = calloc(1, sizeof(Win));
 	if (!win)
 		return NULL;

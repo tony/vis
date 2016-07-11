@@ -13,6 +13,8 @@
 typedef struct Ui Ui;
 typedef struct UiWin UiWin;
 
+typedef int UiOptionEnum;
+
 enum UiLayout {
 	UI_LAYOUT_HORIZONTAL,
 	UI_LAYOUT_VERTICAL,
@@ -54,7 +56,7 @@ struct Ui {
 	bool (*start)(Ui*);
 	void (*free)(Ui*);
 	void (*resize)(Ui*);
-	UiWin* (*window_new)(Ui*, View*, File*, enum UiOption);
+	UiWin* (*window_new)(Ui*, View*, File*, UiOptionEnum);
 	void (*window_free)(UiWin*);
 	void (*window_focus)(UiWin*);
 	void (*window_swap)(UiWin*, UiWin*);
@@ -77,8 +79,8 @@ struct UiWin {
 	void (*draw)(UiWin*);
 	void (*status)(UiWin*, const char *txt);
 	void (*reload)(UiWin*, File*);
-	void (*options_set)(UiWin*, enum UiOption);
-	enum UiOption (*options_get)(UiWin*);
+	void (*options_set)(UiWin*, UiOptionEnum);
+	UiOptionEnum (*options_get)(UiWin*);
 	bool (*syntax_style)(UiWin*, int id, const char *style);
 	int (*window_width)(UiWin*);
 	int (*window_height)(UiWin*);

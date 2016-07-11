@@ -32,7 +32,7 @@ static void window_status_update(Vis *vis, Win *win) {
 	File *file = win->file;
 	Text *txt = file->text;
 	int width = vis_window_width_get(win);
-	enum UiOption options = view_options_get(view);
+	UiOptionEnum options = view_options_get(view);
 	bool focused = vis->win == win;
 	const char *filename = file_name_get(file);
 	const char *mode = vis->mode->status;

@@ -101,7 +101,7 @@ struct UiCursesWin {
 	int x, y;                 /* window position */
 	int sidebar_width;        /* width of the sidebar showing line numbers etc. */
 	UiCursesWin *next, *prev; /* pointers to neighbouring windows */
-	enum UiOption options;    /* display settings for this window */
+	UiOptionEnum options;    /* display settings for this window */
 	CellStyle styles[UI_STYLE_MAX];
 };
 
@@ -871,7 +871,7 @@ static void ui_window_focus(UiWin *w) {
 	ui_window_draw(w);
 }
 
-static void ui_window_options_set(UiWin *w, enum UiOption options) {
+static void ui_window_options_set(UiWin *w, UiOptionEnum options) {
 	UiCursesWin *win = (UiCursesWin*)w;
 	win->options = options;
 	if (options & (UI_OPTION_LINE_NUMBERS_ABSOLUTE|UI_OPTION_LINE_NUMBERS_RELATIVE)) {
@@ -915,7 +915,7 @@ static void ui_window_options_set(UiWin *w, enum UiOption options) {
 	ui_draw((Ui*)win->ui);
 }
 
-static enum UiOption ui_window_options_get(UiWin *w) {
+static UiOptionEnum ui_window_options_get(UiWin *w) {
 	UiCursesWin *win = (UiCursesWin*)w;
 	return win->options;
 }
@@ -958,7 +958,7 @@ static void ui_window_swap(UiWin *aw, UiWin *bw) {
 		ui_window_focus(aw);
 }
 
-static UiWin *ui_window_new(Ui *ui, View *view, File *file, enum UiOption options) {
+static UiWin *ui_window_new(Ui *ui, View *view, File *file, UiOptionEnum options) {
 	UiCurses *uic = (UiCurses*)ui;
 	UiCursesWin *win = calloc(1, sizeof(UiCursesWin));
 	if (!win)

@@ -257,7 +257,7 @@ static bool cmd_set(Vis *vis, Win *win, Command *cmd, const char *argv[], Cursor
 		view_options_set(win->view, flags);
 		break;
 	case OPTION_NUMBER: {
-		enum UiOption opt = view_options_get(win->view);
+		UiOptionEnum opt = view_options_get(win->view);
 		if (arg.b) {
 			opt &= ~UI_OPTION_LINE_NUMBERS_RELATIVE;
 			opt |=  UI_OPTION_LINE_NUMBERS_ABSOLUTE;
@@ -268,7 +268,7 @@ static bool cmd_set(Vis *vis, Win *win, Command *cmd, const char *argv[], Cursor
 		break;
 	}
 	case OPTION_NUMBER_RELATIVE: {
-		enum UiOption opt = view_options_get(win->view);
+		UiOptionEnum opt = view_options_get(win->view);
 		if (arg.b) {
 			opt &= ~UI_OPTION_LINE_NUMBERS_ABSOLUTE;
 			opt |=  UI_OPTION_LINE_NUMBERS_RELATIVE;
@@ -279,7 +279,7 @@ static bool cmd_set(Vis *vis, Win *win, Command *cmd, const char *argv[], Cursor
 		break;
 	}
 	case OPTION_CURSOR_LINE: {
-		enum UiOption opt = view_options_get(win->view);
+		UiOptionEnum opt = view_options_get(win->view);
 		if (arg.b)
 			opt |= UI_OPTION_CURSOR_LINE;
 		else
@@ -452,7 +452,7 @@ static bool cmd_qall(Vis *vis, Win *win, Command *cmd, const char *argv[], Curso
 static bool cmd_split(Vis *vis, Win *win, Command *cmd, const char *argv[], Cursor *cur, Filerange *range) {
 	if (!win)
 		return false;
-	enum UiOption options = view_options_get(win->view);
+	UiOptionEnum options = view_options_get(win->view);
 	windows_arrange(vis, UI_LAYOUT_HORIZONTAL);
 	if (!argv[1])
 		return vis_window_split(win);
@@ -465,7 +465,7 @@ static bool cmd_split(Vis *vis, Win *win, Command *cmd, const char *argv[], Curs
 static bool cmd_vsplit(Vis *vis, Win *win, Command *cmd, const char *argv[], Cursor *cur, Filerange *range) {
 	if (!win)
 		return false;
-	enum UiOption options = view_options_get(win->view);
+	UiOptionEnum options = view_options_get(win->view);
 	windows_arrange(vis, UI_LAYOUT_VERTICAL);
 	if (!argv[1])
 		return vis_window_split(win);

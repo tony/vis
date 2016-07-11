@@ -826,7 +826,7 @@ void view_scroll_to(View *view, size_t pos) {
 	view_cursors_scroll_to(view->cursor, pos);
 }
 
-void view_options_set(View *view, enum UiOption options) {
+void view_options_set(View *view, UiOptionEnum options) {
 	const int mapping[] = {
 		[SYNTAX_SYMBOL_SPACE]    = UI_OPTION_SYMBOL_SPACE,
 		[SYNTAX_SYMBOL_TAB]      = UI_OPTION_SYMBOL_TAB,
@@ -849,7 +849,7 @@ void view_options_set(View *view, enum UiOption options) {
 		view->ui->options_set(view->ui, options);
 }
 
-enum UiOption view_options_get(View *view) {
+UiOptionEnum view_options_get(View *view) {
 	return view->ui ? view->ui->options_get(view->ui) : 0;
 }
 

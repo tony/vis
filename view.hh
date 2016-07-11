@@ -92,8 +92,8 @@ Filerange view_viewport_get(View*);
 bool view_viewport_up(View *view, int n);
 bool view_viewport_down(View *view, int n);
 
-void view_options_set(View*, enum UiOption options);
-enum UiOption view_options_get(View*);
+void view_options_set(View*, UiOptionEnum options);
+UiOptionEnum view_options_get(View*);
 void view_colorcolumn_set(View*, int col);
 int view_colorcolumn_get(View*);
 
