@@ -39,7 +39,7 @@ struct Line {               /* a line on the screen, *not* in the file */
 	size_t len;         /* line length in terms of bytes */
 	size_t lineno;      /* line number from start of file */
 	int width;          /* zero based position of last used column cell */
-	std::vector<Cell> cells;       /* win->width cells storing information about the displayed characters */
+    Cell cells[];       /* win->width cells storing information about the displayed characters */
 };
 
 View *view_new(Text*, ViewEvent*);
