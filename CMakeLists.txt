@@ -80,7 +80,7 @@ add_custom_target(superbuild
 
 include_directories("./")
 
-file(GLOB vis_SOURCES array.cc buffer.cc libutf.cc main.ccc map.cc register.cc ring-buffer.cc
+file(GLOB vis_SOURCES array.cc buffer.cc libutf.cc main.cc map.cc register.cc ring-buffer.cc
 	sam.cc text.cc text-motions.cc text-objects.cc text-regex.cc text-util.cc
 	ui-curses.cc view.cc vis.cc vis-lua.cc vis-modes.cc vis-motions.cc
 	vis-operators.cc vis-prompt.cc vis-text-objects.cc)
