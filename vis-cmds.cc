@@ -16,7 +16,7 @@ bool vis_cmd_register(Vis *vis, const char *name, void *data, CmdFunc func) {
 		return false;
 	if (!vis->usercmds && !(vis->usercmds = map_new()))
 		return false;
-	CmdUser *cmd = calloc(1, sizeof *cmd);
+	CmdUser *cmd = (CmdUser*)calloc(1, sizeof *cmd);
 	if (!cmd)
 		return false;
 	cmd->func = func;
@@ -36,7 +36,7 @@ err:
 bool vis_cmd_unregister(Vis *vis, const char *name) {
 	if (!name)
 		return true;
-	CmdUser *cmd = map_delete(vis->usercmds, name);
+	CmdUser *cmd = (CmdUser*)map_delete(vis->usercmds, name);
 	if (!cmd)
 		return false;
 	if (!map_delete(vis->cmds, name))
@@ -46,7 +46,7 @@ bool vis_cmd_unregister(Vis *vis, const char *name) {
 }
 
 static bool cmd_user(Vis *vis, Win *win, Command *cmd, const char *argv[], Cursor *cur, Filerange *range) {
-	CmdUser *user = map_get(vis->usercmds, argv[0]);
+	CmdUser *user = (CmdUser*)map_get(vis->usercmds, argv[0]);
 	return user && user->func(vis, win, user->data, cmd->flags == '!', argv, cur, range);
 }
 
@@ -92,7 +92,7 @@ static bool cmd_set(Vis *vis, Win *win, Command *cmd, const char *argv[], Cursor
 	enum OptionDefFlag {
 		OPTION_FLAG_OPTIONAL = 1 << 0,
 		OPTION_FLAG_WINDOW = 1 << 1
-	}
+	};
 
 	typedef struct {
 		const char *names[3];
@@ -101,7 +101,7 @@ static bool cmd_set(Vis *vis, Win *win, Command *cmd, const char *argv[], Cursor
 		int index;
 	} OptionDef;
 
-	enum {
+	enum OptionDefEnum {
 		OPTION_AUTOINDENT,
 		OPTION_EXPANDTAB,
 		OPTION_TABWIDTH,
@@ -121,7 +121,7 @@ static bool cmd_set(Vis *vis, Win *win, Command *cmd, const char *argv[], Cursor
 		[OPTION_EXPANDTAB]       = { { "expandtab", "et"        }, OPTION_TYPE_BOOL, OPTION_FLAG_OPTIONAL, 0                                              },
 		[OPTION_TABWIDTH]        = { { "tabwidth", "tw"         }, OPTION_TYPE_NUMBER, OPTION_FLAG_OPTIONAL, 0                                            },
 		[OPTION_THEME]           = { { "theme"                  }, OPTION_TYPE_STRING, OPTION_FLAG_OPTIONAL, 0                                           },
-		[OPTION_SYNTAX]          = { { "syntax"                 }, OPTION_TYPE_STRING,   OptionDefFlag(OPTION_FLAG_WINDOW|OPTION_FLAG_OPTIONAL), 0 },
+		[OPTION_SYNTAX]          = { { "syntax"                 }, OPTION_TYPE_STRING,   (OptionDefFlag)(OPTION_FLAG_WINDOW|OPTION_FLAG_OPTIONAL), 0 },
 		[OPTION_SHOW]            = { { "show"                   }, OPTION_TYPE_STRING,   OPTION_FLAG_WINDOW, 0                      },
 		[OPTION_NUMBER]          = { { "numbers", "nu"          }, OPTION_TYPE_BOOL,     OPTION_FLAG_WINDOW, 0                      },
 		[OPTION_NUMBER_RELATIVE] = { { "relativenumbers", "rnu" }, OPTION_TYPE_BOOL,     OPTION_FLAG_WINDOW, 0                      },
@@ -152,7 +152,7 @@ static bool cmd_set(Vis *vis, Win *win, Command *cmd, const char *argv[], Cursor
 	OptionDef *opt = NULL;
 
 	if (!strncasecmp(argv[1], "no", 2)) {
-		opt = map_closest(vis->options, argv[1]+2);
+		opt = (OptionDef*)map_closest(vis->options, argv[1]+2);
 		if (opt && opt->type == OPTION_TYPE_BOOL)
 			invert = true;
 		else
@@ -160,7 +160,7 @@ static bool cmd_set(Vis *vis, Win *win, Command *cmd, const char *argv[], Cursor
 	}
 
 	if (!opt)
-		opt = map_closest(vis->options, argv[1]);
+		opt = (OptionDef*)map_closest(vis->options, argv[1]);
 	if (!opt) {
 		vis_info_show(vis, "Unknown option: `%s'", argv[1]);
 		return false;
@@ -201,92 +201,103 @@ static bool cmd_set(Vis *vis, Win *win, Command *cmd, const char *argv[], Cursor
 	}
 
 	switch (opt->index) {
-	case OPTION_EXPANDTAB:
-		vis->expandtab = arg.b;
-		break;
-	case OPTION_AUTOINDENT:
-		vis->autoindent = arg.b;
-		break;
+    case OPTION_EXPANDTAB: {
+        vis->expandtab = arg.b;
+        break;
+    }
+    case OPTION_AUTOINDENT: {
+        vis->autoindent = arg.b;
+        break;
+    }
 	case OPTION_TABWIDTH:
 		tabwidth_set(vis, arg.i);
 		break;
-	case OPTION_SYNTAX:
-		if (!argv[2]) {
-			const char *syntax = vis_window_syntax_get(win);
-			if (syntax)
-				vis_info_show(vis, "Syntax definition in use: `%s'", syntax);
-			else
-				vis_info_show(vis, "No syntax definition in use");
-			return true;
-		}
+	case OPTION_SYNTAX: {
+        if (!argv[2]) {
+            const char *syntax = vis_window_syntax_get(win);
+            if (syntax)
+                vis_info_show(vis, "Syntax definition in use: `%s'", syntax);
+            else
+                vis_info_show(vis, "No syntax definition in use");
+            return true;
+        }
 
-		if (parse_bool(argv[2], &arg.b) && !arg.b)
-			return vis_window_syntax_set(win, NULL);
-		if (!vis_window_syntax_set(win, argv[2])) {
-			vis_info_show(vis, "Unknown syntax definition: `%s'", argv[2]);
-			return false;
-		}
-		break;
+        if (parse_bool(argv[2], &arg.b) && !arg.b)
+            return vis_window_syntax_set(win, NULL);
+        if (!vis_window_syntax_set(win, argv[2])) {
+            vis_info_show(vis, "Unknown syntax definition: `%s'", argv[2]);
+            return false;
+        }
+        break;
+    }
 	case OPTION_SHOW:
-		if (!argv[2]) {
-			vis_info_show(vis, "Expecting: spaces, tabs, newlines");
-			return false;
-		}
-		const char *keys[] = { "spaces", "tabs", "newlines" };
-		const int values[] = {
-			UI_OPTION_SYMBOL_SPACE,
-			UI_OPTION_SYMBOL_TAB|UI_OPTION_SYMBOL_TAB_FILL,
-			UI_OPTION_SYMBOL_EOL,
-		};
-		int flags = view_options_get(win->view);
-		for (const char **args = &argv[2]; *args; args++) {
-			for (int i = 0; i < LENGTH(keys); i++) {
-				if (strcmp(*args, keys[i]) == 0) {
-					flags |= values[i];
-				} else if (strstr(*args, keys[i]) == *args) {
-					bool show;
-					const char *v = *args + strlen(keys[i]);
-					if (*v == '=' && parse_bool(v+1, &show)) {
-						if (show)
-							flags |= values[i];
-						else
-							flags &= ~values[i];
-					}
-				}
-			}
-		}
-		view_options_set(win->view, flags);
-		break;
+    {
+        if (!argv[2]) {
+            vis_info_show(vis, "Expecting: spaces, tabs, newlines");
+            return false;
+        }
+        const char *keys[] = {"spaces", "tabs", "newlines"};
+        const int values[] = {
+                UI_OPTION_SYMBOL_SPACE,
+                UI_OPTION_SYMBOL_TAB | UI_OPTION_SYMBOL_TAB_FILL,
+                UI_OPTION_SYMBOL_EOL,
+        };
+        int flags = view_options_get(win->view);
+        for (const char **args = &argv[2]; *args; args++) {
+            for (int i = 0; i < LENGTH(keys); i++) {
+                if (strcmp(*args, keys[i]) == 0) {
+                    flags |= values[i];
+                } else if (strstr(*args, keys[i]) == *args) {
+                    bool show;
+                    const char *v = *args + strlen(keys[i]);
+                    if (*v == '=' && parse_bool(v + 1, &show)) {
+                        if (show)
+                            flags |= values[i];
+                        else
+                            flags &= ~values[i];
+                    }
+                }
+            }
+        }
+        view_options_set(win->view, flags);
+        break;
+    }
 	case OPTION_NUMBER: {
-		UiOptionEnum opt = view_options_get(win->view);
-		if (arg.b) {
-			opt &= ~UI_OPTION_LINE_NUMBERS_RELATIVE;
-			opt |=  UI_OPTION_LINE_NUMBERS_ABSOLUTE;
-		} else {
-			opt &= ~UI_OPTION_LINE_NUMBERS_ABSOLUTE;
-		}
-		view_options_set(win->view, opt);
-		break;
+        {
+            UiOptionEnum opt = view_options_get(win->view);
+            if (arg.b) {
+                opt &= ~UI_OPTION_LINE_NUMBERS_RELATIVE;
+                opt |= UI_OPTION_LINE_NUMBERS_ABSOLUTE;
+            } else {
+                opt &= ~UI_OPTION_LINE_NUMBERS_ABSOLUTE;
+            }
+            view_options_set(win->view, opt);
+            break;
+        }
 	}
 	case OPTION_NUMBER_RELATIVE: {
-		UiOptionEnum opt = view_options_get(win->view);
-		if (arg.b) {
-			opt &= ~UI_OPTION_LINE_NUMBERS_ABSOLUTE;
-			opt |=  UI_OPTION_LINE_NUMBERS_RELATIVE;
-		} else {
-			opt &= ~UI_OPTION_LINE_NUMBERS_RELATIVE;
-		}
-		view_options_set(win->view, opt);
-		break;
+        {
+            UiOptionEnum opt = view_options_get(win->view);
+            if (arg.b) {
+                opt &= ~UI_OPTION_LINE_NUMBERS_ABSOLUTE;
+                opt |= UI_OPTION_LINE_NUMBERS_RELATIVE;
+            } else {
+                opt &= ~UI_OPTION_LINE_NUMBERS_RELATIVE;
+            }
+            view_options_set(win->view, opt);
+            break;
+        }
 	}
 	case OPTION_CURSOR_LINE: {
-		UiOptionEnum opt = view_options_get(win->view);
-		if (arg.b)
-			opt |= UI_OPTION_CURSOR_LINE;
-		else
-			opt &= ~UI_OPTION_CURSOR_LINE;
-		view_options_set(win->view, opt);
-		break;
+        {
+            UiOptionEnum opt = view_options_get(win->view);
+            if (arg.b)
+                opt |= UI_OPTION_CURSOR_LINE;
+            else
+                opt &= ~UI_OPTION_CURSOR_LINE;
+            view_options_set(win->view, opt);
+            break;
+        }
 	}
 	case OPTION_THEME:
 		if (!vis_theme_load(vis, arg.s)) {
@@ -297,9 +308,10 @@ static bool cmd_set(Vis *vis, Win *win, Command *cmd, const char *argv[], Cursor
 	case OPTION_COLOR_COLUMN:
 		view_colorcolumn_set(win->view, arg.i);
 		break;
-	case OPTION_HORIZON:
-		win->horizon = arg.u;
-		break;
+	case OPTION_HORIZON: {
+        win->horizon = arg.u;
+        break;
+    }
 	}
 
 	return true;
@@ -547,15 +559,15 @@ static bool cmd_earlier_later(Vis *vis, Win *win, Command *cmd, const char *argv
 }
 
 static bool print_keylayout(const char *key, void *value, void *data) {
-	return text_appendf(data, "  %-18s\t%s\n", key[0] == ' ' ? "␣" : key, (char*)value);
+	return text_appendf((Text*)data, "  %-18s\t%s\n", key[0] == ' ' ? "␣" : key, (char*)value);
 }
 
 static bool print_keybinding(const char *key, void *value, void *data) {
-	KeyBinding *binding = value;
+	KeyBinding *binding = (KeyBinding*)value;
 	const char *desc = binding->alias;
 	if (!desc && binding->action)
 		desc = binding->action->help;
-	return text_appendf(data, "  %-18s\t%s\n", key[0] == ' ' ? "␣" : key, desc ? desc : "");
+	return text_appendf((Text*)data, "  %-18s\t%s\n", key[0] == ' ' ? "␣" : key, desc ? desc : "");
 }
 
 static void print_mode(Mode *mode, Text *txt) {
@@ -565,12 +577,12 @@ static void print_mode(Mode *mode, Text *txt) {
 }
 
 static bool print_action(const char *key, void *value, void *data) {
-	KeyAction *action = value;
-	return text_appendf(data, "  %-30s\t%s\n", key, action->help);
+	KeyAction *action = (KeyAction*)value;
+	return text_appendf((Text*)data, "  %-30s\t%s\n", key, action->help);
 }
 
 static bool print_cmd(const char *key, void *value, void *data) {
-	return text_appendf(data, "  %s\n", key);
+	return text_appendf((Text*)data, "  %s\n", key);
 }
 
 static void print_symbolic_keys(Vis *vis, Text *txt) {
@@ -639,7 +651,7 @@ static void print_symbolic_keys(Vis *vis, Text *txt) {
 	TermKey *termkey = vis->ui->termkey_get(vis->ui);
 	text_appendf(txt, "  ␣ (a literal \" \" space symbol must be used to refer to <Space>)\n");
 	for (size_t i = 0; i < LENGTH(keys); i++) {
-		text_appendf(txt, "  <%s>\n", termkey_get_keyname(termkey, keys[i]));
+		text_appendf((Text*)txt, "  <%s>\n", termkey_get_keyname(termkey, (TermKeySym)keys[i]));
 	}
 }
 
@@ -708,7 +720,7 @@ static enum VisMode str2vismode(const char *mode) {
 
 	for (size_t i = 0; i < LENGTH(modes); i++) {
 		if (mode && modes[i] && strcmp(mode, modes[i]) == 0)
-			return i;
+			return (enum VisMode)i;
 	}
 	return VIS_MODE_INVALID;
 }
@@ -760,7 +772,7 @@ static bool cmd_map(Vis *vis, Win *win, Command *cmd, const char *argv[], Cursor
 
 	const char *lhs = argv[2];
 	char *rhs = strdup(argv[3]);
-	if (!rhs || !(binding = calloc(1, sizeof *binding)))
+	if (!rhs || !(binding = (KeyBinding*)calloc(1, sizeof *binding)))
 		goto err;
 
 	binding->alias = rhs;

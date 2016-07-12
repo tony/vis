@@ -168,6 +168,7 @@ bool vis_action_register(Vis*, const KeyAction*);
  * before any key bindings are evaluated */
 bool vis_keymap_add(Vis*, const char *key, const char *mapping);
 
+typedef int VisOperatorEnum;
 enum VisOperator {
 	VIS_OP_DELETE,
 	VIS_OP_CHANGE,
@@ -202,8 +203,9 @@ enum VisOperator {
  *
  *  - VIS_OP_FILTER     a char pointer referring to the command to run
  */
-bool vis_operator(Vis*, enum VisOperator, ...);
+bool vis_operator(Vis*, VisOperatorEnum, ...);
 
+typedef int VisMotionEnum;
 enum VisMotion {
 	VIS_MOVE_LINE_DOWN,
 	VIS_MOVE_LINE_UP,
@@ -290,7 +292,7 @@ enum VisMotion {
  *
  *     expect a valid enum VisMark
  */
-bool vis_motion(Vis*, enum VisMotion, ...);
+bool vis_motion(Vis*, VisMotionEnum, ...);
 
 /* If no count is explicitly specified, operators, motions and
  * text object will always perform their function as if a minimal
@@ -300,17 +302,18 @@ int vis_count_get(Vis*);
 int vis_count_get_default(Vis*, int def);
 void vis_count_set(Vis*, int count);
 
+typedef int VisMotionTypeEnum;
 enum VisMotionType {
 	VIS_MOTIONTYPE_LINEWISE  = 1 << 0,
 	VIS_MOTIONTYPE_CHARWISE  = 1 << 1,
 };
 /* force certain motion to behave in line or character wise mode */
-void vis_motion_type(Vis *vis, enum VisMotionType);
+void vis_motion_type(Vis *vis, VisMotionTypeEnum _type);
 
 /* register a motion function, if positive the return value can be used
  * as an id for the vis_motion funntion. A negative return value indicates
  * an error */
-int vis_motion_register(Vis*, enum VisMotionType, void *data,
+int vis_motion_register(Vis*, VisMotionTypeEnum _type, void *data,
 	size_t (*motion)(Vis*, Win*, void*, size_t pos));
 
 enum VisTextObject {
@@ -368,6 +371,7 @@ enum VisMark {
 
 void vis_mark_set(Vis*, enum VisMark mark, size_t pos);
 
+typedef int VisRegisterEnum;
 enum VisRegister {
 	VIS_REG_a, VIS_REG_b, VIS_REG_c, VIS_REG_d, VIS_REG_e,
 	VIS_REG_f, VIS_REG_g, VIS_REG_h, VIS_REG_i, VIS_REG_j,
@@ -395,18 +399,18 @@ enum VisRegister {
 };
 
 /* set the register to use, if none is given the DEFAULT register is used */
-void vis_register_set(Vis*, enum VisRegister);
+void vis_register_set(Vis*, VisRegisterEnum);
 /* get register content */
-const char *vis_register_get(Vis*, enum VisRegister, size_t *len);
+const char *vis_register_get(Vis*, VisRegisterEnum, size_t *len);
 
 /* start a macro recording, fails if a recording is already on going */
-bool vis_macro_record(Vis*, enum VisRegister);
+bool vis_macro_record(Vis*, VisRegisterEnum);
 /* stop recording, fails if there is nothing to stop */
 bool vis_macro_record_stop(Vis*);
 /* check whether a recording is currently on going */
 bool vis_macro_recording(Vis*);
 /* replay a macro. a macro currently being recorded can't be replayed */
-bool vis_macro_replay(Vis*, enum VisRegister);
+bool vis_macro_replay(Vis*, VisRegisterEnum);
 
 /* repeat last operator, possibly with a new count if one was provided in the meantime */
 void vis_repeat(Vis*);

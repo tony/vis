@@ -627,7 +627,7 @@ static int map(lua_State *L) {
 
 static int motion(lua_State *L) {
 	Vis *vis = obj_ref_check(L, 1, "vis");
-	enum VisMotion id = luaL_checkunsigned(L, 2);
+	VisMotionEnum id = luaL_checkunsigned(L, 2);
 	// TODO handle var args?
 	lua_pushboolean(L, vis && vis_motion(vis, id));
 	return 1;

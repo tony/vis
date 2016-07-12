@@ -1548,7 +1548,7 @@ static const char *nop(Vis *vis, const char *keys, const Arg *arg) {
 	return keys;
 }
 
-static const char *key2register(Vis *vis, const char *keys, enum VisRegister *reg) {
+static const char *key2register(Vis *vis, const char *keys, VisRegisterEnum *reg) {
     std::ignore = vis;
 	*reg = VIS_REG_INVALID;
 	if (!keys[0])
@@ -1575,7 +1575,7 @@ static const char *key2register(Vis *vis, const char *keys, enum VisRegister *re
 static const char *macro_record(Vis *vis, const char *keys, const Arg *arg) {
     std::ignore = arg;
 	if (!vis_macro_record_stop(vis)) {
-		enum VisRegister reg;
+		VisRegisterEnum reg;
 		keys = key2register(vis, keys, &reg);
 		vis_macro_record(vis, reg);
 	}
@@ -1585,7 +1585,7 @@ static const char *macro_record(Vis *vis, const char *keys, const Arg *arg) {
 
 static const char *macro_replay(Vis *vis, const char *keys, const Arg *arg) {
     std::ignore = arg;
-	enum VisRegister reg;
+	VisRegisterEnum reg;
 	keys = key2register(vis, keys, &reg);
 	vis_macro_replay(vis, reg);
 	return keys;
@@ -2007,7 +2007,7 @@ static const char *movement_key(Vis *vis, const char *keys, const Arg *arg) {
 	if (len < sizeof key) {
 		strncpy(key, keys, len);
 		key[len] = '\0';
-		vis_motion(vis, (VisMotion) arg->i, key);
+		vis_motion(vis, (VisMotion)arg->i, key);
 	}
 	return next;
 }
@@ -2047,7 +2047,7 @@ static const char *selection_restore(Vis *vis, const char *keys, const Arg *arg)
 
 static const char *reg(Vis *vis, const char *keys, const Arg *arg) {
     std::ignore = arg;
-	enum VisRegister reg;
+	VisRegisterEnum reg;
 	keys = key2register(vis, keys, &reg);
 	vis_register_set(vis, reg);
 	return keys;
@@ -2144,7 +2144,7 @@ static const char *del(Vis *vis, const char *keys, const Arg *arg) {
 static const char *insert_register(Vis *vis, const char *keys, const Arg *arg) {
     std::ignore = arg;
 
-	enum VisRegister regid;
+	VisRegisterEnum regid;
 	keys = key2register(vis, keys, &regid);
 	size_t len;
 	const char *data = vis_register_get(vis, regid, &len);

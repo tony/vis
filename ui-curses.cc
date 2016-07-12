@@ -960,7 +960,7 @@ static void ui_window_swap(UiWin *aw, UiWin *bw) {
 
 static UiWin *ui_window_new(Ui *ui, View *view, File *file, UiOptionEnum options) {
 	UiCurses *uic = (UiCurses*)ui;
-	UiCursesWin *win = (*UiCursesWin)calloc(1, sizeof(UiCursesWin));
+	UiCursesWin *win = (UiCursesWin*)calloc(1, sizeof(UiCursesWin));
 	if (!win)
 		return NULL;
 

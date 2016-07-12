@@ -121,34 +121,40 @@ static const char *prompt_backspace(Vis *vis, const char *keys, const Arg *arg) 
 	return keys;
 }
 
-constexpr KeyBinding prompt_enter_binding = []{
-    KeyBinding b = {};
-    b.alias = "<Enter>";
-    static KeyAction keyAction {};
-    b.action = &keyAction;
-    b.action.func = prompt_enter;
-    return b;
+static const KeyAction prompt_enter_binding_action = {
+    .func = prompt_enter
+};
+
+static const KeyBinding prompt_enter_binding = {
+    .key = "<Enter>",
+	.action = &prompt_enter_binding_action
+};
+
+static const KeyAction prompt_esc_binding_action {
+		.func = prompt_esc,
 };
 
 static const KeyBinding prompt_esc_binding {
 	.key = "<Escape>",
-	.action = &(KeyAction){
-		.func = prompt_esc,
-	},
+	.action = &prompt_esc_binding_action
+};
+
+static const KeyAction prompt_up_binding_action {
+    .func = prompt_up
 };
 
 static const KeyBinding prompt_up_binding = {
 	.key = "<Up>",
-	.action = &(KeyAction){
-		.func = prompt_up,
-	},
+	.action = &prompt_up_binding_action
+};
+
+static const KeyAction prompt_backspace_binding_action = {
+    .func = prompt_backspace
 };
 
 static const KeyBinding prompt_backspace_binding = {
 	.key = "<Enter>",
-	.action = &(KeyAction){
-		.func = prompt_backspace,
-	},
+	.action = &prompt_backspace_binding_action,
 };
 
 void vis_prompt_show(Vis *vis, const char *title) {

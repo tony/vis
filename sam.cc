@@ -424,7 +424,7 @@ static Address *address_parse_simple(Vis *vis, const char **s, enum SamError *er
 }
 
 static Address *address_parse_compound(Vis *vis, const char **s, enum SamError *err) {
-	Address addr = { 0 }, *left = address_parse_simple(vis, s, err), *right = NULL;
+	Address addr = { 0, 0, 0 }, *left = address_parse_simple(vis, s, err), *right = NULL;
 	skip_spaces(s);
 	addr.type = **s;
 	switch (addr.type) {
@@ -441,14 +441,16 @@ static Address *address_parse_compound(Vis *vis, const char **s, enum SamError *
 		return left;
 	}
 
-	addr.left = left;
-	addr.right = right;
+    {
+        addr.left = left;
+        addr.right = right;
 
-	Address *ret = address_new();
-	if (ret) {
-		*ret = addr;
-		return ret;
-	}
+        Address *ret = address_new();
+        if (ret) {
+            *ret = addr;
+            return ret;
+        }
+    }
 
 fail:
 	address_free(left);
@@ -457,7 +459,7 @@ fail:
 }
 
 static Command *command_new(const char *name) {
-	Command *cmd = calloc(1, sizeof(Command));
+	Command *cmd = (Command*)calloc(1, sizeof(Command));
 	if (!cmd)
 		return NULL;
 	if (name && !(cmd->argv[0] = strdup(name))) {
@@ -484,7 +486,7 @@ static void command_free(Command *cmd) {
 }
 
 static const CommandDef *command_lookup(Vis *vis, const char *name) {
-	return map_closest(vis->cmds, name);
+	return (const CommandDef*)map_closest(vis->cmds, name);
 }
 
 static Command *command_parse(Vis *vis, const char **s, int level, enum SamError *err) {
@@ -509,102 +511,104 @@ static Command *command_parse(Vis *vis, const char **s, int level, enum SamError
 			goto fail;
 	}
 
-	const CommandDef *cmddef = command_lookup(vis, cmd->argv[0]);
-	if (!cmddef) {
-		*err = SAM_ERR_COMMAND;
-		goto fail;
-	}
+    {
+        const CommandDef *cmddef = command_lookup(vis, cmd->argv[0]);
+        if (!cmddef) {
+            *err = SAM_ERR_COMMAND;
+            goto fail;
+        }
 
-	cmd->cmddef = cmddef;
+        cmd->cmddef = cmddef;
 
-	if (strcmp(cmd->argv[0], "{") == 0) {
-		Command *prev = NULL, *next;
-		do {
-			skip_spaces(s);
-			if (**s == '\n')
-				(*s)++;
-			next = command_parse(vis, s, level+1, err);
-			if (prev)
-				prev->next = next;
-			else
-				cmd->cmd = next;
-		} while ((prev = next));
-	} else if (strcmp(cmd->argv[0], "}") == 0) {
-		if (level == 0) {
-			*err = SAM_ERR_UNMATCHED_BRACE;
-			goto fail;
-		}
-		command_free(cmd);
-		return NULL;
-	}
+        if (strcmp(cmd->argv[0], "{") == 0) {
+            Command *prev = NULL, *next;
+            do {
+                skip_spaces(s);
+                if (**s == '\n')
+                    (*s)++;
+                next = command_parse(vis, s, level + 1, err);
+                if (prev)
+                    prev->next = next;
+                else
+                    cmd->cmd = next;
+            } while ((prev = next));
+        } else if (strcmp(cmd->argv[0], "}") == 0) {
+            if (level == 0) {
+                *err = SAM_ERR_UNMATCHED_BRACE;
+                goto fail;
+            }
+            command_free(cmd);
+            return NULL;
+        }
 
-	if (cmddef->flags & CMD_ADDRESS_NONE && cmd->address) {
-		*err = SAM_ERR_NO_ADDRESS;
-		goto fail;
-	}
+        if (cmddef->flags & CMD_ADDRESS_NONE && cmd->address) {
+            *err = SAM_ERR_NO_ADDRESS;
+            goto fail;
+        }
 
-	if (cmddef->flags & CMD_COUNT)
-		cmd->count = parse_number(s);
+        if (cmddef->flags & CMD_COUNT)
+            cmd->count = parse_number(s);
 
-	if (cmddef->flags & CMD_FORCE && **s == '!') {
-		cmd->flags = '!';
-		(*s)++;
-	}
+        if (cmddef->flags & CMD_FORCE && **s == '!') {
+            cmd->flags = '!';
+            (*s)++;
+        }
 
-	if (cmddef->flags & CMD_FILE) {
-		if (!(cmd->argv[1] = parse_filename(s)) && cmd->argv[0][0] != 'w') {
-			*err = SAM_ERR_FILENAME;
-			goto fail;
-		}
-	}
+        if (cmddef->flags & CMD_FILE) {
+            if (!(cmd->argv[1] = parse_filename(s)) && cmd->argv[0][0] != 'w') {
+                *err = SAM_ERR_FILENAME;
+                goto fail;
+            }
+        }
 
-	if (cmddef->flags & CMD_REGEX) {
-		if ((cmddef->flags & CMD_REGEX_DEFAULT) && (!**s || **s == ' ')) {
-			skip_spaces(s);
-		} else if (!(cmd->regex = parse_regex(vis, s))) {
-			*err = SAM_ERR_REGEX;
-			goto fail;
-		}
-	}
+        if (cmddef->flags & CMD_REGEX) {
+            if ((cmddef->flags & CMD_REGEX_DEFAULT) && (!**s || **s == ' ')) {
+                skip_spaces(s);
+            } else if (!(cmd->regex = parse_regex(vis, s))) {
+                *err = SAM_ERR_REGEX;
+                goto fail;
+            }
+        }
 
-	if (cmddef->flags & CMD_SHELL && !(cmd->argv[1] = parse_shellcmd(s))) {
-		*err = SAM_ERR_SHELL;
-		goto fail;
-	}
+        if (cmddef->flags & CMD_SHELL && !(cmd->argv[1] = parse_shellcmd(s))) {
+            *err = SAM_ERR_SHELL;
+            goto fail;
+        }
 
-	if (cmddef->flags & CMD_TEXT && !(cmd->argv[1] = parse_text(s))) {
-		*err = SAM_ERR_TEXT;
-		goto fail;
-	}
+        if (cmddef->flags & CMD_TEXT && !(cmd->argv[1] = parse_text(s))) {
+            *err = SAM_ERR_TEXT;
+            goto fail;
+        }
 
-	if (cmddef->flags & CMD_ARGV) {
-		parse_argv(s, &cmd->argv[1], MAX_ARGV-2);
-		cmd->argv[MAX_ARGV-1] = NULL;
-	}
+        if (cmddef->flags & CMD_ARGV) {
+            parse_argv(s, &cmd->argv[1], MAX_ARGV - 2);
+            cmd->argv[MAX_ARGV - 1] = NULL;
+        }
 
-	if (cmddef->flags & CMD_CMD) {
-		skip_spaces(s);
-		if (cmddef->defcmd && (**s == '\n' || **s == '\0')) {
-			if (**s == '\n')
-				(*s)++;
-			if (!(cmd->cmd = command_new(cmddef->defcmd)))
-				goto fail;
-			cmd->cmd->cmddef = command_lookup(vis, cmddef->defcmd);
-		} else {
-			if (!(cmd->cmd = command_parse(vis, s, level, err)))
-				goto fail;
-			if (strcmp(cmd->argv[0], "X") == 0 || strcmp(cmd->argv[0], "Y") == 0) {
-				Command *sel = command_new("s");
-				if (!sel)
-					goto fail;
-				sel->cmd = cmd->cmd;
-				sel->cmddef = &cmddef_select;
-				cmd->cmd = sel;
-			}
-		}
-	}
+        if (cmddef->flags & CMD_CMD) {
+            skip_spaces(s);
+            if (cmddef->defcmd && (**s == '\n' || **s == '\0')) {
+                if (**s == '\n')
+                    (*s)++;
+                if (!(cmd->cmd = command_new(cmddef->defcmd)))
+                    goto fail;
+                cmd->cmd->cmddef = command_lookup(vis, cmddef->defcmd);
+            } else {
+                if (!(cmd->cmd = command_parse(vis, s, level, err)))
+                    goto fail;
+                if (strcmp(cmd->argv[0], "X") == 0 || strcmp(cmd->argv[0], "Y") == 0) {
+                    Command *sel = command_new("s");
+                    if (!sel)
+                        goto fail;
+                    sel->cmd = cmd->cmd;
+                    sel->cmddef = &cmddef_select;
+                    cmd->cmd = sel;
+                }
+            }
+        }
 
-	return cmd;
+        return cmd;
+    }
 fail:
 	command_free(cmd);
 	return NULL;
@@ -1120,14 +1124,14 @@ static bool cmd_read(Vis *vis, Win *win, Command *cmd, const char *argv[], Curso
 }
 
 static ssize_t read_text(void *context, char *data, size_t len) {
-	Filter *filter = context;
+	Filter *filter = (Filter*)context;
 	text_insert(filter->txt, filter->pos, data, len);
 	filter->pos += len;
 	return len;
 }
 
 static ssize_t read_buffer(void *context, char *data, size_t len) {
-	buffer_append(context, data, len);
+	buffer_append((Buffer*)context, data, len);
 	return len;
 }
 

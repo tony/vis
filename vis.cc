@@ -20,7 +20,7 @@
 #include "vis-core.hh"
 #include "sam.hh"
 
-static Macro *macro_get(Vis *vis, enum VisRegister);
+static Macro *macro_get(Vis *vis, VisRegisterEnum);
 static void macro_replay(Vis *vis, const Macro *macro);
 static void vis_keys_process(Vis *vis);
 
@@ -211,7 +211,7 @@ static void window_draw(void *ctx) {
 }
 
 Win *window_new_file(Vis *vis, File *file, UiOptionEnum options) {
-	Win *win = calloc(1, sizeof(Win));
+	Win *win = (Win*)calloc(1, sizeof(Win));
 	if (!win)
 		return NULL;
 	win->vis = vis;
@@ -417,7 +417,7 @@ void vis_window_close(Win *win) {
 Vis *vis_new(Ui *ui, VisEvent *event) {
 	if (!ui)
 		return NULL;
-	Vis *vis = calloc(1, sizeof(Vis));
+	Vis *vis = (Vis*)calloc(1, sizeof(Vis));
 	if (!vis)
 		return NULL;
 	vis->ui = ui;
@@ -631,12 +631,12 @@ void action_do(Vis *vis, Action *a) {
 					r = a->textobj->user(vis, win, a->textobj->data, pos);
 				if (!text_range_valid(&r))
 					break;
-				if (a->textobj->type & Movement::OUTER) {
+				if (a->textobj->type & TextObject::Type::OUTER) {
 					r.start--;
 					r.end++;
 				}
 
-				if (a->textobj->type & Movement::SPLIT)
+				if (a->textobj->type & TextObject::Type::SPLIT)
 					c.range = r;
 				else
 					c.range = text_range_union(&c.range, &r);
@@ -787,7 +787,7 @@ static void vis_keys_process(Vis *vis) {
 				Mode *mode_local = global || !vis->win ? mode : &vis->win->modes[mode->id];
 				if (!mode_local->bindings)
 					continue;
-				binding = map_get(mode_local->bindings, start);
+				binding = (KeyBinding*)map_get(mode_local->bindings, start);
 				/* "<" is never treated as a prefix because it is used to denote
 				 * special key symbols */
 				if (strcmp(cur, "<"))
@@ -816,7 +816,7 @@ static void vis_keys_process(Vis *vis) {
 				/* test for special editor key command */
 				char tmp = end[-1];
 				end[-1] = '\0';
-				action = map_get(vis->actions, start+1);
+				action = (KeyAction*)map_get(vis->actions, start+1);
 				end[-1] = tmp;
 				if (action) {
 					end = (char*)action->func(vis, end, &action->arg);
@@ -861,7 +861,7 @@ static const char *getkey(Vis *vis) {
 		return NULL;
 	vis_info_hide(vis);
 	if (!vis->mode->input) {
-		const char *mapped = map_get(vis->keymap, key);
+		const char *mapped = (const char*)map_get(vis->keymap, key);
 		if (mapped)
 			return mapped;
 	}
@@ -872,7 +872,7 @@ bool vis_signal_handler(Vis *vis, int signum, const siginfo_t *siginfo, const vo
 	switch (signum) {
 	case SIGBUS:
 		for (File *file = vis->files; file; file = file->next) {
-			if (text_sigbus(file->text, siginfo->si_addr))
+			if (text_sigbus((Text*)file->text, (const char*)siginfo->si_addr))
 				file->truncated = true;
 		}
 		vis->sigbus = true;
@@ -1010,11 +1010,11 @@ int vis_run(Vis *vis, int argc, char *argv[]) {
 	return vis->exit_status;
 }
 
-static Macro *macro_get(Vis *vis, enum VisRegister id) {
+static Macro *macro_get(Vis *vis, VisRegisterEnum id) {
 	if (id == VIS_MACRO_LAST_RECORDED)
 		return vis->last_recording;
 	if (VIS_REG_A <= id && id <= VIS_REG_Z)
-		id -= VIS_REG_A;
+		id -= (int)VIS_REG_A;
 	if (id < LENGTH(vis->registers))
 		return &vis->registers[id].buf;
 	return NULL;
@@ -1029,7 +1029,7 @@ void macro_operator_stop(Vis *vis) {
 	vis->macro_operator = NULL;
 }
 
-bool vis_macro_record(Vis *vis, enum VisRegister id) {
+bool vis_macro_record(Vis *vis, VisRegisterEnum id) {
 	Macro *macro = macro_get(vis, id);
 	if (vis->recording || !macro)
 		return false;
@@ -1087,7 +1087,7 @@ static void macro_replay(Vis *vis, const Macro *macro) {
 	vis->keys = input_queue;
 }
 
-bool vis_macro_replay(Vis *vis, enum VisRegister id) {
+bool vis_macro_replay(Vis *vis, VisRegisterEnum id) {
 	if (id == VIS_REG_SEARCH)
 		return vis_motion(vis, VIS_MOVE_SEARCH_NEXT);
 	if (id == VIS_REG_COMMAND) {
@@ -1155,7 +1155,7 @@ void vis_count_set(Vis *vis, int count) {
 	vis->action.count = (count >= 0 ? count : VIS_COUNT_UNKNOWN);
 }
 
-void vis_register_set(Vis *vis, enum VisRegister reg) {
+void vis_register_set(Vis *vis, VisRegisterEnum reg) {
 	if (reg >= VIS_REG_A && reg <= VIS_REG_Z) {
 		vis->action.reg = &vis->registers[reg - VIS_REG_A];
 		vis->action.reg->append = true;
@@ -1165,7 +1165,7 @@ void vis_register_set(Vis *vis, enum VisRegister reg) {
 	}
 }
 
-const char *vis_register_get(Vis *vis, enum VisRegister reg, size_t *len) {
+const char *vis_register_get(Vis *vis, VisRegisterEnum reg, size_t *len) {
 	if (VIS_REG_A <= reg && reg <= VIS_REG_Z)
 		reg -= VIS_REG_A;
 	if (reg < LENGTH(vis->registers))
@@ -1207,7 +1207,7 @@ static void copy_indent_from_previous_line(Win *win, Cursor *cur) {
 	size_t begin = text_line_begin(text, prev_line);
 	size_t start = text_line_start(text, begin);
 	size_t len = start-begin;
-	char *buf = malloc(len);
+	char *buf = (char*)malloc(len);
 	if (!buf)
 		return;
 	len = text_bytes_get(text, begin, len, buf);
@@ -1428,7 +1428,7 @@ bool vis_cmd(Vis *vis, const char *cmdline) {
 	while (*cmdline == ':')
 		cmdline++;
 	size_t len = strlen(cmdline);
-	char *line = malloc(len+2);
+	char *line = (char*)malloc(len+2);
 	if (!line)
 		return false;
 	strncpy(line, cmdline, len+1);

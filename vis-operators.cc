@@ -227,7 +227,7 @@ static size_t op_filter(Vis *vis, Text *txt, OperatorContext *c) {
 	return text_size(txt) + 1; /* do not change cursor position, would destroy selection */
 }
 
-bool vis_operator(Vis *vis, enum VisOperator id, ...) {
+bool vis_operator(Vis *vis, VisOperatorEnum id, ...) {
 	va_list ap;
 	va_start(ap, id);
 
@@ -262,29 +262,31 @@ bool vis_operator(Vis *vis, enum VisOperator id, ...) {
 	}
 	if (id >= LENGTH(vis_operators))
 		goto err;
-	const Operator *op = &vis_operators[id];
-	if (vis->mode->visual) {
-		vis->action.op = op;
-		action_do(vis, &vis->action);
-		goto out;
-	}
 
-	/* switch to operator mode inorder to make operator options and
-	 * text-object available */
-	vis_mode_switch(vis, VIS_MODE_OPERATOR_PENDING);
-	if (vis->action.op == op) {
-		/* hacky way to handle double operators i.e. things like
-		 * dd, yy etc where the second char isn't a movement */
-		vis->action.type = Movement::VIS_MOTIONTYPE_LINEWISE;
-		vis_motion(vis, VIS_MOVE_LINE_NEXT);
-	} else {
-		vis->action.op = op;
-	}
+    {
+        const Operator *op = &vis_operators[id];
+        if (vis->mode->visual) {
+            vis->action.op = op;
+            action_do(vis, &vis->action);
+            goto out;
+        }
 
-	/* put is not a real operator, does not need a range to operate on */
-	if (id == VIS_OP_PUT_AFTER)
-		vis_motion(vis, VIS_MOVE_NOP);
+        /* switch to operator mode inorder to make operator options and
+         * text-object available */
+        vis_mode_switch(vis, VIS_MODE_OPERATOR_PENDING);
+        if (vis->action.op == op) {
+            /* hacky way to handle double operators i.e. things like
+             * dd, yy etc where the second char isn't a movement */
+            vis->action.type = (Movement::Type) VIS_MOTIONTYPE_LINEWISE;
+            vis_motion(vis, VIS_MOVE_LINE_NEXT);
+        } else {
+            vis->action.op = op;
+        }
 
+        /* put is not a real operator, does not need a range to operate on */
+        if (id == VIS_OP_PUT_AFTER)
+            vis_motion(vis, VIS_MOVE_NOP);
+    }
 out:
 	va_end(ap);
 	return true;

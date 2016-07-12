@@ -211,11 +211,11 @@ static size_t percent(Vis *vis, Text *txt, size_t pos) {
 	return text_size(txt) * ratio / 100;
 }
 
-void vis_motion_type(Vis *vis, enum VisMotionType type) {
-	vis->action.type = type;
+void vis_motion_type(Vis *vis, VisMotionTypeEnum _type) {
+	vis->action.type = (Movement::Type)_type;
 }
 
-int vis_motion_register(Vis *vis, enum VisMotionType type, void *data,
+int vis_motion_register(Vis *vis, VisMotionTypeEnum _type, void *data,
 	size_t (*motion)(Vis*, Win*, void*, size_t pos)) {
 
 	Movement *move = (Movement*)calloc(1, sizeof *move);
@@ -223,7 +223,7 @@ int vis_motion_register(Vis *vis, enum VisMotionType type, void *data,
 		return -1;
 
 	move->user = motion;
-	move->type = (Movement::Type)type;
+	move->type = (Movement::Type)_type;
 	move->data = data;
 
 	if (array_add_ptr(&vis->motions, move))
@@ -232,7 +232,7 @@ int vis_motion_register(Vis *vis, enum VisMotionType type, void *data,
 	return -1;
 }
 
-bool vis_motion(Vis *vis, enum VisMotion motion, ...) {
+bool vis_motion(Vis *vis, VisMotionEnum motion, ...) {
 	va_list ap;
 	va_start(ap, motion);
 
@@ -277,7 +277,7 @@ bool vis_motion(Vis *vis, enum VisMotion motion, ...) {
 	case VIS_MOVE_TOTILL_REPEAT:
 		if (!vis->last_totill)
 			goto err;
-		motion = vis->last_totill;
+		motion = (VisMotionEnum)vis->last_totill;
 		break;
 	case VIS_MOVE_TOTILL_REVERSE:
 		switch (vis->last_totill) {
@@ -302,7 +302,7 @@ bool vis_motion(Vis *vis, enum VisMotion motion, ...) {
 	{
 		int mark = va_arg(ap, int);
 		if (VIS_MARK_a <= mark && mark < VIS_MARK_INVALID)
-			vis->action.mark = mark;
+			vis->action.mark = (VisMark)mark;
 		else
 			goto err;
 		break;
@@ -314,7 +314,7 @@ bool vis_motion(Vis *vis, enum VisMotion motion, ...) {
 	if (motion < LENGTH(vis_motions))
 		vis->action.movement = &vis_motions[motion];
 	else
-		vis->action.movement = array_get_ptr(&vis->motions, motion - VIS_MOVE_LAST);
+		vis->action.movement = (const Movement*)array_get_ptr(&vis->motions, motion - VIS_MOVE_LAST);
 
 	if (!vis->action.movement)
 		goto err;
@@ -328,13 +328,13 @@ err:
 }
 
 const Movement vis_motions[] = {
-	[VIS_MOVE_LINE_UP]             = { .cur = view_line_up,             .type = Movement::LINEWISE|Movement::LINEWISE_INCLUSIVE },
-	[VIS_MOVE_LINE_DOWN]           = { .cur = view_line_down,           .type = Movement::LINEWISE|Movement::LINEWISE_INCLUSIVE },
+	[VIS_MOVE_LINE_UP]             = { .cur = view_line_up,             .type = (Movement::Type)(Movement::LINEWISE|Movement::LINEWISE_INCLUSIVE) },
+	[VIS_MOVE_LINE_DOWN]           = { .cur = view_line_down,           .type = (Movement::Type)(Movement::LINEWISE|Movement::LINEWISE_INCLUSIVE) },
 	[VIS_MOVE_SCREEN_LINE_UP]      = { .cur = view_screenline_up,                                        },
 	[VIS_MOVE_SCREEN_LINE_DOWN]    = { .cur = view_screenline_down,                                      },
 	[VIS_MOVE_SCREEN_LINE_BEGIN]   = { .cur = view_screenline_begin,    .type = Movement::CHARWISE                 },
 	[VIS_MOVE_SCREEN_LINE_MIDDLE]  = { .cur = view_screenline_middle,   .type = Movement::CHARWISE                 },
-	[VIS_MOVE_SCREEN_LINE_END]     = { .cur = view_screenline_end,      .type = Movement::CHARWISE|Movement::INCLUSIVE       },
+	[VIS_MOVE_SCREEN_LINE_END]     = { .cur = view_screenline_end,      .type = (Movement::Type)(Movement::CHARWISE|Movement::INCLUSIVE)       },
 	[VIS_MOVE_LINE_PREV]           = { .txt = text_line_prev,                                            },
 	[VIS_MOVE_LINE_BEGIN]          = { .txt = text_line_begin,                                           },
 	[VIS_MOVE_LINE_START]          = { .txt = text_line_start,                                           },
@@ -342,52 +342,52 @@ const Movement vis_motions[] = {
 	[VIS_MOVE_LINE_LASTCHAR]       = { .txt = text_line_lastchar,       .type = Movement::INCLUSIVE                },
 	[VIS_MOVE_LINE_END]            = { .txt = text_line_end,                                             },
 	[VIS_MOVE_LINE_NEXT]           = { .txt = text_line_next,                                            },
-	[VIS_MOVE_LINE]                = { .vis = line,                     .type = Movement::LINEWISE|Movement::IDEMPOTENT|Movement::JUMP },
-	[VIS_MOVE_COLUMN]              = { .vis = column,                   .type = Movement::CHARWISE|Movement::IDEMPOTENT      },
+	[VIS_MOVE_LINE]                = { .vis = line,                     .type = (Movement::Type)(Movement::LINEWISE|Movement::IDEMPOTENT|Movement::JUMP) },
+	[VIS_MOVE_COLUMN]              = { .vis = column,                   .type = (Movement::Type)(Movement::CHARWISE|Movement::IDEMPOTENT)      },
 	[VIS_MOVE_CHAR_PREV]           = { .txt = text_char_prev,           .type = Movement::CHARWISE                 },
 	[VIS_MOVE_CHAR_NEXT]           = { .txt = text_char_next,           .type = Movement::CHARWISE                 },
 	[VIS_MOVE_LINE_CHAR_PREV]      = { .txt = text_line_char_prev,      .type = Movement::CHARWISE                 },
 	[VIS_MOVE_LINE_CHAR_NEXT]      = { .txt = text_line_char_next,      .type = Movement::CHARWISE                 },
 	[VIS_MOVE_WORD_START_PREV]     = { .txt = text_word_start_prev,     .type = Movement::CHARWISE                 },
 	[VIS_MOVE_WORD_START_NEXT]     = { .txt = text_word_start_next,     .type = Movement::CHARWISE                 },
-	[VIS_MOVE_WORD_END_PREV]       = { .txt = text_word_end_prev,       .type = Movement::CHARWISE|Movement::INCLUSIVE       },
-	[VIS_MOVE_WORD_END_NEXT]       = { .txt = text_word_end_next,       .type = Movement::CHARWISE|Movement::INCLUSIVE       },
+	[VIS_MOVE_WORD_END_PREV]       = { .txt = text_word_end_prev,       .type = (Movement::Type)(Movement::CHARWISE|Movement::INCLUSIVE)      },
+	[VIS_MOVE_WORD_END_NEXT]       = { .txt = text_word_end_next,       .type = (Movement::Type)(Movement::CHARWISE|Movement::INCLUSIVE)      },
 	[VIS_MOVE_LONGWORD_START_PREV] = { .txt = text_longword_start_prev, .type = Movement::CHARWISE                 },
 	[VIS_MOVE_LONGWORD_START_NEXT] = { .txt = text_longword_start_next, .type = Movement::CHARWISE                 },
-	[VIS_MOVE_LONGWORD_END_PREV]   = { .txt = text_longword_end_prev,   .type = Movement::CHARWISE|Movement::INCLUSIVE       },
-	[VIS_MOVE_LONGWORD_END_NEXT]   = { .txt = text_longword_end_next,   .type = Movement::CHARWISE|Movement::INCLUSIVE       },
+	[VIS_MOVE_LONGWORD_END_PREV]   = { .txt = text_longword_end_prev,   .type = (Movement::Type)(Movement::CHARWISE|Movement::INCLUSIVE)      },
+	[VIS_MOVE_LONGWORD_END_NEXT]   = { .txt = text_longword_end_next,   .type = (Movement::Type)(Movement::CHARWISE|Movement::INCLUSIVE)      },
 	[VIS_MOVE_SENTENCE_PREV]       = { .txt = text_sentence_prev,       .type = Movement::CHARWISE                 },
 	[VIS_MOVE_SENTENCE_NEXT]       = { .txt = text_sentence_next,       .type = Movement::CHARWISE                 },
-	[VIS_MOVE_PARAGRAPH_PREV]      = { .txt = text_paragraph_prev,      .type = Movement::LINEWISE|Movement::JUMP            },
-	[VIS_MOVE_PARAGRAPH_NEXT]      = { .txt = text_paragraph_next,      .type = Movement::LINEWISE|Movement::JUMP            },
-	[VIS_MOVE_FUNCTION_START_PREV] = { .txt = text_function_start_prev, .type = Movement::LINEWISE|Movement::JUMP            },
-	[VIS_MOVE_FUNCTION_START_NEXT] = { .txt = text_function_start_next, .type = Movement::LINEWISE|Movement::JUMP            },
-	[VIS_MOVE_FUNCTION_END_PREV]   = { .txt = text_function_end_prev,   .type = Movement::LINEWISE|Movement::JUMP            },
-	[VIS_MOVE_FUNCTION_END_NEXT]   = { .txt = text_function_end_next,   .type = Movement::LINEWISE|Movement::JUMP            },
+	[VIS_MOVE_PARAGRAPH_PREV]      = { .txt = text_paragraph_prev,      .type = (Movement::Type)(Movement::LINEWISE|Movement::JUMP)            },
+	[VIS_MOVE_PARAGRAPH_NEXT]      = { .txt = text_paragraph_next,      .type = (Movement::Type)(Movement::LINEWISE|Movement::JUMP)            },
+	[VIS_MOVE_FUNCTION_START_PREV] = { .txt = text_function_start_prev, .type = (Movement::Type)(Movement::LINEWISE|Movement::JUMP)            },
+	[VIS_MOVE_FUNCTION_START_NEXT] = { .txt = text_function_start_next, .type = (Movement::Type)(Movement::LINEWISE|Movement::JUMP)            },
+	[VIS_MOVE_FUNCTION_END_PREV]   = { .txt = text_function_end_prev,   .type = (Movement::Type)(Movement::LINEWISE|Movement::JUMP)            },
+	[VIS_MOVE_FUNCTION_END_NEXT]   = { .txt = text_function_end_next,   .type = (Movement::Type)(Movement::LINEWISE|Movement::JUMP)            },
 	[VIS_MOVE_BLOCK_START]         = { .txt = text_block_start,         .type = Movement::JUMP                     },
 	[VIS_MOVE_BLOCK_END]           = { .txt = text_block_end,           .type = Movement::JUMP                     },
 	[VIS_MOVE_PARENTHESE_START]    = { .txt = text_parenthese_start,    .type = Movement::JUMP                     },
 	[VIS_MOVE_PARENTHESE_END]      = { .txt = text_parenthese_end,      .type = Movement::JUMP                     },
-	[VIS_MOVE_BRACKET_MATCH]       = { .txt = bracket_match,            .type = Movement::INCLUSIVE|Movement::JUMP           },
-	[VIS_MOVE_FILE_BEGIN]          = { .txt = text_begin,               .type = Movement::LINEWISE|Movement::JUMP            },
-	[VIS_MOVE_FILE_END]            = { .txt = text_end,                 .type = Movement::LINEWISE|Movement::JUMP            },
+	[VIS_MOVE_BRACKET_MATCH]       = { .txt = bracket_match,            .type = (Movement::Type)(Movement::INCLUSIVE|Movement::JUMP)           },
+	[VIS_MOVE_FILE_BEGIN]          = { .txt = text_begin,               .type = (Movement::Type)(Movement::LINEWISE|Movement::JUMP)            },
+	[VIS_MOVE_FILE_END]            = { .txt = text_end,                 .type = (Movement::Type)(Movement::LINEWISE|Movement::JUMP)            },
 	[VIS_MOVE_LEFT_TO]             = { .vis = to_left,                                                   },
 	[VIS_MOVE_RIGHT_TO]            = { .vis = to,                       .type = Movement::INCLUSIVE                },
 	[VIS_MOVE_LEFT_TILL]           = { .vis = till_left,                                                 },
 	[VIS_MOVE_RIGHT_TILL]          = { .vis = till,                     .type = Movement::INCLUSIVE                },
-	[VIS_MOVE_MARK]                = { .file = mark_goto,               .type = Movement::JUMP|Movement::IDEMPOTENT          },
-	[VIS_MOVE_MARK_LINE]           = { .file = mark_line_goto,          .type = Movement::LINEWISE|Movement::JUMP|Movement::IDEMPOTENT },
+	[VIS_MOVE_MARK]                = { .file = mark_goto,               .type = (Movement::Type)(Movement::JUMP|Movement::IDEMPOTENT)          },
+	[VIS_MOVE_MARK_LINE]           = { .file = mark_line_goto,          .type = (Movement::Type)(Movement::LINEWISE|Movement::JUMP|Movement::IDEMPOTENT) },
 	[VIS_MOVE_SEARCH_WORD_FORWARD] = { .vis = search_word_forward,      .type = Movement::JUMP                     },
 	[VIS_MOVE_SEARCH_WORD_BACKWARD]= { .vis = search_word_backward,     .type = Movement::JUMP                     },
 	[VIS_MOVE_SEARCH_NEXT]         = { .vis = search_forward,           .type = Movement::JUMP                     },
 	[VIS_MOVE_SEARCH_PREV]         = { .vis = search_backward,          .type = Movement::JUMP                     },
-	[VIS_MOVE_WINDOW_LINE_TOP]     = { .view = view_lines_top,          .type = Movement::LINEWISE|Movement::JUMP|Movement::IDEMPOTENT },
-	[VIS_MOVE_WINDOW_LINE_MIDDLE]  = { .view = view_lines_middle,       .type = Movement::LINEWISE|Movement::JUMP|Movement::IDEMPOTENT },
-	[VIS_MOVE_WINDOW_LINE_BOTTOM]  = { .view = view_lines_bottom,       .type = Movement::LINEWISE|Movement::JUMP|Movement::IDEMPOTENT },
+	[VIS_MOVE_WINDOW_LINE_TOP]     = { .view = view_lines_top,          .type = (Movement::Type)(Movement::LINEWISE|Movement::JUMP|Movement::IDEMPOTENT) },
+	[VIS_MOVE_WINDOW_LINE_MIDDLE]  = { .view = view_lines_middle,       .type = (Movement::Type)(Movement::LINEWISE|Movement::JUMP|Movement::IDEMPOTENT) },
+	[VIS_MOVE_WINDOW_LINE_BOTTOM]  = { .view = view_lines_bottom,       .type = (Movement::Type)(Movement::LINEWISE|Movement::JUMP|Movement::IDEMPOTENT) },
 	[VIS_MOVE_CHANGELIST_NEXT]     = { .win = window_changelist_next,   .type = Movement::INCLUSIVE                },
 	[VIS_MOVE_CHANGELIST_PREV]     = { .win = window_changelist_prev,   .type = Movement::INCLUSIVE                },
-	[VIS_MOVE_Movement::JUMPLIST_NEXT]       = { .win = window_jumplist_next,     .type = Movement::INCLUSIVE                },
-	[VIS_MOVE_Movement::JUMPLIST_PREV]       = { .win = window_jumplist_prev,     .type = Movement::INCLUSIVE                },
+	[VIS_MOVE_JUMPLIST_NEXT]       = { .win = window_jumplist_next,     .type = Movement::INCLUSIVE                },
+	[VIS_MOVE_JUMPLIST_PREV]       = { .win = window_jumplist_prev,     .type = Movement::INCLUSIVE                },
 	[VIS_MOVE_NOP]                 = { .win = window_nop,               .type = Movement::IDEMPOTENT               },
 	[VIS_MOVE_PERCENT]             = { .vis = percent,                  .type = Movement::IDEMPOTENT               },
 };

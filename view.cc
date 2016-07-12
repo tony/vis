@@ -218,7 +218,7 @@ static bool view_addch(View *view, Cell *cell) {
 		if (ch < 128 && !isprint(ch)) {
 			/* non-printable ascii char, represent it as ^(char + 64) */
 			*cell = (Cell) {
-				.data = { '^', ch == 127 ? '?' : ch + 64, '\0' },
+				.data = { '^', static_cast<char>(ch == 127 ? '?' : ch + 64), '\0' },
 				.len = 1,
 				.width = 2,
 				.style = cell->style,
@@ -227,7 +227,7 @@ static bool view_addch(View *view, Cell *cell) {
 
 		if (ch == ' ') {
 			strncpy(cell->data, view->symbols[SYNTAX_SYMBOL_SPACE]->symbol, sizeof(cell->data)-1);
-			cell->style = view->symbols[SYNTAX_SYMBOL_SPACE]->style;
+			cell->style = (enum UiStyle)view->symbols[SYNTAX_SYMBOL_SPACE]->style;
 
 		}
 
@@ -336,9 +336,9 @@ void view_draw(View *view) {
 	/* current position into buffer from which to interpret a character */
 	char *cur = text;
 	/* start from known multibyte state */
-	mbstate_t mbstate = { 0 };
+	mbstate_t mbstate = {{ 0 }};
 
-	Cell cell = { 0 }, prev_cell = { 0 };
+	Cell cell = { 0, 0, 0, 0, 0, 0, 0 }, prev_cell = { 0 };
 
 	while (rem > 0) {
 
@@ -465,7 +465,7 @@ void view_update(View *view) {
 
 	for (Line *l = view->lastline->next; l; l = l->next) {
 		strncpy(l->cells[0].data, view->symbols[SYNTAX_SYMBOL_EOF]->symbol, sizeof(l->cells[0].data));
-		l->cells[0].style = view->symbols[SYNTAX_SYMBOL_EOF]->style;
+		l->cells[0].style = (UiStyle)view->symbols[SYNTAX_SYMBOL_EOF]->style;
 		for (int x = 1; x < view->width; x++)
 			l->cells[x] = cell_blank;
 		l->width = 1;
@@ -513,7 +513,7 @@ bool view_resize(View *view, int width, int height) {
 		return true;
 	size_t lines_size = height*(sizeof(Line) + width*sizeof(Cell));
 	if (lines_size > view->lines_size) {
-		Line *lines = realloc(view->lines, lines_size);
+		Line *lines = (Line*)realloc(view->lines, lines_size);
 		if (!lines)
 			return false;
 		view->lines = lines;
@@ -556,7 +556,7 @@ void view_reload(View *view, Text *text) {
 View *view_new(Text *text, ViewEvent *events) {
 	if (!text)
 		return NULL;
-	View *view = calloc(1, sizeof(View));
+	View *view = (View*)calloc(1, sizeof(View));
 	if (!view)
 		return NULL;
 	if (!view_cursors_new(view, 0)) {
@@ -870,7 +870,7 @@ size_t view_screenline_goto(View *view, int n) {
 }
 
 static Cursor *cursors_new(View *view, size_t pos, bool force) {
-	Cursor *c = calloc(1, sizeof(*c));
+	Cursor *c = (Cursor*)calloc(1, sizeof(*c));
 	if (!c)
 		return NULL;
 	c->view = view;
@@ -1215,7 +1215,7 @@ void view_cursors_selection_set(Cursor *c, const Filerange *r) {
 }
 
 Selection *view_selections_new(View *view) {
-	Selection *s = calloc(1, sizeof(*s));
+	Selection *s = (Selection*)calloc(1, sizeof(*s));
 	if (!s)
 		return NULL;
 
