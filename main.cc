@@ -1,5 +1,8 @@
 #include <map>
 #include <tuple>
+#if __FreeBSD__
+#include <ctype.h>
+#endif
 #include <signal.h>
 #include <limits.h>
 #include <string.h>

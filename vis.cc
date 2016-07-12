@@ -10,6 +10,9 @@
 #include <ctype.h>
 #include <regex.h>
 #include <sys/stat.h>
+#if __FreeBSD__
+#include <sys/wait.h>
+#endif
 #include <libgen.h>
 #include <termkey.h>
 

@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <wchar.h>
 #include <errno.h>
+#if __FreeBSD__
+#include <ctype.h>
+#endif
 #include <limits.h>
 #include "view.hh"
 #include "text-motions.hh"
