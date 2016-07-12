@@ -175,6 +175,7 @@ void vis_prompt_show(Vis *vis, const char *title) {
 	vis_window_mode_map(prompt, VIS_MODE_INSERT, true, "<Enter>", &prompt_enter_binding);
 	vis_window_mode_map(prompt, VIS_MODE_VISUAL, true, "<Enter>", &prompt_enter_binding);
 	vis_window_mode_map(prompt, VIS_MODE_NORMAL, true, "<Escape>", &prompt_esc_binding);
+	vis_window_mode_map(prompt, VIS_MODE_NORMAL, true, "<C-c>", &prompt_esc_binding);
 	vis_window_mode_map(prompt, VIS_MODE_INSERT, true, "<Up>", &prompt_up_binding);
 	vis_window_mode_map(prompt, VIS_MODE_INSERT, true, "<Backspace>", &prompt_backspace_binding);
 	vis_mode_switch(vis, VIS_MODE_INSERT);
