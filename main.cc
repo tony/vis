@@ -2552,13 +2552,15 @@ int main(int argc, char *argv[]) {
 
 	// note currently this needs to iterate over a map of the modes from config.def.hh -> config.hh
 	// this is hard-coded right now while trying to get it to build
-	for (auto binding = default_bindings.cbegin(); binding != default_bindings.cend(); ++binding) {
-		for (const KeyBinding *kb = binding; kb->key; kb++) {
-			vis_mode_map(vis, VIS_MODE_INSERT, false, kb->key, kb);
-		}
-	}
+    for (int i = 0; i < LENGTH(default_bindings); i++) {
+        for (const KeyBinding **binding = default_bindings[i]; binding && *binding; binding++) {
+            for (const KeyBinding *kb = *binding; kb->key; kb++) {
+                vis_mode_map(vis, (enum VisMode)i, false, kb->key, kb);
+            }
+        }
+    }
 
-	for (const char **k = keymaps; k[0]; k += 2)
+    for (const char **k = keymaps; k[0]; k += 2)
 		vis_keymap_add(vis, k[0], k[1]);
 
 	/* install signal handlers etc. */
