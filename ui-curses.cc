@@ -1144,7 +1144,7 @@ static void ui_terminal_restore(Ui *ui) {
 
 Ui *ui_curses_new(void) {
 
-	UiCurses *uic = new UiCurses;
+	UiCurses *uic = (UiCurses*)calloc(1, sizeof(UiCurses));
 	Ui *ui = (Ui*)uic;
 	if (!uic)
 		return NULL;
