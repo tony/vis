@@ -339,9 +339,9 @@ void view_draw(View *view) {
 	/* current position into buffer from which to interpret a character */
 	char *cur = text;
 	/* start from known multibyte state */
-	mbstate_t mbstate = {{ 0 }};
+	mbstate_t mbstate = { 0 };
 
-	Cell cell = { 0, 0, 0, 0, 0, 0, 0 }, prev_cell = { 0 };
+	Cell cell = { 0 }, prev_cell = { 0 };
 
 	while (rem > 0) {
 
