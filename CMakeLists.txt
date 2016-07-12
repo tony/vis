@@ -68,13 +68,15 @@ if(CMAKE_C_COMPILER_ARG1)
 else()
   set(DEPS_C_COMPILER "${CMAKE_C_COMPILER}")
 endif()
+set(UNIBILIUM_URL https://github.com/mauke/unibilium/archive/v1.2.0.tar.gz)
+set(UNIBILIUM_SHA256 623af1099515e673abfd3cae5f2fa808a09ca55dda1c65a7b5c9424eb304ead8)
 set(LIBTERMKEY_URL http://www.leonerd.org.uk/code/libtermkey/libtermkey-0.18.tar.gz)
 set(LIBTERMKEY_SHA256 239746de41c845af52bb3c14055558f743292dd6c24ac26c2d6567a5a6093926)
 add_subdirectory(cmake/superbuild)
 find_package(LibTermkey REQUIRED)
 add_custom_target(superbuild
   cmake --build . --target libtermkey
-  BYPRODUCTS ${LIBTERMKEY_LIBRARY}
+  BYPRODUCTS ${LIBTERMKEY_LIBRARY} ${UNIBILIUM_LIBRARY}
   DEPENDS libtermkey
 )
 
@@ -92,7 +94,7 @@ if (NOT EXISTS "${PROJECT_SOURCE_DIR}/config.hh")
   )
 endif()
 
-include_directories(${CURSES_INCLUDE_DIR} ${LIBTERMKEY_INCLUDE_DIR})
+include_directories(${CURSES_INCLUDE_DIR} ${LIBTERMKEY_INCLUDE_DIR} ${UNIBILIUM_INCLUDE_DIR})
 
 MESSAGE(STATUS "CURSES_INCLUDE_DIR: " ${CURSES_INCLUDE_DIR})
 
@@ -100,7 +102,7 @@ add_executable(vis ${vis_SOURCES} )
 set_property(TARGET vis PROPERTY CXX_STANDARD 11)
 add_dependencies(vis libtermkey)
 
-target_link_libraries(vis ${CURSES_LIBRARY} ${LIBTERMKEY_LIBRARY})
+target_link_libraries(vis ${CURSES_LIBRARY} ${LIBTERMKEY_LIBRARY} ${UNIBILIUM_LIBRARY})
 
 MESSAGE(STATUS "BIN_DIR: " ${BIN_DIR})
 install(TARGETS vis RUNTIME DESTINATION ${BIN_DIR})

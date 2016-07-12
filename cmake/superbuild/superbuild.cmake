@@ -1,5 +1,6 @@
 include( ExternalProject )
 
+include(External-unibilium.cmake)
 include(External-libtermkey.cmake)
 
 # Compute -G arg for configuring external projects with the same CMake generator:

@@ -28,3 +28,5 @@ set(LIBTERMKEY_DIR "${CMAKE_CURRENT_BINARY_DIR}/libtermkey" CACHE PATH "libtermk
 set(LIBTERMKEY_ROOT ${LIBTERMKEY_DIR} CACHE PATH "libtermkey root" FORCE)
 set(LIBTERMKEY_INCLUDE_DIR ${DEPS_INSTALL_DIR}/include CACHE PATH "libtermkey include dir" FORCE)
 set(LIBTERMKEY_LIBRARY ${DEPS_LIB_DIR}/libtermkey.a CACHE FILEPATH "libtermkey library" FORCE)
+
+add_dependencies(libtermkey unibilium)
