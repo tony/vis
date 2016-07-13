@@ -92,7 +92,11 @@ configure_file (
 "${PROJECT_SOURCE_DIR}/config.hh"
 )
 
-include_directories(${CURSES_INCLUDE_DIR} ${LIBTERMKEY_INCLUDE_DIR} ${UNIBILIUM_INCLUDE_DIR})
+find_package(PythonLibs REQUIRED)
+add_definitions(-DCONFIG_PYTHON)
+list(APPEND vis_SOURCES vis-python.cc)
+
+include_directories(${CURSES_INCLUDE_DIR} ${LIBTERMKEY_INCLUDE_DIR} ${UNIBILIUM_INCLUDE_DIR} ${PYTHON_INCLUDE_DIR})
 
 MESSAGE(STATUS "CURSES_INCLUDE_DIR: " ${CURSES_INCLUDE_DIR})
 
@@ -100,7 +104,7 @@ add_executable(vis ${vis_SOURCES} )
 set_property(TARGET vis PROPERTY CXX_STANDARD 11)
 add_dependencies(vis libtermkey)
 
-target_link_libraries(vis ${CURSES_LIBRARY} ${LIBTERMKEY_LIBRARY} ${UNIBILIUM_LIBRARY})
+target_link_libraries(vis ${CURSES_LIBRARY} ${LIBTERMKEY_LIBRARY} ${UNIBILIUM_LIBRARY} ${PYTHON_LIBRARY})
 
 MESSAGE(STATUS "BIN_DIR: " ${BIN_DIR})
 install(TARGETS vis RUNTIME DESTINATION ${BIN_DIR})

@@ -10,7 +10,7 @@
 #include <errno.h>
 
 #include "ui-curses.hh"
-#include "vis-lua.hh"
+#include "vis-python.hh"
 #include "text-motions.hh"
 #include "text-objects.hh"
 #include "util.hh"
@@ -2525,19 +2525,18 @@ static void signal_handler(int signum, siginfo_t *siginfo, void *context) {
 }
 
 int main(int argc, char *argv[]) {
-
 	VisEvent event = {
-		.vis_init = vis_lua_init,
-		.vis_start = vis_lua_start,
-		.vis_quit = vis_lua_quit,
-		.file_open = vis_lua_file_open,
-		.file_save = vis_lua_file_save,
-		.file_close = vis_lua_file_close,
-		.win_open = vis_lua_win_open,
-		.win_close = vis_lua_win_close,
-		.win_highlight = vis_lua_win_highlight,
-		.win_syntax = vis_lua_win_syntax,
-		.win_status = vis_lua_win_status,
+		.vis_init = vis_py_init,
+		.vis_start = vis_py_start,
+		.vis_quit = vis_py_quit,
+		.file_open = vis_py_file_open,
+		.file_save = vis_py_file_save,
+		.file_close = vis_py_file_close,
+		.win_open = vis_py_win_open,
+		.win_close = vis_py_win_close,
+		.win_highlight = vis_py_win_highlight,
+		.win_syntax = vis_py_win_syntax,
+		.win_status = vis_py_win_status,
 	};
 
 	vis = vis_new(ui_curses_new(), &event);
