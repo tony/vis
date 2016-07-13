@@ -76,8 +76,8 @@ add_subdirectory(cmake/superbuild)
 find_package(LibTermkey REQUIRED)
 add_custom_target(superbuild
   cmake --build . --target libtermkey
-  BYPRODUCTS ${LIBTERMKEY_LIBRARY} ${UNIBILIUM_LIBRARY}
-  DEPENDS libtermkey
+  BYPRODUCTS ${LIBTERMKEY_LIBRARY} ${UNIBILIUM_LIBRARY} ${PYTHON_LIBRARY} ${ZLIB_LIBRARY}
+  DEPENDS libtermkey Python zlib
 )
 
 include_directories("./")
@@ -92,19 +92,22 @@ configure_file (
 "${PROJECT_SOURCE_DIR}/config.hh"
 )
 
-find_package(PythonLibs REQUIRED)
+#find_package(PythonLibs REQUIRED)
 add_definitions(-DCONFIG_PYTHON)
 list(APPEND vis_SOURCES vis-python.cc)
 
-include_directories(${CURSES_INCLUDE_DIR} ${LIBTERMKEY_INCLUDE_DIR} ${UNIBILIUM_INCLUDE_DIR} ${PYTHON_INCLUDE_DIR})
+include_directories(${CURSES_INCLUDE_DIR} ${LIBTERMKEY_INCLUDE_DIR} ${UNIBILIUM_INCLUDE_DIR} ${PYTHON_INCLUDE_DIR} ${ZLIB_LIBRARY})
 
+MESSAGE(STATUS "PYTHON_INCLUDE_DIR: " ${PYTHON_INCLUDE_DIR})
+MESSAGE(STATUS "PYTHON_LIBRARY: " ${PYTHON_LIBRARY})
 MESSAGE(STATUS "CURSES_INCLUDE_DIR: " ${CURSES_INCLUDE_DIR})
 
 add_executable(vis ${vis_SOURCES} )
 set_property(TARGET vis PROPERTY CXX_STANDARD 11)
 add_dependencies(vis libtermkey)
+add_dependencies(vis Python)
 
-target_link_libraries(vis ${CURSES_LIBRARY} ${LIBTERMKEY_LIBRARY} ${UNIBILIUM_LIBRARY} ${PYTHON_LIBRARY})
+target_link_libraries(vis ${CURSES_LIBRARY} ${LIBTERMKEY_LIBRARY} ${UNIBILIUM_LIBRARY} ${PYTHON_LIBRARY} ${ZLIB_LIBRARY})
 
 MESSAGE(STATUS "BIN_DIR: " ${BIN_DIR})
 install(TARGETS vis RUNTIME DESTINATION ${BIN_DIR})
