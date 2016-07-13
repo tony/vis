@@ -32,10 +32,54 @@ const char *vis_py_paths_get(Vis* vis) {
 
 }
 
+static PyObject *VisError;
+
+static PyObject *
+vis_system(PyObject *self, PyObject *args)
+{
+    const char *command;
+    int sts;
+
+    if (!PyArg_ParseTuple(args, "s", &command))
+        return NULL;
+    sts = system(command);
+    if (sts < 0) {
+        PyErr_SetString(VisError, "System command failed");
+        return NULL;
+    }
+    return PyLong_FromLong(sts);
+}
+
+static PyMethodDef VisMethods[] = {
+    {"system",  vis_system, METH_VARARGS, "Execute a shell command."},
+    {NULL, NULL, 0, NULL}        /* Sentinel */
+};
+
+char *vis_doc = (char *)"Python API for vis editor";
+
+static struct PyModuleDef vismodule = {
+   PyModuleDef_HEAD_INIT,
+   "vis",   /* name of module */
+   vis_doc, /* module documentation, may be NULL */
+   -1,       /* size of per-interpreter state of the module,
+                or -1 if the module keeps state in global variables. */
+   VisMethods
+};
+
+PyMODINIT_FUNC
+PyInit_vis(void)
+{
+    return PyModule_Create(&vismodule);
+}
+
 /* various event handlers, triggered by the vis core */
 void vis_py_init(Vis* vis) {
+	char* modname = (char *)"vis";
+    PyImport_AppendInittab(modname, PyInit_vis);
+	Py_SetProgramName((wchar_t *)modname);
+
 	Py_Initialize();
-	char* modname = "vis";
+
 	PyObject* py_modname = PyUnicode_DecodeFSDefault(modname);
 	if (!py_modname) {
 		if (PyErr_Occurred())
