@@ -25,11 +25,12 @@ void vis_py_win_status(Vis *vis, Win *win) { window_status_update(vis, win); }
 
 bool vis_py_path_add(Vis*, const char *path) {
 	std::cout << "HI" << std::endl;
+	return true;
 }
 
 /* get semi colon separated list of paths to load py files */
 const char *vis_py_paths_get(Vis* vis) {
-
+	return NULL;
 }
 
 static PyObject *VisError;
@@ -63,7 +64,11 @@ static struct PyModuleDef vismodule = {
    vis_doc, /* module documentation, may be NULL */
    -1,       /* size of per-interpreter state of the module,
                 or -1 if the module keeps state in global variables. */
-   VisMethods
+   VisMethods,
+   nullptr, // m_slots
+   nullptr, // m_traverse
+   nullptr, // m_clear
+   nullptr, // m_free
 };
 
 PyMODINIT_FUNC
@@ -116,7 +121,7 @@ void vis_py_file_close(Vis* vis, File*){}
 void vis_py_win_open(Vis* vis, Win*){}
 void vis_py_win_close(Vis* vis, Win*){}
 void vis_py_win_highlight(Vis* vis, Win*, size_t horizon){}
-bool vis_py_win_syntax(Vis* vis, Win*, const char *syntax){}
+bool vis_py_win_syntax(Vis* vis, Win*, const char *syntax){ return true; }
 void vis_py_win_status(Vis* vis, Win*){}
 
 #endif
