@@ -35,7 +35,22 @@ const char *vis_py_paths_get(Vis* vis) {
 /* various event handlers, triggered by the vis core */
 void vis_py_init(Vis* vis) {
 	Py_Initialize();
-	PyObject* py_modname = PyUnicode_DecodeFSDefault("vis");
+	char* modname = "vis";
+	PyObject* py_modname = PyUnicode_DecodeFSDefault(modname);
+	if (!py_modname) {
+		if (PyErr_Occurred())
+			PyErr_Print();
+		std::cout << "Can't decode module " << modname << std::endl;
+	}
+
+	PyObject* py_module = PyImport_Import(py_modname);
+	Py_DecRef(py_module);
+
+	if (!py_module) {
+		PyErr_Print();
+		std::cout << "Failed to load " << modname << std::endl;
+		return;
+	}
 
 	Py_Finalize();
 }
@@ -48,10 +63,8 @@ void vis_py_file_open(Vis* vis, File* file){
 	auto filename = file->name ? file->name : "unnamed";
 	std::cout << filename << std::endl;
 	if (strstr(filename, "hi") != nullptr) {
-		exit(0);
 	} else {
 		std::cout << "no exit: " << filename << std::endl;
-		exit(0);
 	}
 }
 void vis_py_file_save(Vis* vis, File*){}
