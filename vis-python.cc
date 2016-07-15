@@ -1,8 +1,8 @@
+#include <iostream>
+
 #include "vis-python.hh"
 #include "vis-core.hh"
 #include "util.hh"
-#include <iostream>
-
 
 #if !CONFIG_PYTHON
 
