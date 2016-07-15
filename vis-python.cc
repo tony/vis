@@ -35,8 +35,7 @@ const char *vis_py_paths_get(Vis* vis) {
 
 static PyObject *VisError;
 
-static PyObject *
-vis_system(PyObject *self, PyObject *args)
+static PyObject * vis_system(PyObject *self, PyObject *args)
 {
     const char *command;
     int sts;
